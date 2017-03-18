@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -31,6 +30,8 @@ public class InformesActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
 
+        IntentDetalle = new Intent(this, InformeDetallesActivity.class);
+
         ArrayInformes = new ArrayList<Informes>();
         Informes = new Informes("Empresa 2", "Labor 2", "1");
         ArrayInformes.add(Informes);
@@ -46,7 +47,10 @@ public class InformesActivity extends AppCompatActivity {
         ListDetalle.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d("ITEM",ArrayInformes.get(i).getId());
+                IntentDetalle.putExtra("InformeId",ArrayInformes.get(i).getId());
+                IntentDetalle.putExtra("InformeTitle",ArrayInformes.get(i).getTitle());
+                IntentDetalle.putExtra("InformeSubtitle",ArrayInformes.get(i).getSubtitle());
+                startActivity(IntentDetalle);
             }
         });
     }
