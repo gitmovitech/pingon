@@ -1,8 +1,9 @@
 package cl.pingon;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -16,6 +17,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     Spinner SpinnerMarca;
     Spinner SpinnerEquipo;
     Spinner SpinnerSerie;
+    Intent IntentInformes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +25,13 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         setContentView(R.layout.activity_nuevo_formulario);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
+        }
 
         this.setTitle("Nuevo formulario");
+
+        IntentInformes = new Intent(this, InformesActivity.class);
 
         final String[] list = {"Constructora Belmar Y Ribba Limitada","Constructora Belmar Y Ribba Limitada","Constructora Belmar Y Ribba Limitada" };
         ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
@@ -46,8 +53,9 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startActivity(IntentInformes);
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
             }
         });
     }
