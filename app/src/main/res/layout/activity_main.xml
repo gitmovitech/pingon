@@ -23,7 +23,6 @@
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 app:srcCompat="@drawable/icon"
-                android:id="@+id/imageView"
                 android:layout_weight="1" />
 
             <TextView
@@ -33,6 +32,13 @@
                 android:text="@string/welcome_message"
                 android:gravity="center"
                 android:textSize="16sp" />
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp" />
+
         </LinearLayout>
 
     </LinearLayout>
