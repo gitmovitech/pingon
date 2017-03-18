@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -29,15 +32,22 @@ public class InformesActivity extends AppCompatActivity {
         }
 
         ArrayInformes = new ArrayList<Informes>();
-        Informes = new Informes("Empresa 2", "Labor 2");
+        Informes = new Informes("Empresa 2", "Labor 2", "1");
         ArrayInformes.add(Informes);
-        Informes = new Informes("Empresa 4", "Labor 4");
+        Informes = new Informes("Empresa 4", "Labor 4", "2");
         ArrayInformes.add(Informes);
-        Informes = new Informes("Empresa N", "Labor N");
+        Informes = new Informes("Empresa N", "Labor N", "3");
         ArrayInformes.add(Informes);
 
 
         ListDetalle = (ListView) findViewById(R.id.ListDetalle);
         ListDetalle.setAdapter(new AdapterInformes(this, ArrayInformes) {});
+
+        ListDetalle.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d("ITEM",ArrayInformes.get(i).getId());
+            }
+        });
     }
 }

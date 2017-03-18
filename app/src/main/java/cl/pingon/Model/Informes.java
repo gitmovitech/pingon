@@ -3,10 +3,12 @@ package cl.pingon.Model;
 public class Informes {
     String title;
     String subtitle;
+    String id;
 
-    public Informes(String title, String subtitle){
+    public Informes(String title, String subtitle, String id){
         this.title = title;
         this.subtitle = subtitle;
+        this.id = id;
     }
 
     public void setTitle(String title){
@@ -23,5 +25,9 @@ public class Informes {
 
     public String getSubtitle(){
         return this.subtitle;
+    }
+
+    public String getId() {
+        return this.id;
     }
 }
