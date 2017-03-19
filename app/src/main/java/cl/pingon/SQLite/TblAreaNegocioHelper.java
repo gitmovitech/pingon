@@ -36,6 +36,12 @@ public class TblAreaNegocioHelper extends SQLiteOpenHelper {
         db.insert(TblAreaNegocioDefinition.Entry.TABLE_NAME, null, values);
     }
 
+    public void update(Integer id, ContentValues values){
+        SQLiteDatabase db = getReadableDatabase();
+        String where = TblAreaNegocioDefinition.Entry.ARN_ID + " = "+ id;
+        db.update(TblAreaNegocioDefinition.Entry.TABLE_NAME, values, where, null);
+    }
+
     public Cursor getAll(){
         SQLiteDatabase db = getReadableDatabase();
         String[] projection = {"ARN_ID", "ARN_NOMBRE", "ACTIVO"};

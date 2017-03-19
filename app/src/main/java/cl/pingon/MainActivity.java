@@ -81,8 +81,17 @@ public class MainActivity extends AppCompatActivity {
                                 ARN_ID = CursorAreaNegocio.getInt(CursorAreaNegocio.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ARN_ID));
                                 ARN_NOMBRE = CursorAreaNegocio.getString(CursorAreaNegocio.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ARN_NOMBRE));
                                 ACTIVO = CursorAreaNegocio.getInt(CursorAreaNegocio.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ACTIVO));
-                                if(ARN_ID == item.getInt("ARN_ID")){
+                                if(ARN_ID == item.getInt(TblAreaNegocioDefinition.Entry.ARN_ID)){
                                     addItem = false;
+
+                                    values = new ContentValues();
+                                    if(ARN_NOMBRE != item.getString(TblAreaNegocioDefinition.Entry.ARN_NOMBRE)){
+                                        values.put(TblAreaNegocioDefinition.Entry.ARN_NOMBRE, item.getString(TblAreaNegocioDefinition.Entry.ARN_NOMBRE));
+                                    }
+                                    if(ACTIVO != item.getInt(TblAreaNegocioDefinition.Entry.ACTIVO)){
+                                        values.put(TblAreaNegocioDefinition.Entry.ACTIVO, item.getString(TblAreaNegocioDefinition.Entry.ACTIVO));
+                                    }
+                                    AreaNegocio.update(ARN_ID, values);
                                     break;
                                 }
                             }
@@ -95,7 +104,17 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                         CursorAreaNegocio.close();
-                        Log.d("INSERTADOS", String.valueOf(AreaNegocio.getAll().getCount()));
+
+                        Cursor cursor = AreaNegocio.getAll();
+                        while(cursor.moveToNext()) {
+                            ARN_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ARN_ID));
+                            ARN_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ARN_NOMBRE));
+                            ACTIVO = cursor.getInt(cursor.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ACTIVO));
+                            Log.d("ARN_ID", ARN_ID.toString());
+                            Log.d("ARN_NOMBRE", ARN_NOMBRE.toString());
+                            Log.d("ACTIVO", ACTIVO.toString());
+                            Log.d("----------", "--------------");
+                        }
                     } else {
                         CheckErrorToExit(CursorAreaNegocio, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
                     }
