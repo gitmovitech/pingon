@@ -97,6 +97,7 @@ public class LoginActivity extends AppCompatActivity {
                                                 editor.commit();
 
                                                 startActivity(IntentMain);
+                                                finish();
                                             } else {
                                                 alert.setTitle("Error");
                                                 alert.setMessage("Su nombre de usuario o contraseña es incorrecta");
