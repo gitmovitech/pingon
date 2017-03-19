@@ -31,9 +31,9 @@ public class MainActivity extends AppCompatActivity {
     Intent intentLogin;
     public static Activity activity;
     SharedPreferences session;
+    RESTService REST;
     AlertDialog.Builder alert;
     TblAreaNegocioHelper AreaNegocio;
-    RESTService REST;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,24 +45,26 @@ public class MainActivity extends AppCompatActivity {
         }
 
         activity = this;
+        alert = new AlertDialog.Builder(this);
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
+        REST = new RESTService(this);
 
         if(session.getString("token","") != "") {
             SyncAreaNegocio();
         }
     }
 
-    private void SyncAreaNegocio() {
+    private void SyncAreaNegocio(){
         AreaNegocio = new TblAreaNegocioHelper(this);
         final Cursor CursorAreaNegocio = AreaNegocio.getAll();
         HashMap<String, String> headers = new HashMap<>();
-        String url = getResources().getString(R.string.url_sync_area_negocio).toString() + "/" + session.getString("token", "");
+        String url = getResources().getString(R.string.url_sync_area_negocio).toString()+"/"+session.getString("token","");
         REST.get(url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    if (response.getInt("ok") == 1) {
+                    if(response.getInt("ok") == 1){
 
                         JSONArray data = (JSONArray) response.get("data");
                         JSONObject item;
@@ -72,28 +74,28 @@ public class MainActivity extends AppCompatActivity {
                         Boolean addItem;
                         ContentValues values;
 
-                        for (int i = 0; i < data.length(); i++) {
+                        for(int i = 0;i < data.length(); i++){
                             item = (JSONObject) data.get(i);
                             addItem = true;
-                            while (CursorAreaNegocio.moveToNext()) {
+                            while(CursorAreaNegocio.moveToNext()) {
                                 ARN_ID = CursorAreaNegocio.getInt(CursorAreaNegocio.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ARN_ID));
                                 ARN_NOMBRE = CursorAreaNegocio.getString(CursorAreaNegocio.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ARN_NOMBRE));
                                 ACTIVO = CursorAreaNegocio.getInt(CursorAreaNegocio.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ACTIVO));
-                                if (ARN_ID == item.getInt(TblAreaNegocioDefinition.Entry.ARN_ID)) {
+                                if(ARN_ID == item.getInt(TblAreaNegocioDefinition.Entry.ARN_ID)){
                                     addItem = false;
 
                                     values = new ContentValues();
-                                    if (ARN_NOMBRE != item.getString(TblAreaNegocioDefinition.Entry.ARN_NOMBRE)) {
+                                    if(ARN_NOMBRE != item.getString(TblAreaNegocioDefinition.Entry.ARN_NOMBRE)){
                                         values.put(TblAreaNegocioDefinition.Entry.ARN_NOMBRE, item.getString(TblAreaNegocioDefinition.Entry.ARN_NOMBRE));
                                     }
-                                    if (ACTIVO != item.getInt(TblAreaNegocioDefinition.Entry.ACTIVO)) {
+                                    if(ACTIVO != item.getInt(TblAreaNegocioDefinition.Entry.ACTIVO)){
                                         values.put(TblAreaNegocioDefinition.Entry.ACTIVO, item.getString(TblAreaNegocioDefinition.Entry.ACTIVO));
                                     }
                                     AreaNegocio.update(ARN_ID, values);
                                     break;
                                 }
                             }
-                            if (addItem) {
+                            if(addItem){
                                 values = new ContentValues();
                                 values.put(TblAreaNegocioDefinition.Entry.ARN_ID, item.getInt(TblAreaNegocioDefinition.Entry.ARN_ID));
                                 values.put(TblAreaNegocioDefinition.Entry.ARN_NOMBRE, item.getString(TblAreaNegocioDefinition.Entry.ARN_NOMBRE));
@@ -104,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                         CursorAreaNegocio.close();
 
                         Cursor cursor = AreaNegocio.getAll();
-                        while (cursor.moveToNext()) {
+                        while(cursor.moveToNext()) {
                             ARN_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ARN_ID));
                             ARN_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ARN_NOMBRE));
                             ACTIVO = cursor.getInt(cursor.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ACTIVO));
@@ -127,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 CheckErrorToExit(CursorAreaNegocio, "Ha habido un error de sincronización con el servidor (ERROR). Si el problema persiste por favor contáctenos.");
             }
         }, headers);
+
     }
 
 
