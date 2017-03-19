@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -28,7 +27,7 @@ import cl.pingon.SQLite.TblAreaNegocioHelper;
 
 public class MainActivity extends AppCompatActivity {
 
-    Intent intentLogin;
+    Intent IntentBuzon;
     public static Activity activity;
     SharedPreferences session;
     RESTService REST;
@@ -46,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
         activity = this;
         alert = new AlertDialog.Builder(this);
+
+        IntentBuzon = new Intent(this, BuzonActivity.class);
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
         REST = new RESTService(this);
@@ -105,7 +106,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                         CursorAreaNegocio.close();
 
-                        Cursor cursor = AreaNegocio.getAll();
+                        startActivity(IntentBuzon);
+                        finish();
+
+                        /*Cursor cursor = AreaNegocio.getAll();
                         while(cursor.moveToNext()) {
                             ARN_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ARN_ID));
                             ARN_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ARN_NOMBRE));
@@ -114,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("ARN_NOMBRE", ARN_NOMBRE.toString());
                             Log.d("ACTIVO", ACTIVO.toString());
                             Log.d("----------", "--------------");
-                        }
+                        }*/
                     } else {
                         CheckErrorToExit(CursorAreaNegocio, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
                     }
