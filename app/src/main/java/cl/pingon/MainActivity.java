@@ -1,6 +1,7 @@
 package cl.pingon;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,11 +16,14 @@ import android.util.Log;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 
 import cl.pingon.Libraries.RESTService;
+import cl.pingon.SQLite.TblAreaNegocioDefinition;
 import cl.pingon.SQLite.TblAreaNegocioHelper;
 
 public class MainActivity extends AppCompatActivity {
@@ -55,43 +59,75 @@ public class MainActivity extends AppCompatActivity {
         AreaNegocio = new TblAreaNegocioHelper(this);
         final Cursor CursorAreaNegocio = AreaNegocio.getAll();
         HashMap<String, String> headers = new HashMap<>();
-        REST.get(getResources().getString(R.string.url_sync_area_negocio).toString(), new Response.Listener<JSONObject>() {
+        String url = getResources().getString(R.string.url_sync_area_negocio).toString()+"/"+session.getString("token","");
+        REST.get(url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.d("RESPONSE", response.toString());
+                try {
+                    if(response.getInt("ok") == 1){
+
+                        JSONArray data = (JSONArray) response.get("data");
+                        JSONObject item;
+                        Integer ARN_ID = null;
+                        String ARN_NOMBRE = null;
+                        Integer ACTIVO = null;
+                        Boolean addItem;
+                        ContentValues values;
+
+                        for(int i = 0;i < data.length(); i++){
+                            item = (JSONObject) data.get(i);
+                            addItem = true;
+                            while(CursorAreaNegocio.moveToNext()) {
+                                ARN_ID = CursorAreaNegocio.getInt(CursorAreaNegocio.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ARN_ID));
+                                ARN_NOMBRE = CursorAreaNegocio.getString(CursorAreaNegocio.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ARN_NOMBRE));
+                                ACTIVO = CursorAreaNegocio.getInt(CursorAreaNegocio.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ACTIVO));
+                                if(ARN_ID == item.getInt("ARN_ID")){
+                                    addItem = false;
+                                    break;
+                                }
+                            }
+                            if(addItem){
+                                values = new ContentValues();
+                                values.put(TblAreaNegocioDefinition.Entry.ARN_ID, item.getInt(TblAreaNegocioDefinition.Entry.ARN_ID));
+                                values.put(TblAreaNegocioDefinition.Entry.ARN_NOMBRE, item.getString(TblAreaNegocioDefinition.Entry.ARN_NOMBRE));
+                                values.put(TblAreaNegocioDefinition.Entry.ACTIVO, item.getInt(TblAreaNegocioDefinition.Entry.ACTIVO));
+                                AreaNegocio.insert(values);
+                            }
+                        }
+                        CursorAreaNegocio.close();
+                        Log.d("INSERTADOS", String.valueOf(AreaNegocio.getAll().getCount()));
+                    } else {
+                        CheckErrorToExit(CursorAreaNegocio, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    CheckErrorToExit(CursorAreaNegocio, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
+                }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(CursorAreaNegocio.getCount() == 0){
-                    alert.setTitle("Error de sincronización");
-                    alert.setMessage("Ha habido un error de conexión con el servidor. Si el problema persiste contáctese con nosotros.");
-                    alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                            System.exit(0);
-                            finish();
-                        }
-                    });
-                    alert.create();
-                    alert.show();
-                }
+                CheckErrorToExit(CursorAreaNegocio, "Ha habido un error de sincronización con el servidor (ERROR). Si el problema persiste por favor contáctenos.");
             }
         }, headers);
 
-        /*ContentValues values = new ContentValues();
-            values.put("ARN_ID", 2);
-            values.put("ARN_NOMBRE", "Tu casa");
-            values.put("activo", 1);
-            AreaNegocio.insert(values);*/
+    }
 
-            /*Cursor cursor = AreaNegocio.getAll();
 
-            while(cursor.moveToNext()) {
-                String item = cursor.getString(cursor.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ARN_NOMBRE));
-                Log.d("ARN_NOMBRE", item.toString());
-            }
-            cursor.close();*/
+    private void CheckErrorToExit(Cursor CursorAreaNegocio, String message){
+        if(CursorAreaNegocio.getCount() == 0){
+            alert.setTitle("Error de sincronización");
+            alert.setMessage(message);
+            alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                    System.exit(0);
+                    finish();
+                }
+            });
+            alert.create();
+            alert.show();
+        }
     }
 
 }
