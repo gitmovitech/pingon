@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -49,10 +48,10 @@ public abstract class AdapterCustomLists extends BaseAdapter {
             ViewInflater = convertView;
         }
 
-        TextView label = (TextView) ViewInflater.findViewById(R.id.fecha_label);
+        //TextView label = (TextView) ViewInflater.findViewById(R.id.fecha_label);
         EditText input = (EditText) ViewInflater.findViewById(R.id.fecha_input);
 
-        label.setText(CustomLists.get(position).getFecha().toString());
+        //label.setText(CustomLists.get(position).getFecha().toString());
         //input.setText(CustomLists.get(position).getFecha());
 
         return ViewInflater;

@@ -15,19 +15,13 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/select_label"
+            android:id="@+id/firma_label"
             android:layout_width="match_parent"
             android:layout_marginBottom="10dp"
             android:layout_height="match_parent"
-            android:text="Seleccion de opciones"/>
+            android:text="Firma"/>
 
-        <Spinner
-            android:minHeight="40dp"
-            android:spinnerMode="dialog"
-            android:id="@+id/select_input"
-            android:layout_width="match_parent"
-            style="@style/Widget.AppCompat.Spinner.Underlined"
-            android:layout_height="match_parent"/>
+
 
     </LinearLayout>
 

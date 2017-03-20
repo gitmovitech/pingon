@@ -14,19 +14,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.design.widget.TextInputLayout
+        <Button
+            android:id="@+id/item_video"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/hora_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Hora"
-                android:inputType="time"
-                android:maxLines="1" />
-
-        </android.support.design.widget.TextInputLayout>
+            android:layout_height="match_parent"
+            android:text="Video"/>
 
     </LinearLayout>
 

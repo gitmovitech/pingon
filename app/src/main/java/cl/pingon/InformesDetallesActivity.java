@@ -29,10 +29,24 @@ public class InformesDetallesActivity extends AppCompatActivity {
         View ItemHoraView = Inflater.inflate(R.layout.item_hora, null);
         View ItemSelectView = Inflater.inflate(R.layout.item_select, null);
         View ItemTextareaView = Inflater.inflate(R.layout.item_textarea, null);
+        View ItemNumeroView = Inflater.inflate(R.layout.item_numero, null);
+        View ItemEmailView = Inflater.inflate(R.layout.item_email, null);
+        View ItemRadioView = Inflater.inflate(R.layout.item_radio, null);
+        View ItemFotoView = Inflater.inflate(R.layout.item_foto, null);
+        View ItemVideoView = Inflater.inflate(R.layout.item_video, null);
+        View ItemAudioView = Inflater.inflate(R.layout.item_audio, null);
+        View ItemFirmaView = Inflater.inflate(R.layout.item_firma, null);
 
         LinearLayoutInformesDetalles.addView(ItemFechaView);
         LinearLayoutInformesDetalles.addView(ItemHoraView);
         LinearLayoutInformesDetalles.addView(ItemSelectView);
         LinearLayoutInformesDetalles.addView(ItemTextareaView);
+        LinearLayoutInformesDetalles.addView(ItemNumeroView);
+        LinearLayoutInformesDetalles.addView(ItemEmailView);
+        LinearLayoutInformesDetalles.addView(ItemRadioView);
+        LinearLayoutInformesDetalles.addView(ItemFotoView);
+        LinearLayoutInformesDetalles.addView(ItemVideoView);
+        LinearLayoutInformesDetalles.addView(ItemAudioView);
+        LinearLayoutInformesDetalles.addView(ItemFirmaView);
     }
 }

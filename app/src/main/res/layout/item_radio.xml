@@ -10,23 +10,35 @@
 
     <LinearLayout
         android:padding="@dimen/activity_vertical_margin"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.design.widget.TextInputLayout
+        <TextView
+            android:id="@+id/radio_label"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_marginBottom="10dp"
+            android:layout_height="match_parent"
+            android:text="Seleccion simple"/>
 
-            <EditText
-                android:id="@+id/hora_input"
+        <RadioGroup
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RadioButton
+                android:text="Si"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Hora"
-                android:inputType="time"
-                android:maxLines="1" />
+                android:id="@+id/radio_si" />
 
-        </android.support.design.widget.TextInputLayout>
+            <RadioButton
+                android:text="No"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/radio_no" />
+        </RadioGroup>
+
 
     </LinearLayout>
 

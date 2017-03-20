@@ -14,19 +14,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/numero_label"
+            android:layout_width="50dp"
+            android:layout_marginTop="10dp"
+            android:layout_height="match_parent"
+            android:text="Numero normal"/>
 
-            <EditText
-                android:id="@+id/hora_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Hora"
-                android:inputType="time"
-                android:maxLines="1" />
-
-        </android.support.design.widget.TextInputLayout>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/numero_input"
+            android:layout_weight="1" />
 
     </LinearLayout>
 
