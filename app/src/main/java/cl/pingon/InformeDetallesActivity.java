@@ -1,5 +1,6 @@
 package cl.pingon;
 
+import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -46,6 +47,10 @@ public class InformeDetallesActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle(getIntent().getStringExtra("InformeTitle"));
         getSupportActionBar().setSubtitle(getIntent().getStringExtra("InformeSubtitle"));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
+        }
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
