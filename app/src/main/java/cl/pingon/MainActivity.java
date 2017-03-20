@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
             finish();
 
         }
+        startActivity(IntentBuzon);
+        finish();
     }
 
     private void SyncAreaNegocio(){

@@ -30,7 +30,7 @@ public class InformesActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
 
-        IntentDetalle = new Intent(this, InformesDetallesActivity.class);
+        IntentDetalle = new Intent(this, ReemplazoTabsActivity.class);
 
         ArrayInformes = new ArrayList<Informes>();
         Informes = new Informes("Producción", "Asistencia Técnica Grúas", "1");

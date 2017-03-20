@@ -68,6 +68,10 @@ public class LoginActivity extends AppCompatActivity {
             ButtonSignin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    startActivity(IntentMain);
+                    finish();
+
                     if (EditTextUser.getText().toString().isEmpty()) {
                         EditTextUser.setError("Debe ingresar su nombre de usuario");
                     } else if (EditTextPassword.getText().toString().isEmpty()) {
