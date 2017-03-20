@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 public class InformesDetallesActivity extends AppCompatActivity {
@@ -15,7 +16,9 @@ public class InformesDetallesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_informes_detalles);
-        this.setTitle("CUSTOM FIELDS");
+        getSupportActionBar();
+        this.setTitle(getIntent().getStringExtra("InformeSubtitle"));
+        getSupportActionBar().setSubtitle(getIntent().getStringExtra("TabSeccion"));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
@@ -48,5 +51,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         LinearLayoutInformesDetalles.addView(ItemVideoView);
         LinearLayoutInformesDetalles.addView(ItemAudioView);
         LinearLayoutInformesDetalles.addView(ItemFirmaView);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 }

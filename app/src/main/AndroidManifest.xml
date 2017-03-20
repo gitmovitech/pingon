@@ -29,7 +29,8 @@
         <activity android:name=".BorradoresActivity" />
         <activity android:name=".PendientesEnvioActivity" />
         <activity android:name=".EnviadosActivity" />
-        <activity android:name=".InformesDetallesActivity"></activity>
+        <activity android:name=".InformesDetallesActivity" />
+        <activity android:name=".ReemplazoTabsActivity"></activity>
     </application>
 
 </manifest>
