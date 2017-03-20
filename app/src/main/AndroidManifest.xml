@@ -26,13 +26,10 @@
             android:label="@string/title_activity_nuevo_formulario"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".InformesActivity" />
-        <activity
-            android:name=".InformeDetallesActivity"
-            android:label="@string/title_activity_informe_detalles"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".BorradoresActivity" />
         <activity android:name=".PendientesEnvioActivity" />
-        <activity android:name=".EnviadosActivity"></activity>
+        <activity android:name=".EnviadosActivity" />
+        <activity android:name=".InformesDetallesActivity"></activity>
     </application>
 
 </manifest>
