@@ -52,7 +52,10 @@ public class MainActivity extends AppCompatActivity {
         REST = new RESTService(this);
 
         if(session.getString("token","") != "") {
-            SyncAreaNegocio();
+            //SyncAreaNegocio();
+            startActivity(IntentBuzon);
+            finish();
+
         }
     }
 

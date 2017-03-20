@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cl.pingon">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cl.pingon">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -18,7 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"/>
+        <activity android:name=".MainActivity" />
         <activity android:name=".BuzonActivity" />
         <activity
             android:name=".NuevoFormularioActivity"
@@ -28,7 +29,10 @@
         <activity
             android:name=".InformeDetallesActivity"
             android:label="@string/title_activity_informe_detalles"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".BorradoresActivity" />
+        <activity android:name=".PendientesEnvioActivity" />
+        <activity android:name=".EnviadosActivity"></activity>
     </application>
 
 </manifest>

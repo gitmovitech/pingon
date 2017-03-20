@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import cl.pingon.Adapter.AdapterInformes;
 import cl.pingon.Model.Informes;
 
-public class InformesActivity extends AppCompatActivity {
+public class PendientesEnvioActivity extends AppCompatActivity {
 
     ListView ListDetalle;
     Intent IntentDetalle;
@@ -23,8 +23,8 @@ public class InformesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_informes);
-        this.setTitle("Informes");
+        setContentView(R.layout.activity_pendientes_envio);
+        this.setTitle("Pendientes de envío");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
@@ -38,12 +38,6 @@ public class InformesActivity extends AppCompatActivity {
         Informes = new Informes("Producción", "Orden de Trabajo Elevadores", "2");
         ArrayInformes.add(Informes);
         Informes = new Informes("Producción", "Informe Grúa Auxiliar", "3");
-        ArrayInformes.add(Informes);
-        Informes = new Informes("Producción", "Inspección y revisión de equipo en terreno", "4");
-        ArrayInformes.add(Informes);
-        Informes = new Informes("Producción", "Revisión de generadores", "5");
-        ArrayInformes.add(Informes);
-        Informes = new Informes("Producción", "Mantención de Grúas", "6");
         ArrayInformes.add(Informes);
 
 

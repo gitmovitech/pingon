@@ -25,10 +25,13 @@ public class BuzonActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
 
-        final String[] ListItems = {"Nuevo formulario", "Borradores", "Pendientes de envío", "Formularios enviados" };
+        final String[] ListItems = {"Nuevo informe", "Borradores", "Pendientes de envío", "Informes enviados", };
         ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ListItems);
 
         IntentNuevo = new Intent(this, NuevoFormularioActivity.class);
+        IntentBorradores = new Intent(this, BorradoresActivity.class);
+        IntentPendientes = new Intent(this, PendientesEnvioActivity.class);
+        IntentEnviados = new Intent(this, EnviadosActivity.class);
 
         ListadoBuzon = (ListView) findViewById(R.id.ListadoBuzon);
         ListadoBuzon.setAdapter(listAdapter);
@@ -41,10 +44,13 @@ public class BuzonActivity extends AppCompatActivity {
                         startActivity(IntentNuevo);
                         break;
                     case 1:
+                        startActivity(IntentBorradores);
                         break;
                     case 2:
+                        startActivity(IntentPendientes);
                         break;
                     case 3:
+                        startActivity(IntentEnviados);
                         break;
                 }
             }
