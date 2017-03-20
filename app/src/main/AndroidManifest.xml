@@ -13,11 +13,7 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".BuzonActivity" />
@@ -30,7 +26,13 @@
         <activity android:name=".PendientesEnvioActivity" />
         <activity android:name=".EnviadosActivity" />
         <activity android:name=".InformesDetallesActivity" />
-        <activity android:name=".ReemplazoTabsActivity"></activity>
+        <activity android:name=".ReemplazoTabsActivity" />
+        <activity android:name=".SignDraw">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
