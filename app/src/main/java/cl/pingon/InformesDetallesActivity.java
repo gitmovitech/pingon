@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.VideoView;
 
 import java.io.File;
 
@@ -23,10 +24,19 @@ public class InformesDetallesActivity extends AppCompatActivity {
     Intent IntentSign;
     Intent CameraIntent;
     ImageButton ImageButtonFoto;
+    VideoView VideoViewItem;
+    Button ButtonVideoView;
+    Button ButtonVideoPlay;
+    Button ButtonVideoRewind;
+    Button ButtonVideoStop;
+    LinearLayout LinearLayoutVideo;
 
     private static int TAKE_PICTURE = 1;
     private static int SELECT_PICTURE = 2;
     private String ImageName = "";
+
+    private static final int REQUEST_VIDEO_CAPTURE = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +72,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         View ItemFirmaView = Inflater.inflate(R.layout.item_firma, null);
 
 
+        LinearLayoutInformesDetalles.addView(ItemVideoView);
         LinearLayoutInformesDetalles.addView(ItemFotoView);
         LinearLayoutInformesDetalles.addView(ItemFechaView);
         LinearLayoutInformesDetalles.addView(ItemHoraView);
@@ -70,12 +81,14 @@ public class InformesDetallesActivity extends AppCompatActivity {
         LinearLayoutInformesDetalles.addView(ItemNumeroView);
         LinearLayoutInformesDetalles.addView(ItemEmailView);
         LinearLayoutInformesDetalles.addView(ItemRadioView);
-        LinearLayoutInformesDetalles.addView(ItemVideoView);
         LinearLayoutInformesDetalles.addView(ItemAudioView);
         LinearLayoutInformesDetalles.addView(ItemFirmaView);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+        /**
+         * FIRMA
+         */
         Button ButtonFirma = (Button) ItemFirmaView.findViewById(R.id.item_firma);
         ButtonFirma.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,6 +97,10 @@ public class InformesDetallesActivity extends AppCompatActivity {
             }
         });
 
+
+        /**
+         * FOTOS
+         */
         Button ButtonCamera = (Button) ItemFotoView.findViewById(R.id.item_foto);
         ButtonCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +116,41 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 showPhoto(Uri.fromFile(new File(ImageName)));
             }
         });
+
+
+        /**
+         * VIDEO
+         */
+        VideoViewItem = (VideoView) ItemVideoView.findViewById(R.id.VideoViewItem);
+        LinearLayoutVideo = (LinearLayout) ItemVideoView.findViewById(R.id.LinearLayoutVideo);
+        ButtonVideoView = (Button) ItemVideoView.findViewById(R.id.ButtonVideoView);
+        ButtonVideoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dispatchTakeVideoIntent();
+            }
+        });
+        ButtonVideoPlay = (Button) ItemVideoView.findViewById(R.id.ButtonVideoPlay);
+        ButtonVideoPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                VideoViewItem.start();
+            }
+        });
+        /*ButtonVideoStop = (Button) ItemVideoView.findViewById(R.id.ButtonVideoStop);
+        ButtonVideoStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                VideoViewItem.pause();
+            }
+        });
+        ButtonVideoRewind = (Button) ItemVideoView.findViewById(R.id.ButtonVideoPlay);
+        ButtonVideoRewind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                VideoViewItem.pause();
+            }
+        });*/
     }
 
     private void showPhoto(Uri photoUri){
@@ -110,8 +162,23 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Bitmap ImageBitmapDecoded = BitmapFactory.decodeFile(ImageName);
-        ImageButtonFoto.setImageBitmap(ImageBitmapDecoded);
-        ImageButtonFoto.setVisibility(View.VISIBLE);
+        if (requestCode == REQUEST_VIDEO_CAPTURE){
+            Uri videoUri = data.getData();
+            VideoViewItem.setVideoURI(videoUri);
+            LinearLayoutVideo.setVisibility(View.VISIBLE);
+            VideoViewItem.setVisibility(View.VISIBLE);
+        }
+        if(requestCode == TAKE_PICTURE) {
+            Bitmap ImageBitmapDecoded = BitmapFactory.decodeFile(ImageName);
+            ImageButtonFoto.setImageBitmap(ImageBitmapDecoded);
+            ImageButtonFoto.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void dispatchTakeVideoIntent() {
+        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
+        }
     }
 }

@@ -10,15 +10,49 @@
 
     <LinearLayout
         android:padding="@dimen/activity_vertical_margin"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <Button
-            android:id="@+id/item_video"
+            android:id="@+id/ButtonVideoView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@android:drawable/presence_video_online"
             android:text="Video"/>
+
+        <VideoView
+            android:visibility="gone"
+            android:id="@+id/VideoViewItem"
+            android:layout_width="match_parent"
+            android:layout_height="300dp" />
+
+        <LinearLayout
+            android:id="@+id/LinearLayoutVideo"
+            android:visibility="gone"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/ButtonVideoPlay"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@android:drawable/ic_media_play"/>
+
+            <!--<Button
+                android:id="@+id/ButtonVideoStop"
+                android:layout_width="55dp"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@android:drawable/ic_media_pause"/>
+
+            <Button
+                android:id="@+id/ButtonVideoRewind"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@android:drawable/ic_media_previous"/>-->
+
+        </LinearLayout>
 
     </LinearLayout>
 
