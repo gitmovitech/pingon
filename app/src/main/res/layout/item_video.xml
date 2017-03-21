@@ -18,14 +18,14 @@
             android:id="@+id/ButtonVideoView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@android:drawable/presence_video_online"
-            android:text="Video"/>
+            android:drawableLeft="@android:drawable/ic_media_play"
+            android:text="Grabar video"/>
 
         <VideoView
             android:visibility="gone"
             android:id="@+id/VideoViewItem"
             android:layout_width="match_parent"
-            android:layout_height="300dp" />
+            android:layout_height="250dp" />
 
         <LinearLayout
             android:id="@+id/LinearLayoutVideo"
