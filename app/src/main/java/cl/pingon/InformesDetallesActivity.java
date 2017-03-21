@@ -137,20 +137,20 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 VideoViewItem.start();
             }
         });
-        /*ButtonVideoStop = (Button) ItemVideoView.findViewById(R.id.ButtonVideoStop);
+        ButtonVideoStop = (Button) ItemVideoView.findViewById(R.id.ButtonVideoStop);
         ButtonVideoStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 VideoViewItem.pause();
             }
         });
-        ButtonVideoRewind = (Button) ItemVideoView.findViewById(R.id.ButtonVideoPlay);
+        ButtonVideoRewind = (Button) ItemVideoView.findViewById(R.id.ButtonVideoRewind);
         ButtonVideoRewind.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                VideoViewItem.pause();
+                VideoViewItem.seekTo(0);
             }
-        });*/
+        });
     }
 
     private void showPhoto(Uri photoUri){

@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:drawableLeft="@android:drawable/ic_media_play"/>
 
-            <!--<Button
+            <Button
                 android:id="@+id/ButtonVideoStop"
                 android:layout_width="55dp"
                 android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
                 android:id="@+id/ButtonVideoRewind"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@android:drawable/ic_media_previous"/>-->
+                android:drawableLeft="@android:drawable/ic_media_previous"/>
 
         </LinearLayout>
 
