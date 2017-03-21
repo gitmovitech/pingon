@@ -1,16 +1,18 @@
 package cl.pingon;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 public class InformesDetallesActivity extends AppCompatActivity {
 
-    private View ViewFecha;
+    Intent IntentSign;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +25,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
+
+        IntentSign = new Intent(this, SignDrawActivity.class);
 
         //SOLUCION A LOS DIFERENTES TIPOS DE ITEMS http://android.amberfog.com/?p=296
 
@@ -53,5 +57,13 @@ public class InformesDetallesActivity extends AppCompatActivity {
         LinearLayoutInformesDetalles.addView(ItemFirmaView);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+        Button ButtonFirma = (Button) ItemFirmaView.findViewById(R.id.item_firma);
+        ButtonFirma.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(IntentSign);
+            }
+        });
     }
 }
