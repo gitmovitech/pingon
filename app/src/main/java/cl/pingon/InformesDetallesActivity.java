@@ -1,18 +1,32 @@
 package cl.pingon;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+
+import java.io.File;
 
 public class InformesDetallesActivity extends AppCompatActivity {
 
     Intent IntentSign;
+    Intent CameraIntent;
+    ImageButton ImageButtonFoto;
+
+    private static int TAKE_PICTURE = 1;
+    private static int SELECT_PICTURE = 2;
+    private String ImageName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +41,9 @@ public class InformesDetallesActivity extends AppCompatActivity {
         }
 
         IntentSign = new Intent(this, SignDrawActivity.class);
+        CameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        ImageName = Environment.getExternalStorageDirectory() + "/tmp.jpg";
+        CameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(ImageName)));
 
         //SOLUCION A LOS DIFERENTES TIPOS DE ITEMS http://android.amberfog.com/?p=296
 
@@ -44,6 +61,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
         View ItemAudioView = Inflater.inflate(R.layout.item_audio, null);
         View ItemFirmaView = Inflater.inflate(R.layout.item_firma, null);
 
+
+        LinearLayoutInformesDetalles.addView(ItemFotoView);
         LinearLayoutInformesDetalles.addView(ItemFechaView);
         LinearLayoutInformesDetalles.addView(ItemHoraView);
         LinearLayoutInformesDetalles.addView(ItemSelectView);
@@ -51,7 +70,6 @@ public class InformesDetallesActivity extends AppCompatActivity {
         LinearLayoutInformesDetalles.addView(ItemNumeroView);
         LinearLayoutInformesDetalles.addView(ItemEmailView);
         LinearLayoutInformesDetalles.addView(ItemRadioView);
-        LinearLayoutInformesDetalles.addView(ItemFotoView);
         LinearLayoutInformesDetalles.addView(ItemVideoView);
         LinearLayoutInformesDetalles.addView(ItemAudioView);
         LinearLayoutInformesDetalles.addView(ItemFirmaView);
@@ -65,5 +83,35 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 startActivity(IntentSign);
             }
         });
+
+        Button ButtonCamera = (Button) ItemFotoView.findViewById(R.id.item_foto);
+        ButtonCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityForResult(CameraIntent, TAKE_PICTURE);
+            }
+        });
+
+        ImageButtonFoto = (ImageButton) ItemFotoView.findViewById(R.id.ImageViewFoto);
+        ImageButtonFoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPhoto(Uri.fromFile(new File(ImageName)));
+            }
+        });
+    }
+
+    private void showPhoto(Uri photoUri){
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(photoUri, "image/*");
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Bitmap ImageBitmapDecoded = BitmapFactory.decodeFile(ImageName);
+        ImageButtonFoto.setImageBitmap(ImageBitmapDecoded);
+        ImageButtonFoto.setVisibility(View.VISIBLE);
     }
 }

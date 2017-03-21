@@ -10,21 +10,23 @@
 
     <LinearLayout
         android:padding="@dimen/activity_vertical_margin"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <Button
-            android:id="@+id/item_button"
+            android:id="@+id/item_foto"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Foto"/>
+            android:layout_height="wrap_content"
+            android:drawableLeft="@android:drawable/ic_menu_camera"
+            android:text="Tomar una fotografía"/>
 
         <ImageButton
             android:visibility="gone"
-            android:id="@+id/item_foto_button"
+            android:id="@+id/ImageViewFoto"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:scaleType="fitCenter"
+            android:layout_height="300dp" />
 
     </LinearLayout>
 
