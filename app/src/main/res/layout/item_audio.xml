@@ -22,6 +22,14 @@
             android:gravity="left|center"
             android:text="Grabar Audio"/>
 
+        <TextView
+            android:id="@+id/TextViewSegundos"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="28dp"
+            android:text="0 segundos grabados"/>
+
         <Button
             android:visibility="gone"
             android:id="@+id/btn_audio_stop"
@@ -38,7 +46,7 @@
             android:layout_height="match_parent"
             android:drawableLeft="@android:drawable/ic_media_play"
             android:gravity="left|center"
-            android:text="Reproducir audio"/>
+            android:text="Reproducir Audio"/>
 
     </LinearLayout>
 

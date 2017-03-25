@@ -8,6 +8,7 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import java.io.File;
@@ -47,6 +49,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
     Button btn_audio_start;
     Button btn_audio_stop;
     Button btn_audio_play;
+    TextView TextViewSegundos;
+    CountDownTimer countDowntimer;
 
 
     @Override
@@ -171,19 +175,38 @@ public class InformesDetallesActivity extends AppCompatActivity {
         mFileName = getExternalCacheDir().getAbsolutePath();
         mFileName += "/tmp.3gp";
 
+        TextViewSegundos = (TextView) ItemAudioView.findViewById(R.id.TextViewSegundos);
         btn_audio_start = (Button) ItemAudioView.findViewById(R.id.btn_audio_start);
         btn_audio_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final int[] seconds = {0};
+                countDowntimer = new CountDownTimer(10000, 1000) {
+                    public void onTick(long millisUntilFinished) {
+                        seconds[0]++;
+                        TextViewSegundos.setText(seconds[0]+" segundos grabados");
+                    }
+                    public void onFinish() {
+                        mRecorder.stop();
+                        mRecorder.release();
+                        mRecorder = null;
+
+                        btn_audio_stop.setVisibility(View.GONE);
+                        btn_audio_start.setVisibility(View.VISIBLE);
+                        btn_audio_play.setVisibility(View.VISIBLE);
+                        TextViewSegundos.setText("10 segundos grabados");
+                    }};countDowntimer.start();
                 mRecorder = new MediaRecorder();
                 mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                 mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
                 mRecorder.setOutputFile(mFileName);
                 mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                mRecorder.setMaxDuration(10000);
                 try {
                     mRecorder.prepare();
                     btn_audio_start.setVisibility(View.GONE);
                     btn_audio_stop.setVisibility(View.VISIBLE);
+                    TextViewSegundos.setVisibility(View.VISIBLE);
                 } catch (IOException e) {
                     Log.e("ERROR AL GRABAR", "prepare() failed");
                 }
@@ -198,6 +221,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 mRecorder.stop();
                 mRecorder.release();
                 mRecorder = null;
+
                 btn_audio_stop.setVisibility(View.GONE);
                 btn_audio_start.setVisibility(View.VISIBLE);
                 btn_audio_play.setVisibility(View.VISIBLE);
