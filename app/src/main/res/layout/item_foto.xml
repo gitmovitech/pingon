@@ -18,6 +18,7 @@
             android:id="@+id/item_foto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="left|center"
             android:drawableLeft="@android:drawable/ic_menu_camera"
             android:text="Tomar una fotografía"/>
 

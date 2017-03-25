@@ -10,15 +10,35 @@
 
     <LinearLayout
         android:padding="@dimen/activity_vertical_margin"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <Button
-            android:id="@+id/item_audio"
+            android:id="@+id/btn_audio_start"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Audio"/>
+            android:drawableLeft="@android:drawable/ic_btn_speak_now"
+            android:gravity="left|center"
+            android:text="Grabar Audio"/>
+
+        <Button
+            android:visibility="gone"
+            android:id="@+id/btn_audio_stop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:drawableLeft="@android:drawable/ic_media_pause"
+            android:gravity="left|center"
+            android:text="Detener grabación"/>
+
+        <Button
+            android:visibility="gone"
+            android:id="@+id/btn_audio_play"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:drawableLeft="@android:drawable/ic_media_play"
+            android:gravity="left|center"
+            android:text="Reproducir audio"/>
 
     </LinearLayout>
 

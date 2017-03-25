@@ -18,7 +18,9 @@
             android:id="@+id/item_firma"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Firma"/>
+            android:gravity="left|center"
+            android:drawableLeft="@android:drawable/ic_menu_edit"
+            android:text="Firmar"/>
 
 
     </LinearLayout>

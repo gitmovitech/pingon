@@ -18,6 +18,7 @@
             android:id="@+id/ButtonVideoView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="left|center"
             android:drawableLeft="@android:drawable/ic_media_play"
             android:text="Grabar video"/>
 

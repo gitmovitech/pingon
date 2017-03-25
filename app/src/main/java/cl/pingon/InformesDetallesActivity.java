@@ -3,12 +3,15 @@ package cl.pingon;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -18,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.VideoView;
 
 import java.io.File;
+import java.io.IOException;
 
 public class InformesDetallesActivity extends AppCompatActivity {
 
@@ -36,6 +40,13 @@ public class InformesDetallesActivity extends AppCompatActivity {
     private String ImageName = "";
 
     private static final int REQUEST_VIDEO_CAPTURE = 1;
+
+    private MediaRecorder mRecorder = null;
+    private MediaPlayer mPlayer = null;
+    private static String mFileName = null;
+    Button btn_audio_start;
+    Button btn_audio_stop;
+    Button btn_audio_play;
 
 
     @Override
@@ -72,6 +83,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         View ItemFirmaView = Inflater.inflate(R.layout.item_firma, null);
 
 
+        LinearLayoutInformesDetalles.addView(ItemAudioView);
         LinearLayoutInformesDetalles.addView(ItemVideoView);
         LinearLayoutInformesDetalles.addView(ItemFotoView);
         LinearLayoutInformesDetalles.addView(ItemFechaView);
@@ -81,7 +93,6 @@ public class InformesDetallesActivity extends AppCompatActivity {
         LinearLayoutInformesDetalles.addView(ItemNumeroView);
         LinearLayoutInformesDetalles.addView(ItemEmailView);
         LinearLayoutInformesDetalles.addView(ItemRadioView);
-        LinearLayoutInformesDetalles.addView(ItemAudioView);
         LinearLayoutInformesDetalles.addView(ItemFirmaView);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -149,6 +160,63 @@ public class InformesDetallesActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 VideoViewItem.seekTo(0);
+            }
+        });
+
+
+
+        /**
+         * GRABACION DE AUDIO
+         */
+        mFileName = getExternalCacheDir().getAbsolutePath();
+        mFileName += "/tmp.3gp";
+
+        btn_audio_start = (Button) ItemAudioView.findViewById(R.id.btn_audio_start);
+        btn_audio_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRecorder = new MediaRecorder();
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                mRecorder.setOutputFile(mFileName);
+                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                try {
+                    mRecorder.prepare();
+                    btn_audio_start.setVisibility(View.GONE);
+                    btn_audio_stop.setVisibility(View.VISIBLE);
+                } catch (IOException e) {
+                    Log.e("ERROR AL GRABAR", "prepare() failed");
+                }
+                mRecorder.start();
+            }
+        });
+
+        btn_audio_stop = (Button) ItemAudioView.findViewById(R.id.btn_audio_stop);
+        btn_audio_stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRecorder.stop();
+                mRecorder.release();
+                mRecorder = null;
+                btn_audio_stop.setVisibility(View.GONE);
+                btn_audio_start.setVisibility(View.VISIBLE);
+                btn_audio_play.setVisibility(View.VISIBLE);
+            }
+        });
+
+        btn_audio_play = (Button) ItemAudioView.findViewById(R.id.btn_audio_play);
+        btn_audio_play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPlayer = new MediaPlayer();
+                try {
+                    mPlayer.setDataSource(mFileName);
+                    mPlayer.prepare();
+                    mPlayer.start();
+                } catch (IOException e) {
+                    Log.e("ERROR AL REPR AUDIO", "prepare() failed");
+                }
+
             }
         });
     }
