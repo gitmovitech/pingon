@@ -283,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
                                     String NAME = null;
                                     String COORDINATES = null;
                                     String ADDRESS = null;
+                                    Integer COMPANY_ID = null;
                                     Boolean addItem;
                                     ContentValues values;
 
@@ -294,6 +295,7 @@ public class MainActivity extends AppCompatActivity {
                                             NAME = CursorEmpProjects.getString(CursorEmpProjects.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.NAME));
                                             COORDINATES = CursorEmpProjects.getString(CursorEmpProjects.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COORDINATES));
                                             ADDRESS = CursorEmpProjects.getString(CursorEmpProjects.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ADDRESS));
+                                            COMPANY_ID = CursorEmpProjects.getInt(CursorEmpProjects.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COMPANY_ID));
                                             if(ID == item.getInt(TblEmpProjectsDefinition.Entry.ID)){
                                                 addItem = false;
 
@@ -307,6 +309,9 @@ public class MainActivity extends AppCompatActivity {
                                                 if(ADDRESS != item.getString(TblEmpProjectsDefinition.Entry.ADDRESS)){
                                                     values.put(TblEmpProjectsDefinition.Entry.ADDRESS, item.getString(TblEmpProjectsDefinition.Entry.ADDRESS));
                                                 }
+                                                if(COMPANY_ID != item.getInt(TblEmpProjectsDefinition.Entry.COMPANY_ID)){
+                                                    values.put(TblEmpProjectsDefinition.Entry.COMPANY_ID, item.getInt(TblEmpProjectsDefinition.Entry.COMPANY_ID));
+                                                }
                                                 EmpProjects.update(ID, values);
                                                 break;
                                             }
@@ -317,24 +322,13 @@ public class MainActivity extends AppCompatActivity {
                                             values.put(TblEmpProjectsDefinition.Entry.NAME, item.getString(TblEmpProjectsDefinition.Entry.NAME));
                                             values.put(TblEmpProjectsDefinition.Entry.COORDINATES, item.getString(TblEmpProjectsDefinition.Entry.COORDINATES));
                                             values.put(TblEmpProjectsDefinition.Entry.ADDRESS, item.getString(TblEmpProjectsDefinition.Entry.ADDRESS));
+                                            values.put(TblEmpProjectsDefinition.Entry.COMPANY_ID, item.getInt(TblEmpProjectsDefinition.Entry.COMPANY_ID));
                                             EmpProjects.insert(values);
                                         }
                                     }
                                     CursorEmpProjects.close();
                                     SyncReady();
 
-                                    /*Cursor cursor = EmpProjects.getAll();
-                                    while(cursor.moveToNext()) {
-                                        ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ID));
-                                        NAME = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.NAME));
-                                        COORDINATES = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COORDINATES));
-                                        ADDRESS = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ADDRESS));
-                                        Log.d("ID", ID.toString());
-                                        Log.d("NAME", NAME.toString());
-                                        Log.d("COORDINATES", COORDINATES.toString());
-                                        Log.d("ADDRESS", ADDRESS.toString());
-                                        Log.d("----------", "--------------");
-                                    }*/
                                 } else {
                                     CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
                                 }

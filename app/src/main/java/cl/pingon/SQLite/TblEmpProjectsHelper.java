@@ -21,7 +21,8 @@ public class TblEmpProjectsHelper extends SQLiteOpenHelper{
         query += " ("+TblEmpProjectsDefinition.Entry.ID+" INTEGER NOT NULL,";
         query += TblEmpProjectsDefinition.Entry.NAME+ " TEXT NOT NULL,";
         query += TblEmpProjectsDefinition.Entry.COORDINATES+ " TEXT NOT NULL,";
-        query += TblEmpProjectsDefinition.Entry.ADDRESS+ " TEXT NOT NULL)";
+        query += TblEmpProjectsDefinition.Entry.ADDRESS+ " TEXT NOT NULL,";
+        query += TblEmpProjectsDefinition.Entry.COMPANY_ID+ " INTEGER NOT NULL)";
         //query += "UNIQUE ("+TblEmpProjectsDefinition.Entry.ID+"))";
         db.execSQL(query);
     }
@@ -49,7 +50,7 @@ public class TblEmpProjectsHelper extends SQLiteOpenHelper{
 
     public Cursor getAll(){
         SQLiteDatabase db = getReadableDatabase();
-        String[] projection = {"ID", "NAME", "COORDINATES", "ADDRESS"};
+        String[] projection = {"ID", "NAME", "COORDINATES", "ADDRESS", "COMPANY_ID"};
         Cursor cursor = db.query(TblEmpProjectsDefinition.Entry.TABLE_NAME, projection, null, null, null, null, null);
         return cursor;
     }
