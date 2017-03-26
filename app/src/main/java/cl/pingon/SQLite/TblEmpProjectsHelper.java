@@ -21,7 +21,7 @@ public class TblEmpProjectsHelper extends SQLiteOpenHelper{
         query += " ("+TblEmpProjectsDefinition.Entry.ID+" INTEGER NOT NULL,";
         query += TblEmpProjectsDefinition.Entry.NAME+ " TEXT NOT NULL,";
         query += TblEmpProjectsDefinition.Entry.COORDINATES+ " TEXT NOT NULL,";
-        query += TblEmpProjectsDefinition.Entry.ADDRESS+ " TEXT NOT NULL,";
+        query += TblEmpProjectsDefinition.Entry.ADDRESS+ " TEXT NOT NULL)";
         //query += "UNIQUE ("+TblEmpProjectsDefinition.Entry.ID+"))";
         db.execSQL(query);
     }

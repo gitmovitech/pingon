@@ -289,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         CursorEmpProjects.close();
 
-                        /*Cursor cursor = EmpCompany.getAll();
+                        Cursor cursor = EmpProjects.getAll();
                         while(cursor.moveToNext()) {
                             ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ID));
                             NAME = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.NAME));
@@ -300,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("COORDINATES", COORDINATES.toString());
                             Log.d("ADDRESS", ADDRESS.toString());
                             Log.d("----------", "--------------");
-                        }*/
+                        }
                     } else {
                         CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
                     }
