@@ -18,10 +18,10 @@ public class TblEmpCompanyHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String query = "CREATE TABLE "+ TblEmpCompanyDefinition.Entry.TABLE_NAME;
-        query += " ("+TblEmpCompanyDefinition.Entry.ID+" INTEGER PRIMARY KEY NOT NULL,";
+        query += " ("+TblEmpCompanyDefinition.Entry.ID+" INTEGER NOT NULL,";
         query += TblEmpCompanyDefinition.Entry.NAME+ " TEXT NOT NULL,";
-        query += TblEmpCompanyDefinition.Entry.RUT+ " TEXT NOT NULL,";
-        query += "UNIQUE ("+TblEmpCompanyDefinition.Entry.ID+"))";
+        query += TblEmpCompanyDefinition.Entry.RUT+ " TEXT NOT NULL )";
+        //query += "UNIQUE ("+TblEmpCompanyDefinition.Entry.ID+"))";
         db.execSQL(query);
     }
 
