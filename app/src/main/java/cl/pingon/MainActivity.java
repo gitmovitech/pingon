@@ -549,8 +549,9 @@ public class MainActivity extends AppCompatActivity {
             alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();
-                    System.exit(0);
-                    finish();
+                    /*System.exit(0);
+                    finish();*/
+                    SyncReady();
                 }
             });
             alert.create();
