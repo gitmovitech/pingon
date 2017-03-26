@@ -1,6 +1,7 @@
 package cl.pingon;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,6 +11,12 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import java.util.ArrayList;
+
+import cl.pingon.Model.ModelEmpCompany;
+import cl.pingon.SQLite.TblEmpCompanyDefinition;
+import cl.pingon.SQLite.TblEmpCompanyHelper;
+
 public class NuevoFormularioActivity extends AppCompatActivity {
 
     Spinner SpinnerClientes;
@@ -18,6 +25,11 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     Spinner SpinnerEquipo;
     Spinner SpinnerSerie;
     Intent IntentInformes;
+
+    private TblEmpCompanyHelper EmpCompany;
+    private ModelEmpCompany Item;
+    private ArrayList<ModelEmpCompany> ArrayListModelEmpCompany;
+    private ArrayList<String> ListadoArrayListModelEmpCompany;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +41,34 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
 
-        this.setTitle("Nuevo formulario");
+        this.setTitle("Nuevo Informe");
 
         IntentInformes = new Intent(this, InformesActivity.class);
 
-        final String[] list = {"Constructora Belmar Y Ribba Limitada","Constructora Belmar Y Ribba Limitada","Constructora Belmar Y Ribba Limitada" };
-        ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
+        //final String[] list = {"Constructora Belmar Y Ribba Limitada","Constructora Belmar Y Ribba Limitada","Constructora Belmar Y Ribba Limitada" };
+
+        EmpCompany = new TblEmpCompanyHelper(this);
+        Cursor CursorEmpCompany = EmpCompany.getAll();
+        ArrayListModelEmpCompany = new ArrayList<ModelEmpCompany>();
+        ListadoArrayListModelEmpCompany = new ArrayList<String>();
+        int Index = 0;
+        ListadoArrayListModelEmpCompany.add(Index, "Seleccione Cliente");
+        ArrayListModelEmpCompany.add(Index, new ModelEmpCompany(0, null, null));
+        int RowValueId;
+        String RowValueName;
+        String RowValueRut;
+        while(CursorEmpCompany.moveToNext()) {
+            Index++;
+            RowValueId = CursorEmpCompany.getInt(CursorEmpCompany.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.ID));
+            RowValueName = CursorEmpCompany.getString(CursorEmpCompany.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.NAME));
+            RowValueRut = CursorEmpCompany.getString(CursorEmpCompany.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.RUT));
+            Item = new ModelEmpCompany(RowValueId, RowValueName, RowValueRut);
+            ArrayListModelEmpCompany.add(Index, Item);
+            ListadoArrayListModelEmpCompany.add(Index, RowValueName);
+        }
+        
+        ArrayAdapter<String> ArrayAdapterEmpCompany = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,ListadoArrayListModelEmpCompany);
+
 
         SpinnerClientes = (Spinner) findViewById(R.id.SpinnerClientes);
         SpinnerObras = (Spinner) findViewById(R.id.SpinnerObras);
@@ -42,11 +76,11 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         SpinnerEquipo = (Spinner) findViewById(R.id.SpinnerEquipo);
         SpinnerSerie = (Spinner) findViewById(R.id.SpinnerSerie);
 
-        SpinnerClientes.setAdapter(listAdapter);
-        SpinnerObras.setAdapter(listAdapter);
-        SpinnerMarca.setAdapter(listAdapter);
-        SpinnerEquipo.setAdapter(listAdapter);
-        SpinnerSerie.setAdapter(listAdapter);
+        SpinnerClientes.setAdapter(ArrayAdapterEmpCompany);
+        SpinnerObras.setAdapter(ArrayAdapterEmpCompany);
+        SpinnerMarca.setAdapter(ArrayAdapterEmpCompany);
+        SpinnerEquipo.setAdapter(ArrayAdapterEmpCompany);
+        SpinnerSerie.setAdapter(ArrayAdapterEmpCompany);
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
