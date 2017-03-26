@@ -69,8 +69,8 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
 
-                    startActivity(IntentMain);
-                    finish();
+                    /*startActivity(IntentMain);
+                    finish();*/
 
                     if (EditTextUser.getText().toString().isEmpty()) {
                         EditTextUser.setError("Debe ingresar su nombre de usuario");
