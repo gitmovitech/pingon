@@ -27,6 +27,8 @@ import cl.pingon.SQLite.TblAreaNegocioDefinition;
 import cl.pingon.SQLite.TblAreaNegocioHelper;
 import cl.pingon.SQLite.TblEmpCompanyDefinition;
 import cl.pingon.SQLite.TblEmpCompanyHelper;
+import cl.pingon.SQLite.TblEmpProjectsDefinition;
+import cl.pingon.SQLite.TblEmpProjectsHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     AlertDialog.Builder alert;
     TblAreaNegocioHelper AreaNegocio;
     TblEmpCompanyHelper EmpCompany;
+    TblEmpProjectsHelper EmpProjects;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
         if(session.getString("token","") != "") {
             //SyncAreaNegocio();
-            SyncEmpCompany();
+            //SyncEmpCompany();
+            SyncEmpProjects();
             /*startActivity(IntentBuzon);
             finish();*/
         }
@@ -219,6 +223,96 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 CheckErrorToExit(CursorEmpCompany, "Ha habido un error de sincronización con el servidor (ERROR). Si el problema persiste por favor contáctenos.");
+            }
+        }, headers);
+
+    }
+
+
+    /**
+     * SINCRONIZACION DE PROYECTOS
+     */
+    private void SyncEmpProjects(){
+        EmpProjects = new TblEmpProjectsHelper(this);
+        final Cursor CursorEmpProjects = EmpProjects.getAll();
+        HashMap<String, String> headers = new HashMap<>();
+        String url = getResources().getString(R.string.url_sync_emp_projects).toString()+"/"+session.getString("token","");
+
+        REST.get(url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    if(response.getInt("ok") == 1){
+
+                        JSONArray data = (JSONArray) response.get("data");
+                        JSONObject item;
+                        Integer ID = null;
+                        String NAME = null;
+                        String COORDINATES = null;
+                        String ADDRESS = null;
+                        Boolean addItem;
+                        ContentValues values;
+
+                        for(int i = 0;i < data.length(); i++){
+                            item = (JSONObject) data.get(i);
+                            addItem = true;
+                            while(CursorEmpProjects.moveToNext()) {
+                                ID = CursorEmpProjects.getInt(CursorEmpProjects.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ID));
+                                NAME = CursorEmpProjects.getString(CursorEmpProjects.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.NAME));
+                                COORDINATES = CursorEmpProjects.getString(CursorEmpProjects.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COORDINATES));
+                                ADDRESS = CursorEmpProjects.getString(CursorEmpProjects.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ADDRESS));
+                                if(ID == item.getInt(TblEmpProjectsDefinition.Entry.ID)){
+                                    addItem = false;
+
+                                    values = new ContentValues();
+                                    if(NAME != item.getString(TblEmpProjectsDefinition.Entry.NAME)){
+                                        values.put(TblEmpProjectsDefinition.Entry.NAME, item.getString(TblEmpProjectsDefinition.Entry.NAME));
+                                    }
+                                    if(COORDINATES != item.getString(TblEmpProjectsDefinition.Entry.COORDINATES)){
+                                        values.put(TblEmpProjectsDefinition.Entry.COORDINATES, item.getString(TblEmpProjectsDefinition.Entry.COORDINATES));
+                                    }
+                                    if(ADDRESS != item.getString(TblEmpProjectsDefinition.Entry.ADDRESS)){
+                                        values.put(TblEmpProjectsDefinition.Entry.ADDRESS, item.getString(TblEmpProjectsDefinition.Entry.ADDRESS));
+                                    }
+                                    EmpProjects.update(ID, values);
+                                    break;
+                                }
+                            }
+                            if(addItem){
+                                values = new ContentValues();
+                                values.put(TblEmpProjectsDefinition.Entry.ID, item.getInt(TblEmpProjectsDefinition.Entry.ID));
+                                values.put(TblEmpProjectsDefinition.Entry.NAME, item.getString(TblEmpProjectsDefinition.Entry.NAME));
+                                values.put(TblEmpProjectsDefinition.Entry.COORDINATES, item.getString(TblEmpProjectsDefinition.Entry.COORDINATES));
+                                values.put(TblEmpProjectsDefinition.Entry.ADDRESS, item.getString(TblEmpProjectsDefinition.Entry.ADDRESS));
+                                EmpProjects.insert(values);
+                            }
+                        }
+                        CursorEmpProjects.close();
+
+                        /*Cursor cursor = EmpCompany.getAll();
+                        while(cursor.moveToNext()) {
+                            ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ID));
+                            NAME = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.NAME));
+                            COORDINATES = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COORDINATES));
+                            ADDRESS = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ADDRESS));
+                            Log.d("ID", ID.toString());
+                            Log.d("NAME", NAME.toString());
+                            Log.d("COORDINATES", COORDINATES.toString());
+                            Log.d("ADDRESS", ADDRESS.toString());
+                            Log.d("----------", "--------------");
+                        }*/
+                    } else {
+                        CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (ERROR). Si el problema persiste por favor contáctenos.");
             }
         }, headers);
 

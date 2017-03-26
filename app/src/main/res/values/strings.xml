@@ -17,4 +17,5 @@
     <string name="url_signin">http://192.168.43.170:8900/signin</string>
     <string name="url_sync_area_negocio">http://192.168.43.170:8900/area-negocio</string>
     <string name="url_sync_emp_company">http://186.67.177.227:2234/emp-company</string>
+    <string name="url_sync_emp_projects">http://186.67.177.227:2234/emp-projects</string>
 </resources>
