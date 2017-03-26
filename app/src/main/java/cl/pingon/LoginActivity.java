@@ -104,11 +104,10 @@ public class LoginActivity extends AppCompatActivity {
                                                 finish();
                                             } else {
                                                 alert.setTitle("Error");
-                                                alert.setMessage("Su nombre de usuario o contraseña es incorrecta");
+                                                alert.setMessage(response.getString("message"));
                                                 alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialog, int which) {
                                                         dialog.cancel();
-                                                        System.exit(0);
                                                     }
                                                 });
                                                 alert.create();
