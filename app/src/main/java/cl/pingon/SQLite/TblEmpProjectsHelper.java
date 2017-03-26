@@ -53,4 +53,5 @@ public class TblEmpProjectsHelper extends SQLiteOpenHelper{
         Cursor cursor = db.query(TblEmpProjectsDefinition.Entry.TABLE_NAME, projection, null, null, null, null, null);
         return cursor;
     }
+
 }
