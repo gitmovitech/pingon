@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -507,7 +506,7 @@ public class MainActivity extends AppCompatActivity {
                                     CursorEmpProducts.close();
                                     SyncReady();
 
-                                    Cursor cursor = EmpProducts.getAll();
+                                    /*Cursor cursor = EmpProducts.getAll();
                                     while(cursor.moveToNext()) {
                                         ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.ID));
                                         NAME = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.NAME));
@@ -518,7 +517,7 @@ public class MainActivity extends AppCompatActivity {
                                         Log.d("CODE", CODE.toString());
                                         Log.d("YEAR", YEAR.toString());
                                         Log.d("----------", "--------------");
-                                    }
+                                    }*/
                                 } else {
                                     CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
                                 }
@@ -542,20 +541,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void CheckErrorToExit(Cursor CursorAreaNegocio, String message){
-        if(CursorAreaNegocio.getCount() == 0){
+    private void CheckErrorToExit(Cursor CursorSync, String message){
+        if(CursorSync.getCount() == 0){
             alert.setTitle("Error de sincronización");
             alert.setMessage(message);
             alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();
-                    /*System.exit(0);
-                    finish();*/
-                    SyncReady();
+                    System.exit(0);
+                    finish();
                 }
             });
             alert.create();
             alert.show();
+        } else {
+            SyncReady();
         }
     }
 
