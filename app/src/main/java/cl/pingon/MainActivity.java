@@ -29,6 +29,8 @@ import cl.pingon.SQLite.TblEmpBrandsDefinition;
 import cl.pingon.SQLite.TblEmpBrandsHelper;
 import cl.pingon.SQLite.TblEmpCompanyDefinition;
 import cl.pingon.SQLite.TblEmpCompanyHelper;
+import cl.pingon.SQLite.TblEmpProductsDefinition;
+import cl.pingon.SQLite.TblEmpProductsHelper;
 import cl.pingon.SQLite.TblEmpProjectsDefinition;
 import cl.pingon.SQLite.TblEmpProjectsHelper;
 
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     TblEmpCompanyHelper EmpCompany;
     TblEmpProjectsHelper EmpProjects;
     TblEmpBrandsHelper EmpBrands;
-    //TblEmpProductsHelper EmpProducts;
+    TblEmpProductsHelper EmpProducts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
             //SyncAreaNegocio();
             //SyncEmpCompany();
             //SyncEmpProjects();
-            SyncEmpBrands();
+            //SyncEmpBrands();
+            SyncEmpProducts();
             /*startActivity(IntentBuzon);
             finish();*/
         }
@@ -391,6 +394,95 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 CheckErrorToExit(CursorEmpBrands, "Ha habido un error de sincronización con el servidor (ERROR). Si el problema persiste por favor contáctenos.");
+            }
+        }, headers);
+
+    }
+
+    /**
+     * SINCRONIZACION DE PRODUCTOS
+     */
+    private void SyncEmpProducts(){
+        EmpProducts = new TblEmpProductsHelper(this);
+        final Cursor CursorEmpProducts = EmpProducts.getAll();
+        HashMap<String, String> headers = new HashMap<>();
+        String url = getResources().getString(R.string.url_sync_emp_products).toString()+"/"+session.getString("token","");
+
+        REST.get(url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    if(response.getInt("ok") == 1){
+
+                        JSONArray data = (JSONArray) response.get("data");
+                        JSONObject item;
+                        Integer ID = null;
+                        String NAME = null;
+                        String CODE = null;
+                        String YEAR = null;
+                        Boolean addItem;
+                        ContentValues values;
+
+                        for(int i = 0;i < data.length(); i++){
+                            item = (JSONObject) data.get(i);
+                            addItem = true;
+                            while(CursorEmpProducts.moveToNext()) {
+                                ID = CursorEmpProducts.getInt(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.ID));
+                                NAME = CursorEmpProducts.getString(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.NAME));
+                                CODE = CursorEmpProducts.getString(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.CODE));
+                                YEAR = CursorEmpProducts.getString(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.YEAR));
+                                if(ID == item.getInt(TblEmpProjectsDefinition.Entry.ID)){
+                                    addItem = false;
+
+                                    values = new ContentValues();
+                                    if(NAME != item.getString(TblEmpProductsDefinition.Entry.NAME)){
+                                        values.put(TblEmpProductsDefinition.Entry.NAME, item.getString(TblEmpProductsDefinition.Entry.NAME));
+                                    }
+                                    if(CODE != item.getString(TblEmpProductsDefinition.Entry.CODE)){
+                                        values.put(TblEmpProductsDefinition.Entry.CODE, item.getString(TblEmpProductsDefinition.Entry.CODE));
+                                    }
+                                    if(YEAR != item.getString(TblEmpProductsDefinition.Entry.YEAR)){
+                                        values.put(TblEmpProductsDefinition.Entry.YEAR, item.getString(TblEmpProductsDefinition.Entry.YEAR));
+                                    }
+                                    EmpProducts.update(ID, values);
+                                    break;
+                                }
+                            }
+                            if(addItem){
+                                values = new ContentValues();
+                                values.put(TblEmpProductsDefinition.Entry.ID, item.getInt(TblEmpProductsDefinition.Entry.ID));
+                                values.put(TblEmpProductsDefinition.Entry.NAME, item.getString(TblEmpProductsDefinition.Entry.NAME));
+                                values.put(TblEmpProductsDefinition.Entry.CODE, item.getString(TblEmpProductsDefinition.Entry.CODE));
+                                values.put(TblEmpProductsDefinition.Entry.YEAR, item.getString(TblEmpProductsDefinition.Entry.YEAR));
+                                EmpProducts.insert(values);
+                            }
+                        }
+                        CursorEmpProducts.close();
+
+                        Cursor cursor = EmpProducts.getAll();
+                        while(cursor.moveToNext()) {
+                            ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.ID));
+                            NAME = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.NAME));
+                            CODE = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.CODE));
+                            YEAR = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.YEAR));
+                            Log.d("ID", ID.toString());
+                            Log.d("NAME", NAME.toString());
+                            Log.d("CODE", CODE.toString());
+                            Log.d("YEAR", YEAR.toString());
+                            Log.d("----------", "--------------");
+                        }
+                    } else {
+                        CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (ERROR). Si el problema persiste por favor contáctenos.");
             }
         }, headers);
 
