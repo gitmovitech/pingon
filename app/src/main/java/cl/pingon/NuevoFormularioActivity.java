@@ -17,11 +17,14 @@ import java.util.ArrayList;
 
 import cl.pingon.Model.ModelEmpBrands;
 import cl.pingon.Model.ModelEmpCompany;
+import cl.pingon.Model.ModelEmpProducts;
 import cl.pingon.Model.ModelEmpProjects;
 import cl.pingon.SQLite.TblEmpBrandsDefinition;
 import cl.pingon.SQLite.TblEmpBrandsHelper;
 import cl.pingon.SQLite.TblEmpCompanyDefinition;
 import cl.pingon.SQLite.TblEmpCompanyHelper;
+import cl.pingon.SQLite.TblEmpProductsDefinition;
+import cl.pingon.SQLite.TblEmpProductsHelper;
 import cl.pingon.SQLite.TblEmpProjectsDefinition;
 import cl.pingon.SQLite.TblEmpProjectsHelper;
 
@@ -37,12 +40,14 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     private TblEmpCompanyHelper EmpCompany;
     private TblEmpProjectsHelper EmpProject;
     private TblEmpBrandsHelper EmpBrand;
+    private TblEmpProductsHelper EmpProduct;
 
     private ModelEmpCompany Item;
 
     private ArrayList<ModelEmpCompany> ArrayListModelEmpCompany;
     private ArrayList<ModelEmpProjects> ArrayListModelEmpProjects;
     private ArrayList<ModelEmpBrands> ArrayListModelEmpBrands;
+    private ArrayList<ModelEmpProducts> ArrayListModelEmpProducts;
 
     private ArrayList<String> ListadoArrayListModelEmpCompany;
     private ArrayList<String> ListadoArrayListModelEmpProject;
@@ -75,11 +80,13 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         EmpCompany = new TblEmpCompanyHelper(this);
         EmpProject = new TblEmpProjectsHelper(this);
         EmpBrand = new TblEmpBrandsHelper(this);
+        EmpProduct = new TblEmpProductsHelper(this);
 
         Cursor CursorEmpCompany = EmpCompany.getAll();
         ArrayListModelEmpCompany = new ArrayList<ModelEmpCompany>();
         ArrayListModelEmpProjects = new ArrayList<ModelEmpProjects>();
         ArrayListModelEmpBrands = new ArrayList<ModelEmpBrands>();
+        ArrayListModelEmpProducts = new ArrayList<ModelEmpProducts>();
 
         ListadoArrayListModelEmpCompany = new ArrayList<String>();
         ListadoArrayListModelEmpProject = new ArrayList<String>();
@@ -98,7 +105,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         ArrayListModelEmpCompany.add(Index, new ModelEmpCompany(0, null, null));
         ArrayListModelEmpProjects.add(Index, new ModelEmpProjects(0, null, null, null, 0));
         ArrayListModelEmpBrands.add(Index, new ModelEmpBrands(0, null, 0));
-
+        ArrayListModelEmpProducts.add(Index, new ModelEmpProducts(0, null, null, null, 0));
 
         int RowValueId;
         String RowValueName;
@@ -151,6 +158,19 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if(i > 0){
                     getBrandInSpinner(i);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        SpinnerMarca.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(i > 0){
+                    getProductInSpinner(i);
                 }
             }
 
@@ -226,6 +246,37 @@ public class NuevoFormularioActivity extends AppCompatActivity {
 
             ArrayListModelEmpBrands.add(Index, ItemEmpBrands);
             ListadoArrayListModelEmpBrand.add(Index, RowValueName);
+        }
+    }
+
+    private void getProductInSpinner(int Index){
+        ModelEmpBrands Item = ArrayListModelEmpBrands.get(Index);
+        Cursor cursor = EmpProduct.getByBrandId(Item.getID());
+        int RowValueId;
+        String RowValueName;
+        String RowValueCode;
+        String RowValueYear;
+        int RowValueBrandId;
+
+        ListadoArrayListModelEmpProduct.clear();
+        Index = 0;
+        ListadoArrayListModelEmpProduct.add(Index,"Seleccione Equipo");
+        SpinnerEquipo.setSelection(0);
+
+        ModelEmpProducts ItemEmpProducts;
+
+        while(cursor.moveToNext()) {
+            Index++;
+            RowValueId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.ID));
+            RowValueName = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.NAME));
+            RowValueCode = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.CODE));
+            RowValueYear = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.YEAR));
+            RowValueBrandId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.BRAND_ID));
+            Log.d("CURSOR", RowValueName);
+            ItemEmpProducts = new ModelEmpProducts(RowValueId, RowValueName, RowValueCode, RowValueYear, RowValueBrandId);
+
+            ArrayListModelEmpProducts.add(Index, ItemEmpProducts);
+            ListadoArrayListModelEmpProduct.add(Index, RowValueName);
         }
     }
 
