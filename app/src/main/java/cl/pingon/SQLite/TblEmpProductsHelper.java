@@ -21,7 +21,8 @@ public class TblEmpProductsHelper extends SQLiteOpenHelper {
         query += " ("+TblEmpProductsDefinition.Entry.ID+" INTEGER NOT NULL,";
         query += TblEmpProductsDefinition.Entry.NAME+ " TEXT NOT NULL,";
         query += TblEmpProductsDefinition.Entry.CODE+ " TEXT NOT NULL,";
-        query += TblEmpProductsDefinition.Entry.YEAR+ " TEXT NOT NULL)";
+        query += TblEmpProductsDefinition.Entry.YEAR+ " TEXT NOT NULL,";
+        query += TblEmpProductsDefinition.Entry.BRAND_ID+ " INTEGER NOT NULL)";
         //query += "UNIQUE ("+TblEmpProductsDefinition.Entry.ID+"))";
         db.execSQL(query);
     }
@@ -49,8 +50,15 @@ public class TblEmpProductsHelper extends SQLiteOpenHelper {
 
     public Cursor getAll(){
         SQLiteDatabase db = getReadableDatabase();
-        String[] projection = {"ID", "NAME", "CODE", "YEAR"};
+        String[] projection = {"ID", "NAME", "CODE", "YEAR", "BRAND_ID"};
         Cursor cursor = db.query(TblEmpProductsDefinition.Entry.TABLE_NAME, projection, null, null, null, null, null);
+        return cursor;
+    }
+
+    public Cursor getByBrandId(int ID){
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {"ID", "NAME", "CODE", "YEAR", "BRAND_ID"};
+        Cursor cursor = db.query(TblEmpProductsDefinition.Entry.TABLE_NAME, projection, "BRAND_ID = ?", new String[]{String.valueOf(ID)}, null, null, null);
         return cursor;
     }
 }

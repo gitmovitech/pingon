@@ -375,6 +375,7 @@ public class MainActivity extends AppCompatActivity {
                                     JSONObject item;
                                     Integer ID = null;
                                     String NAME = null;
+                                    Integer PROJECT_ID = null;
                                     Boolean addItem;
                                     ContentValues values;
 
@@ -384,12 +385,16 @@ public class MainActivity extends AppCompatActivity {
                                         while(CursorEmpBrands.moveToNext()) {
                                             ID = CursorEmpBrands.getInt(CursorEmpBrands.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.ID));
                                             NAME = CursorEmpBrands.getString(CursorEmpBrands.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.NAME));
+                                            PROJECT_ID = CursorEmpBrands.getInt(CursorEmpBrands.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.PROJECT_ID));
                                             if(ID == item.getInt(TblEmpBrandsDefinition.Entry.ID)){
                                                 addItem = false;
 
                                                 values = new ContentValues();
                                                 if(NAME != item.getString(TblEmpBrandsDefinition.Entry.NAME)){
                                                     values.put(TblEmpBrandsDefinition.Entry.NAME, item.getString(TblEmpBrandsDefinition.Entry.NAME));
+                                                }
+                                                if(PROJECT_ID != item.getInt(TblEmpBrandsDefinition.Entry.PROJECT_ID)){
+                                                    values.put(TblEmpBrandsDefinition.Entry.PROJECT_ID, item.getInt(TblEmpBrandsDefinition.Entry.PROJECT_ID));
                                                 }
                                                 EmpBrands.update(ID, values);
                                                 break;
@@ -399,20 +404,12 @@ public class MainActivity extends AppCompatActivity {
                                             values = new ContentValues();
                                             values.put(TblEmpBrandsDefinition.Entry.ID, item.getInt(TblEmpBrandsDefinition.Entry.ID));
                                             values.put(TblEmpBrandsDefinition.Entry.NAME, item.getString(TblEmpBrandsDefinition.Entry.NAME));
+                                            values.put(TblEmpBrandsDefinition.Entry.PROJECT_ID, item.getInt(TblEmpBrandsDefinition.Entry.PROJECT_ID));
                                             EmpBrands.insert(values);
                                         }
                                     }
                                     CursorEmpBrands.close();
                                     SyncReady();
-
-                                    /*Cursor cursor = EmpBrands.getAll();
-                                    while(cursor.moveToNext()) {
-                                        ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.ID));
-                                        NAME = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.NAME));
-                                        Log.d("ID", ID.toString());
-                                        Log.d("NAME", NAME.toString());
-                                        Log.d("----------", "--------------");
-                                    }*/
                                 } else {
                                     CheckErrorToExit(CursorEmpBrands, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
                                 }
@@ -460,6 +457,7 @@ public class MainActivity extends AppCompatActivity {
                                     String NAME = null;
                                     String CODE = null;
                                     String YEAR = null;
+                                    Integer BRAND_ID = null;
                                     Boolean addItem;
                                     ContentValues values;
 
@@ -471,6 +469,7 @@ public class MainActivity extends AppCompatActivity {
                                             NAME = CursorEmpProducts.getString(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.NAME));
                                             CODE = CursorEmpProducts.getString(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.CODE));
                                             YEAR = CursorEmpProducts.getString(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.YEAR));
+                                            BRAND_ID = CursorEmpProducts.getInt(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.BRAND_ID));
                                             if(ID == item.getInt(TblEmpProjectsDefinition.Entry.ID)){
                                                 addItem = false;
 
@@ -484,6 +483,9 @@ public class MainActivity extends AppCompatActivity {
                                                 if(YEAR != item.getString(TblEmpProductsDefinition.Entry.YEAR)){
                                                     values.put(TblEmpProductsDefinition.Entry.YEAR, item.getString(TblEmpProductsDefinition.Entry.YEAR));
                                                 }
+                                                if(BRAND_ID != item.getInt(TblEmpProductsDefinition.Entry.BRAND_ID)){
+                                                    values.put(TblEmpProductsDefinition.Entry.BRAND_ID, item.getInt(TblEmpProductsDefinition.Entry.BRAND_ID));
+                                                }
                                                 EmpProducts.update(ID, values);
                                                 break;
                                             }
@@ -494,24 +496,13 @@ public class MainActivity extends AppCompatActivity {
                                             values.put(TblEmpProductsDefinition.Entry.NAME, item.getString(TblEmpProductsDefinition.Entry.NAME));
                                             values.put(TblEmpProductsDefinition.Entry.CODE, item.getString(TblEmpProductsDefinition.Entry.CODE));
                                             values.put(TblEmpProductsDefinition.Entry.YEAR, item.getString(TblEmpProductsDefinition.Entry.YEAR));
+                                            values.put(TblEmpProductsDefinition.Entry.BRAND_ID, item.getInt(TblEmpProductsDefinition.Entry.BRAND_ID));
                                             EmpProducts.insert(values);
                                         }
                                     }
                                     CursorEmpProducts.close();
                                     SyncReady();
 
-                                    /*Cursor cursor = EmpProducts.getAll();
-                                    while(cursor.moveToNext()) {
-                                        ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.ID));
-                                        NAME = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.NAME));
-                                        CODE = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.CODE));
-                                        YEAR = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.YEAR));
-                                        Log.d("ID", ID.toString());
-                                        Log.d("NAME", NAME.toString());
-                                        Log.d("CODE", CODE.toString());
-                                        Log.d("YEAR", YEAR.toString());
-                                        Log.d("----------", "--------------");
-                                    }*/
                                 } else {
                                     CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
                                 }

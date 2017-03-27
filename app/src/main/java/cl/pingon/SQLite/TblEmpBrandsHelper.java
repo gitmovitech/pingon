@@ -19,7 +19,8 @@ public class TblEmpBrandsHelper extends SQLiteOpenHelper{
     public void onCreate(SQLiteDatabase db) {
         String query = "CREATE TABLE "+ TblEmpBrandsDefinition.Entry.TABLE_NAME;
         query += " ("+TblEmpBrandsDefinition.Entry.ID+" INTEGER NOT NULL,";
-        query += TblEmpBrandsDefinition.Entry.NAME+ " TEXT NOT NULL)";
+        query += TblEmpBrandsDefinition.Entry.NAME+ " TEXT NOT NULL,";
+        query += TblEmpBrandsDefinition.Entry.PROJECT_ID+ " INTEGER NOT NULL)";
         db.execSQL(query);
     }
 
@@ -41,15 +42,15 @@ public class TblEmpBrandsHelper extends SQLiteOpenHelper{
 
     public Cursor getAll(){
         SQLiteDatabase db = getReadableDatabase();
-        String[] projection = {"ID", "NAME"};
+        String[] projection = {"ID", "NAME", "PROJECT_ID"};
         Cursor cursor = db.query(TblEmpBrandsDefinition.Entry.TABLE_NAME, projection, null, null, null, null, null);
         return cursor;
     }
 
     public Cursor getByProjectId(int ID){
         SQLiteDatabase db = getReadableDatabase();
-        String[] projection = {"ID", "NAME"};
-        Cursor cursor = db.query(TblEmpProjectsDefinition.Entry.TABLE_NAME, projection, "COMPANY_ID = ?", new String[]{String.valueOf(ID)}, null, null, null);
+        String[] projection = {"ID", "NAME", "PROJECT_ID"};
+        Cursor cursor = db.query(TblEmpProjectsDefinition.Entry.TABLE_NAME, projection, "PROJECT_ID = ?", new String[]{String.valueOf(ID)}, null, null, null);
         return cursor;
     }
 }

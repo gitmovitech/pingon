@@ -11,5 +11,6 @@ public class TblEmpProductsDefinition {
         public static final String NAME = "name";
         public static final String CODE = "code";
         public static final String YEAR = "year";
+        public static final String BRAND_ID = "brand_id";
     }
 }
