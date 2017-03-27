@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import cl.pingon.Model.ModelEmpBrands;
 import cl.pingon.Model.ModelEmpCompany;
 import cl.pingon.Model.ModelEmpProjects;
+import cl.pingon.SQLite.TblEmpBrandsDefinition;
 import cl.pingon.SQLite.TblEmpBrandsHelper;
 import cl.pingon.SQLite.TblEmpCompanyDefinition;
 import cl.pingon.SQLite.TblEmpCompanyHelper;
@@ -49,7 +50,11 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     private ArrayList<String> ListadoArrayListModelEmpProduct;
     private ArrayList<String> ListadoArrayListModelEmpSerie;
 
+    ArrayAdapter<String> ArrayAdapterEmpCompany;
     ArrayAdapter<String> ArrayAdapterEmpProject;
+    ArrayAdapter<String> ArrayAdapterEmpBrand;
+    ArrayAdapter<String> ArrayAdapterEmpProduct;
+    ArrayAdapter<String> ArrayAdapterEmpSerie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +74,12 @@ public class NuevoFormularioActivity extends AppCompatActivity {
 
         EmpCompany = new TblEmpCompanyHelper(this);
         EmpProject = new TblEmpProjectsHelper(this);
+        EmpBrand = new TblEmpBrandsHelper(this);
 
         Cursor CursorEmpCompany = EmpCompany.getAll();
         ArrayListModelEmpCompany = new ArrayList<ModelEmpCompany>();
         ArrayListModelEmpProjects = new ArrayList<ModelEmpProjects>();
+        ArrayListModelEmpBrands = new ArrayList<ModelEmpBrands>();
 
         ListadoArrayListModelEmpCompany = new ArrayList<String>();
         ListadoArrayListModelEmpProject = new ArrayList<String>();
@@ -90,6 +97,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
 
         ArrayListModelEmpCompany.add(Index, new ModelEmpCompany(0, null, null));
         ArrayListModelEmpProjects.add(Index, new ModelEmpProjects(0, null, null, null, 0));
+        ArrayListModelEmpBrands.add(Index, new ModelEmpBrands(0, null, 0));
 
 
         int RowValueId;
@@ -105,11 +113,11 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             ListadoArrayListModelEmpCompany.add(Index, RowValueName);
         }
 
-        ArrayAdapter<String> ArrayAdapterEmpCompany = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ListadoArrayListModelEmpCompany);
+        ArrayAdapterEmpCompany = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ListadoArrayListModelEmpCompany);
         ArrayAdapterEmpProject = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ListadoArrayListModelEmpProject);
-        ArrayAdapter<String> ArrayAdapterEmpBrand = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ListadoArrayListModelEmpBrand);
-        ArrayAdapter<String> ArrayAdapterEmpProduct = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ListadoArrayListModelEmpProduct);
-        ArrayAdapter<String> ArrayAdapterEmpSerie = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ListadoArrayListModelEmpSerie);
+        ArrayAdapterEmpBrand = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ListadoArrayListModelEmpBrand);
+        ArrayAdapterEmpProduct = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ListadoArrayListModelEmpProduct);
+        ArrayAdapterEmpSerie = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ListadoArrayListModelEmpSerie);
 
 
         SpinnerClientes = (Spinner) findViewById(R.id.SpinnerClientes);
@@ -166,7 +174,6 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     private void getProjectsInSpinner(int Index){
         ModelEmpCompany Item = ArrayListModelEmpCompany.get(Index);
         Cursor cursor = EmpProject.getByCompanyId(Item.getID());
-        Log.d("CURSOR", String.valueOf(cursor.getCount()));
         int RowValueId;
         String RowValueName;
         String RowValueCoordinates;
@@ -196,34 +203,29 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     }
 
     private void getBrandInSpinner(int Index){
-        ModelEmpBrands Item = ArrayListModelEmpBrands.get(Index);
+        ModelEmpProjects Item = ArrayListModelEmpProjects.get(Index);
         Cursor cursor = EmpBrand.getByProjectId(Item.getID());
-        Log.d("CURSOR", String.valueOf(cursor.getCount()));
         int RowValueId;
         String RowValueName;
-        String RowValueCoordinates;
-        String RowValueAddress;
-        int RowValueCompanyId;
+        int RowValueProjectId;
 
-        ListadoArrayListModelEmpProject.clear();
+        ListadoArrayListModelEmpBrand.clear();
         Index = 0;
-        ListadoArrayListModelEmpProject.add(Index,"Seleccione Obra");
-        SpinnerObras.setSelection(0);
+        ListadoArrayListModelEmpBrand.add(Index,"Seleccione Marca");
+        SpinnerMarca.setSelection(0);
 
-        ModelEmpProjects ItemEmpProjects;
+        ModelEmpBrands ItemEmpBrands;
 
         while(cursor.moveToNext()) {
             Index++;
-            RowValueId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ID));
-            RowValueName = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.NAME));
-            RowValueCoordinates = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COORDINATES));
-            RowValueAddress = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ADDRESS));
-            RowValueCompanyId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COMPANY_ID));
+            RowValueId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.ID));
+            RowValueName = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.NAME));
+            RowValueProjectId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.PROJECT_ID));
             Log.d("CURSOR", RowValueName);
-            ItemEmpProjects = new ModelEmpProjects(RowValueId, RowValueName, RowValueCoordinates, RowValueAddress, RowValueCompanyId);
+            ItemEmpBrands = new ModelEmpBrands(RowValueId, RowValueName, RowValueProjectId);
 
-            ArrayListModelEmpProjects.add(Index, ItemEmpProjects);
-            ListadoArrayListModelEmpProject.add(Index, RowValueName);
+            ArrayListModelEmpBrands.add(Index, ItemEmpBrands);
+            ListadoArrayListModelEmpBrand.add(Index, RowValueName);
         }
     }
 

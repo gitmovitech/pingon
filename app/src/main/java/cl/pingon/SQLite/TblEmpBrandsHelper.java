@@ -50,7 +50,7 @@ public class TblEmpBrandsHelper extends SQLiteOpenHelper{
     public Cursor getByProjectId(int ID){
         SQLiteDatabase db = getReadableDatabase();
         String[] projection = {"ID", "NAME", "PROJECT_ID"};
-        Cursor cursor = db.query(TblEmpProjectsDefinition.Entry.TABLE_NAME, projection, "PROJECT_ID = ?", new String[]{String.valueOf(ID)}, null, null, null);
+        Cursor cursor = db.query(TblEmpBrandsDefinition.Entry.TABLE_NAME, projection, "PROJECT_ID = ?", new String[]{String.valueOf(ID)}, null, null, null);
         return cursor;
     }
 }
