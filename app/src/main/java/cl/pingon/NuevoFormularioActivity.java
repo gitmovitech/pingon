@@ -36,6 +36,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     Spinner SpinnerEquipo;
     Spinner SpinnerSerie;
     Intent IntentInformes;
+    FloatingActionButton fab;
 
     private TblEmpCompanyHelper EmpCompany;
     private TblEmpProjectsHelper EmpProject;
@@ -48,6 +49,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     private ArrayList<ModelEmpProjects> ArrayListModelEmpProjects;
     private ArrayList<ModelEmpBrands> ArrayListModelEmpBrands;
     private ArrayList<ModelEmpProducts> ArrayListModelEmpProducts;
+    private ArrayList<ModelEmpProducts> ArrayListModelEmpSerie;
 
     private ArrayList<String> ListadoArrayListModelEmpCompany;
     private ArrayList<String> ListadoArrayListModelEmpProject;
@@ -87,6 +89,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         ArrayListModelEmpProjects = new ArrayList<ModelEmpProjects>();
         ArrayListModelEmpBrands = new ArrayList<ModelEmpBrands>();
         ArrayListModelEmpProducts = new ArrayList<ModelEmpProducts>();
+        ArrayListModelEmpSerie = new ArrayList<ModelEmpProducts>();
 
         ListadoArrayListModelEmpCompany = new ArrayList<String>();
         ListadoArrayListModelEmpProject = new ArrayList<String>();
@@ -106,6 +109,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         ArrayListModelEmpProjects.add(Index, new ModelEmpProjects(0, null, null, null, 0));
         ArrayListModelEmpBrands.add(Index, new ModelEmpBrands(0, null, 0));
         ArrayListModelEmpProducts.add(Index, new ModelEmpProducts(0, null, null, null, 0));
+        ArrayListModelEmpSerie.add(Index, new ModelEmpProducts(0, null, null, null, 0));
 
         int RowValueId;
         String RowValueName;
@@ -145,6 +149,10 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if(i > 0){
+                    SpinnerObras.setSelection(0);
+                    SpinnerMarca.setSelection(0);
+                    SpinnerEquipo.setSelection(0);
+                    SpinnerSerie.setSelection(0);
                     getProjectsInSpinner(i);
                 }
             }
@@ -157,6 +165,9 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if(i > 0){
+                    SpinnerMarca.setSelection(0);
+                    SpinnerEquipo.setSelection(0);
+                    SpinnerSerie.setSelection(0);
                     getBrandInSpinner(i);
                 }
             }
@@ -170,6 +181,8 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if(i > 0){
+                    SpinnerEquipo.setSelection(0);
+                    SpinnerSerie.setSelection(0);
                     getProductInSpinner(i);
                 }
             }
@@ -179,8 +192,23 @@ public class NuevoFormularioActivity extends AppCompatActivity {
 
             }
         });
+        SpinnerSerie.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(i > 0){
+                    fab.setVisibility(View.VISIBLE);
+                } else {
+                    fab.setVisibility(View.GONE);
+                }
+            }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -259,9 +287,12 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         int RowValueBrandId;
 
         ListadoArrayListModelEmpProduct.clear();
+        ListadoArrayListModelEmpSerie.clear();
         Index = 0;
         ListadoArrayListModelEmpProduct.add(Index,"Seleccione Equipo");
         SpinnerEquipo.setSelection(0);
+        ListadoArrayListModelEmpSerie.add(Index, "Seleccion Serie");
+        SpinnerSerie.setSelection(0);
 
         ModelEmpProducts ItemEmpProducts;
 
@@ -276,7 +307,9 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             ItemEmpProducts = new ModelEmpProducts(RowValueId, RowValueName, RowValueCode, RowValueYear, RowValueBrandId);
 
             ArrayListModelEmpProducts.add(Index, ItemEmpProducts);
+            ArrayListModelEmpSerie.add(Index, ItemEmpProducts);
             ListadoArrayListModelEmpProduct.add(Index, RowValueName);
+            ListadoArrayListModelEmpSerie.add(Index, RowValueCode);
         }
     }
 
