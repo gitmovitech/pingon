@@ -71,6 +71,8 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         setContentView(R.layout.activity_nuevo_formulario);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
@@ -217,6 +219,12 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         });
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private int getIndexFromClients(String clientname){
