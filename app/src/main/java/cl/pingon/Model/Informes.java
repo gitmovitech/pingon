@@ -3,9 +3,9 @@ package cl.pingon.Model;
 public class Informes {
     String title;
     String subtitle;
-    String id;
+    int id;
 
-    public Informes(String title, String subtitle, String id){
+    public Informes(String title, String subtitle, int id){
         this.title = title;
         this.subtitle = subtitle;
         this.id = id;
@@ -27,7 +27,7 @@ public class Informes {
         return this.subtitle;
     }
 
-    public String getId() {
+    public int getId() {
         return this.id;
     }
 }

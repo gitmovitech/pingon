@@ -33,12 +33,12 @@ public class EnviadosActivity extends AppCompatActivity {
         IntentDetalle = new Intent(this, ReemplazoTabsActivity.class);
 
         ArrayInformes = new ArrayList<Informes>();
-        Informes = new Informes("Producción", "Asistencia Técnica Grúas", "1");
+        /*Informes = new Informes("Producción", "Asistencia Técnica Grúas", "1");
         ArrayInformes.add(Informes);
         Informes = new Informes("Producción", "Orden de Trabajo Elevadores", "2");
         ArrayInformes.add(Informes);
         Informes = new Informes("Producción", "Informe Grúa Auxiliar", "3");
-        ArrayInformes.add(Informes);
+        ArrayInformes.add(Informes);*/
 
 
         ListDetalle = (ListView) findViewById(R.id.ListDetalle);

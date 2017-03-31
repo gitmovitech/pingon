@@ -94,9 +94,11 @@ public class LoginActivity extends AppCompatActivity {
                                                 SharedPreferences.Editor editor = session.edit();
                                                 editor.putString("token", response.getString("token"));
                                                 editor.putString("user_id", response.getString("id"));
-                                                editor.putString("last_name", response.getString("last_name"));
+                                                editor.putString("arn_id", response.getString("arn_id"));
+                                                editor.putString("first_name", response.getString("first_name"));
                                                 editor.putString("last_name", response.getString("last_name"));
                                                 editor.putString("run", response.getString("run"));
+                                                editor.putString("email", response.getString("email"));
                                                 editor.putString("sign", response.getString("firma"));
                                                 editor.commit();
 
