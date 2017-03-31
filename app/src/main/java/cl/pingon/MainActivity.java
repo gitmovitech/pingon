@@ -32,6 +32,8 @@ import cl.pingon.SQLite.TblEmpProductsDefinition;
 import cl.pingon.SQLite.TblEmpProductsHelper;
 import cl.pingon.SQLite.TblEmpProjectsDefinition;
 import cl.pingon.SQLite.TblEmpProjectsHelper;
+import cl.pingon.SQLite.TblFormulariosDefinition;
+import cl.pingon.SQLite.TblFormulariosHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,16 +42,20 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences session;
     RESTService REST;
     AlertDialog.Builder alert;
+
     TblAreaNegocioHelper AreaNegocio;
     TblEmpCompanyHelper EmpCompany;
     TblEmpProjectsHelper EmpProjects;
     TblEmpBrandsHelper EmpBrands;
     TblEmpProductsHelper EmpProducts;
+    TblFormulariosHelper Formularios;
+
     int Syncronized = 0;
     private Thread SyncEmpCompanyThread;
     private Thread SyncEmpProjectsThread;
     private Thread SyncEmpBrandsThread;
     private Thread SyncEmpProductsThread;
+    private Thread SyncFormulariosThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
             SyncEmpProjects();
             SyncEmpBrands();
             SyncEmpProducts();
+            SyncFormularios();
 
             //SyncAreaNegocio();
 
@@ -83,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void SyncReady(){
         Syncronized++;
-        if(Syncronized >= 4){
+        if(Syncronized >= 5){
             startActivity(IntentBuzon);
             finish();
         }
@@ -520,6 +527,106 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (ERROR). Si el problema persiste por favor contáctenos.");
+            }
+        }, headers);
+
+    }
+
+
+    /**
+     * SINCRONIZACION DE FORMULARIOS
+     */
+    private void SyncFormularios(){
+        Formularios = new TblFormulariosHelper(this);
+        final Cursor CursorFormularios = Formularios.getAll();
+        HashMap<String, String> headers = new HashMap<>();
+        String url = getResources().getString(R.string.url_sync_formularios).toString()+"/"+session.getString("token","");
+
+        REST.get(url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                final JSONObject ResponseFormularios = response;
+                SyncFormulariosThread = new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            try {
+                                if(ResponseFormularios.getInt("ok") == 1){
+
+                                    JSONArray data = (JSONArray) ResponseFormularios.get("data");
+                                    JSONObject item;
+                                    Integer ARN_ID = null;
+                                    String ARN_NOMBRE = null;
+                                    Integer FRM_ID = null;
+                                    String FRM_NOMBRE = null;
+                                    Boolean addItem;
+                                    ContentValues values;
+
+                                    for(int i = 0;i < data.length(); i++){
+                                        item = (JSONObject) data.get(i);
+                                        addItem = true;
+                                        while(CursorFormularios.moveToNext()) {
+                                            ARN_ID = CursorFormularios.getInt(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_ID));
+                                            ARN_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
+                                            FRM_ID = CursorFormularios.getInt(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_ID));
+                                            FRM_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
+                                            if(ARN_ID == item.getInt(TblFormulariosDefinition.Entry.ARN_ID)){
+                                                addItem = false;
+
+                                                values = new ContentValues();
+                                                if(ARN_NOMBRE != item.getString(TblFormulariosDefinition.Entry.ARN_NOMBRE)){
+                                                    values.put(TblFormulariosDefinition.Entry.ARN_NOMBRE, item.getString(TblFormulariosDefinition.Entry.ARN_NOMBRE));
+                                                }
+                                                if(FRM_ID != item.getInt(TblFormulariosDefinition.Entry.FRM_ID)){
+                                                    values.put(TblFormulariosDefinition.Entry.FRM_ID, item.getString(TblFormulariosDefinition.Entry.FRM_ID));
+                                                }
+                                                if(FRM_NOMBRE != item.getString(TblFormulariosDefinition.Entry.FRM_NOMBRE)){
+                                                    values.put(TblFormulariosDefinition.Entry.FRM_NOMBRE, item.getString(TblFormulariosDefinition.Entry.FRM_NOMBRE));
+                                                }
+                                                Formularios.update(ARN_ID, values);
+                                                break;
+                                            }
+                                        }
+                                        if(addItem){
+                                            values = new ContentValues();
+                                            values.put(TblFormulariosDefinition.Entry.ARN_ID, item.getInt(TblFormulariosDefinition.Entry.ARN_ID));
+                                            values.put(TblFormulariosDefinition.Entry.ARN_NOMBRE, item.getString(TblFormulariosDefinition.Entry.ARN_NOMBRE));
+                                            values.put(TblFormulariosDefinition.Entry.FRM_ID, item.getInt(TblFormulariosDefinition.Entry.FRM_ID));
+                                            values.put(TblFormulariosDefinition.Entry.FRM_NOMBRE, item.getString(TblFormulariosDefinition.Entry.FRM_NOMBRE));
+                                            Formularios.insert(values);
+                                        }
+                                    }
+                                    CursorFormularios.close();
+                                    SyncReady();
+                                    /*Cursor cursor = Formularios.getAll();
+                                    while(cursor.moveToNext()) {
+                                        ARN_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_ID));
+                                        ARN_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
+                                        FRM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_ID));
+                                        FRM_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
+                                        Log.d("ARN_ID", ARN_ID.toString());
+                                        Log.d("ARN_NOMBRE", ARN_NOMBRE.toString());
+                                        Log.d("FRM_ID", FRM_ID.toString());
+                                        Log.d("FRM_NOMBRE", FRM_NOMBRE.toString());
+                                        Log.d("----------", "--------------");
+                                    }*/
+
+                                } else {
+                                    CheckErrorToExit(CursorFormularios, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                CheckErrorToExit(CursorFormularios, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
+                            }
+                        } catch (Exception e) {}
+                    }
+                });
+                SyncFormulariosThread.start();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                CheckErrorToExit(CursorFormularios, "Ha habido un error de sincronización con el servidor (ERROR). Si el problema persiste por favor contáctenos.");
             }
         }, headers);
 

@@ -20,4 +20,5 @@
     <string name="url_sync_emp_projects">http://186.67.177.227:2234/emp-projects</string>
     <string name="url_sync_emp_brands">http://186.67.177.227:2234/emp-brands</string>
     <string name="url_sync_emp_products">http://186.67.177.227:2234/emp-products</string>
+    <string name="url_sync_formularios">http://186.67.177.227:2234/formularios</string>
 </resources>
