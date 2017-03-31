@@ -9,8 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
@@ -30,7 +32,7 @@ import cl.pingon.SQLite.TblEmpProjectsHelper;
 
 public class NuevoFormularioActivity extends AppCompatActivity {
 
-    Spinner SpinnerClientes;
+    AutoCompleteTextView AutocompleteClientes;
     Spinner SpinnerObras;
     Spinner SpinnerMarca;
     Spinner SpinnerEquipo;
@@ -131,34 +133,30 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         ArrayAdapterEmpSerie = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ListadoArrayListModelEmpSerie);
 
 
-        SpinnerClientes = (Spinner) findViewById(R.id.SpinnerClientes);
+        AutocompleteClientes = (AutoCompleteTextView) findViewById(R.id.AutocompleteClientes);
         SpinnerObras = (Spinner) findViewById(R.id.SpinnerObras);
         SpinnerMarca = (Spinner) findViewById(R.id.SpinnerMarca);
         SpinnerEquipo = (Spinner) findViewById(R.id.SpinnerEquipo);
         SpinnerSerie = (Spinner) findViewById(R.id.SpinnerSerie);
 
 
-        SpinnerClientes.setAdapter(ArrayAdapterEmpCompany);
+        AutocompleteClientes.setAdapter(ArrayAdapterEmpCompany);
         SpinnerObras.setAdapter(ArrayAdapterEmpProject);
         SpinnerMarca.setAdapter(ArrayAdapterEmpBrand);
         SpinnerEquipo.setAdapter(ArrayAdapterEmpProduct);
         SpinnerSerie.setAdapter(ArrayAdapterEmpSerie);
 
 
-        SpinnerClientes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        AutocompleteClientes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if(i > 0){
-                    SpinnerObras.setSelection(0);
-                    SpinnerMarca.setSelection(0);
-                    SpinnerEquipo.setSelection(0);
-                    SpinnerSerie.setSelection(0);
-                    getProjectsInSpinner(i);
-                }
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                int index = getIndexFromClients(adapterView.getItemAtPosition(i).toString());
+                SpinnerObras.setSelection(0);
+                SpinnerMarca.setSelection(0);
+                SpinnerEquipo.setSelection(0);
+                SpinnerSerie.setSelection(0);
+                getProjectsInSpinner(index);
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
             }
         });
         SpinnerObras.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -217,6 +215,18 @@ public class NuevoFormularioActivity extends AppCompatActivity {
                         .setAction("Action", null).show();*/
             }
         });
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    }
+
+    private int getIndexFromClients(String clientname){
+        int index = 0;
+        for(int x = 0; x < ListadoArrayListModelEmpCompany.size(); x++){
+            if(clientname.contains(ListadoArrayListModelEmpCompany.get(x))){
+                index = x;
+            }
+        }
+        return index;
     }
 
     private void getProjectsInSpinner(int Index){
