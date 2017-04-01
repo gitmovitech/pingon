@@ -11,10 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <ListView
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:id="@+id/LinearLayoutInformesDetalles"
+            android:id="@+id/ListViewInformesDetalles"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"/>

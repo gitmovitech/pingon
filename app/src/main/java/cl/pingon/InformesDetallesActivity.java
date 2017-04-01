@@ -4,30 +4,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
 
+import cl.pingon.Adapter.AdapterChecklist;
+import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.SQLite.TblChecklistDefinition;
 import cl.pingon.SQLite.TblChecklistHelper;
 
@@ -65,6 +58,15 @@ public class InformesDetallesActivity extends AppCompatActivity {
     Integer CHK_ID;
     Integer ARN_ID;
 
+    private int CAM_ID;
+    private int CAM_POSICION;
+    private String CAM_NOMBRE_INTERNO;
+    private String CAM_NOMBRE_EXTERNO;
+    private String CAM_TIPO;
+    private String CAM_MANDATORIO;
+    private String CAM_VAL_DEFECTO;
+    private String CAM_PLACE_HOLDER;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,18 +84,43 @@ public class InformesDetallesActivity extends AppCompatActivity {
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
 
         ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
-        FRM_ID = getIntent().getIntExtra("FRM_ID",0);
-        CHK_ID = getIntent().getIntExtra("CHK_ID",0);
+        FRM_ID = getIntent().getIntExtra("FRM_ID", 0);
+        CHK_ID = getIntent().getIntExtra("CHK_ID", 0);
         Checklist = new TblChecklistHelper(this);
         Cursor cursor = Checklist.getAllByFrmIdAndChkId(FRM_ID, CHK_ID);
-        while(cursor.moveToNext()){
-            Log.d("DETALLE", cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_NOMBRE_INTERNO)));
+        ArrayList<ModelChecklistFields> ArrayChecklist = new ArrayList<ModelChecklistFields>();
+
+        int index = 0;
+        while (cursor.moveToNext()) {
+
+            CAM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_ID));
+            CAM_POSICION = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_POSICION));
+            CAM_NOMBRE_INTERNO = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_NOMBRE_INTERNO));
+            CAM_NOMBRE_EXTERNO = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_NOMBRE_EXTERNO));
+            CAM_TIPO = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_TIPO));
+            CAM_MANDATORIO = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_MANDATORIO));
+            CAM_VAL_DEFECTO = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_VAL_DEFECTO));
+            CAM_PLACE_HOLDER = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_PLACE_HOLDER));
+
+            ArrayChecklist.add(index, new ModelChecklistFields(
+                    CAM_ID,
+                    CAM_POSICION,
+                    CAM_NOMBRE_INTERNO,
+                    CAM_NOMBRE_EXTERNO,
+                    CAM_TIPO,
+                    CAM_MANDATORIO,
+                    CAM_VAL_DEFECTO,
+                    CAM_PLACE_HOLDER
+            ));
+            index++;
         }
+        cursor.close();
+
+        ListView ListViewInformesDetalles = (ListView) findViewById(R.id.ListViewInformesDetalles);
+        ListViewInformesDetalles.setAdapter(new AdapterChecklist(this, ArrayChecklist){});
 
 
-
-
-        IntentSign = new Intent(this, SignDrawActivity.class);
+        /*IntentSign = new Intent(this, SignDrawActivity.class);
         CameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         ImageName = Environment.getExternalStorageDirectory() + "/tmp.jpg";
         CameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(ImageName)));
@@ -131,7 +158,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         /**
          * FIRMA
-         */
+         *
         Button ButtonFirma = (Button) ItemFirmaView.findViewById(R.id.item_firma);
         ButtonFirma.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,7 +170,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         /**
          * FOTOS
-         */
+         *
         Button ButtonCamera = (Button) ItemFotoView.findViewById(R.id.item_foto);
         ButtonCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,7 +190,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         /**
          * VIDEO
-         */
+         *
         VideoViewItem = (VideoView) ItemVideoView.findViewById(R.id.VideoViewItem);
         LinearLayoutVideo = (LinearLayout) ItemVideoView.findViewById(R.id.LinearLayoutVideo);
         ButtonVideoView = (Button) ItemVideoView.findViewById(R.id.ButtonVideoView);
@@ -199,7 +226,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         /**
          * GRABACION DE AUDIO
-         */
+         *
         mFileName = getExternalCacheDir().getAbsolutePath();
         mFileName += "/tmp.3gp";
 
@@ -300,8 +327,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
         if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
         }
+    }*/
     }
-
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
