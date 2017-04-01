@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -23,8 +22,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 import cl.pingon.Libraries.RESTService;
-import cl.pingon.SQLite.TblAreaNegocioDefinition;
 import cl.pingon.SQLite.TblAreaNegocioHelper;
+import cl.pingon.SQLite.TblChecklistHelper;
 import cl.pingon.SQLite.TblEmpBrandsDefinition;
 import cl.pingon.SQLite.TblEmpBrandsHelper;
 import cl.pingon.SQLite.TblEmpCompanyDefinition;
@@ -35,6 +34,7 @@ import cl.pingon.SQLite.TblEmpProjectsDefinition;
 import cl.pingon.SQLite.TblEmpProjectsHelper;
 import cl.pingon.SQLite.TblFormulariosDefinition;
 import cl.pingon.SQLite.TblFormulariosHelper;
+import cl.pingon.Sync.SyncChecklist;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     TblEmpBrandsHelper EmpBrands;
     TblEmpProductsHelper EmpProducts;
     TblFormulariosHelper Formularios;
+    TblChecklistHelper Checklist;
 
     int Syncronized = 0;
     private Thread SyncEmpCompanyThread;
@@ -57,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     private Thread SyncEmpBrandsThread;
     private Thread SyncEmpProductsThread;
     private Thread SyncFormulariosThread;
+
+    String ChecklistUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +73,12 @@ public class MainActivity extends AppCompatActivity {
         activity = this;
         alert = new AlertDialog.Builder(this);
 
+
         IntentBuzon = new Intent(this, BuzonActivity.class);
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
         REST = new RESTService(this);
+        ChecklistUrl = getResources().getString(R.string.url_sync_checklist).toString()+"/"+session.getString("token","");
 
         if(session.getString("token","") != "") {
 
@@ -83,97 +88,21 @@ public class MainActivity extends AppCompatActivity {
             SyncEmpProducts();
             SyncFormularios();
 
-            //SyncAreaNegocio();
+            SyncChecklist Checklist = new SyncChecklist(this, ChecklistUrl);
+            Checklist.Sync();
 
         }
     }
 
 
-    private void SyncReady(){
+    public void SyncReady(){
         Syncronized++;
-        if(Syncronized >= 5){
+        if(Syncronized >= 6){
             startActivity(IntentBuzon);
             finish();
         }
     }
 
-    private void SyncAreaNegocio(){
-        AreaNegocio = new TblAreaNegocioHelper(this);
-        final Cursor CursorAreaNegocio = AreaNegocio.getAll();
-        HashMap<String, String> headers = new HashMap<>();
-        String url = getResources().getString(R.string.url_sync_area_negocio).toString()+"/"+session.getString("token","");
-        REST.get(url, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    if(response.getInt("ok") == 1){
-
-                        JSONArray data = (JSONArray) response.get("data");
-                        JSONObject item;
-                        Integer ARN_ID = null;
-                        String ARN_NOMBRE = null;
-                        Integer ACTIVO = null;
-                        Boolean addItem;
-                        ContentValues values;
-
-                        for(int i = 0;i < data.length(); i++){
-                            item = (JSONObject) data.get(i);
-                            addItem = true;
-                            while(CursorAreaNegocio.moveToNext()) {
-                                ARN_ID = CursorAreaNegocio.getInt(CursorAreaNegocio.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ARN_ID));
-                                ARN_NOMBRE = CursorAreaNegocio.getString(CursorAreaNegocio.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ARN_NOMBRE));
-                                ACTIVO = CursorAreaNegocio.getInt(CursorAreaNegocio.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ACTIVO));
-                                if(ARN_ID == item.getInt(TblAreaNegocioDefinition.Entry.ARN_ID)){
-                                    addItem = false;
-
-                                    values = new ContentValues();
-                                    if(ARN_NOMBRE != item.getString(TblAreaNegocioDefinition.Entry.ARN_NOMBRE)){
-                                        values.put(TblAreaNegocioDefinition.Entry.ARN_NOMBRE, item.getString(TblAreaNegocioDefinition.Entry.ARN_NOMBRE));
-                                    }
-                                    if(ACTIVO != item.getInt(TblAreaNegocioDefinition.Entry.ACTIVO)){
-                                        values.put(TblAreaNegocioDefinition.Entry.ACTIVO, item.getString(TblAreaNegocioDefinition.Entry.ACTIVO));
-                                    }
-                                    AreaNegocio.update(ARN_ID, values);
-                                    break;
-                                }
-                            }
-                            if(addItem){
-                                values = new ContentValues();
-                                values.put(TblAreaNegocioDefinition.Entry.ARN_ID, item.getInt(TblAreaNegocioDefinition.Entry.ARN_ID));
-                                values.put(TblAreaNegocioDefinition.Entry.ARN_NOMBRE, item.getString(TblAreaNegocioDefinition.Entry.ARN_NOMBRE));
-                                values.put(TblAreaNegocioDefinition.Entry.ACTIVO, item.getInt(TblAreaNegocioDefinition.Entry.ACTIVO));
-                                AreaNegocio.insert(values);
-                            }
-                        }
-                        CursorAreaNegocio.close();
-                        SyncReady();
-
-                        /*Cursor cursor = AreaNegocio.getAll();
-                        while(cursor.moveToNext()) {
-                            ARN_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ARN_ID));
-                            ARN_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ARN_NOMBRE));
-                            ACTIVO = cursor.getInt(cursor.getColumnIndexOrThrow(TblAreaNegocioDefinition.Entry.ACTIVO));
-                            Log.d("ARN_ID", ARN_ID.toString());
-                            Log.d("ARN_NOMBRE", ARN_NOMBRE.toString());
-                            Log.d("ACTIVO", ACTIVO.toString());
-                            Log.d("----------", "--------------");
-                        }*/
-                    } else {
-                        CheckErrorToExit(CursorAreaNegocio, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    CheckErrorToExit(CursorAreaNegocio, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                CheckErrorToExit(CursorAreaNegocio, "Ha habido un error de sincronización con el servidor (ERROR). Si el problema persiste por favor contáctenos.");
-            }
-        }, headers);
-
-    }
 
     /**
      * SINCRONIZACION DE COMPANIES
@@ -570,7 +499,7 @@ public class MainActivity extends AppCompatActivity {
                                             ARN_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
                                             FRM_ID = CursorFormularios.getInt(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_ID));
                                             FRM_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
-                                            Log.d(String.valueOf(FRM_ID), FRM_NOMBRE+" - "+ARN_NOMBRE);
+                                            //Log.d(String.valueOf(FRM_ID), FRM_NOMBRE+" - "+ARN_NOMBRE);
                                             if(ARN_ID == item.getInt(TblFormulariosDefinition.Entry.ARN_ID)){
                                                 addItem = false;
 
@@ -635,7 +564,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void CheckErrorToExit(Cursor CursorSync, String message){
+
+
+    public void CheckErrorToExit(Cursor CursorSync, String message){
         if(CursorSync.getCount() == 0){
             alert.setTitle("Error de sincronización");
             alert.setMessage(message);

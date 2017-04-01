@@ -2,8 +2,9 @@ package cl.pingon;
 
 import android.content.Intent;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -36,6 +37,8 @@ public class ReemplazoTabsActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
+
+        Log.d("FRM_ID seleccionado", getIntent().getStringExtra("FRM_ID").toString());
 
         IntentDetalle = new Intent(this, InformesDetallesActivity.class);
         IntentDetalle.putExtras(getIntent().getExtras());
