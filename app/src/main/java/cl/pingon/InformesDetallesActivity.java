@@ -1,6 +1,9 @@
 package cl.pingon;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
@@ -24,6 +27,9 @@ import android.widget.VideoView;
 
 import java.io.File;
 import java.io.IOException;
+
+import cl.pingon.SQLite.TblChecklistDefinition;
+import cl.pingon.SQLite.TblChecklistHelper;
 
 public class InformesDetallesActivity extends AppCompatActivity {
 
@@ -52,6 +58,12 @@ public class InformesDetallesActivity extends AppCompatActivity {
     TextView TextViewSegundos;
     CountDownTimer countDowntimer;
 
+    SharedPreferences session;
+    TblChecklistHelper Checklist;
+
+    Integer FRM_ID;
+    Integer CHK_ID;
+    Integer ARN_ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,11 +79,16 @@ public class InformesDetallesActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
 
+        session = getSharedPreferences("session", Context.MODE_PRIVATE);
 
-
-
-
-
+        ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
+        FRM_ID = getIntent().getIntExtra("FRM_ID",0);
+        CHK_ID = getIntent().getIntExtra("CHK_ID",0);
+        Checklist = new TblChecklistHelper(this);
+        Cursor cursor = Checklist.getAllByFrmIdAndChkId(FRM_ID, CHK_ID);
+        while(cursor.moveToNext()){
+            Log.d("DETALLE", cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_NOMBRE_INTERNO)));
+        }
 
 
 

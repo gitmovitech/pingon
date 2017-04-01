@@ -22,8 +22,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 import cl.pingon.Libraries.RESTService;
-import cl.pingon.SQLite.TblAreaNegocioHelper;
-import cl.pingon.SQLite.TblChecklistHelper;
 import cl.pingon.SQLite.TblEmpBrandsDefinition;
 import cl.pingon.SQLite.TblEmpBrandsHelper;
 import cl.pingon.SQLite.TblEmpCompanyDefinition;
@@ -44,13 +42,11 @@ public class MainActivity extends AppCompatActivity {
     RESTService REST;
     AlertDialog.Builder alert;
 
-    TblAreaNegocioHelper AreaNegocio;
     TblEmpCompanyHelper EmpCompany;
     TblEmpProjectsHelper EmpProjects;
     TblEmpBrandsHelper EmpBrands;
     TblEmpProductsHelper EmpProducts;
     TblFormulariosHelper Formularios;
-    TblChecklistHelper Checklist;
 
     int Syncronized = 0;
     private Thread SyncEmpCompanyThread;
