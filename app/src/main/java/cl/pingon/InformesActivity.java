@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -28,6 +27,11 @@ public class InformesActivity extends AppCompatActivity {
     ArrayList<Informes> ArrayInformes;
     SharedPreferences session;
 
+    String ARN_ID;
+    String ARN_NOMBRE;
+    String FRM_NOMBRE;
+    Integer FRM_ID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,14 +48,10 @@ public class InformesActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
 
-        String ARN_ID = session.getString("arn_id", "");
-        String ARN_NOMBRE;
-        String FRM_NOMBRE;
-        Integer FRM_ID;
-        Log.d("ARN_ID", ARN_ID);
+        ARN_ID = session.getString("arn_id", "");
+
         Formularios = new TblFormulariosHelper(this);
         Cursor CursorFormularios = Formularios.getByArnId(Integer.parseInt(ARN_ID));
-
 
         ArrayInformes = new ArrayList<Informes>();
 
@@ -59,7 +59,6 @@ public class InformesActivity extends AppCompatActivity {
             ARN_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
             FRM_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
             FRM_ID = CursorFormularios.getInt(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_ID));
-            ARN_ID = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_ID));
             Informes = new Informes(ARN_NOMBRE, FRM_NOMBRE, FRM_ID);
             //Log.d(ARN_ID, String.valueOf(FRM_ID)+" "+ARN_NOMBRE+" "+FRM_NOMBRE);
             ArrayInformes.add(Informes);

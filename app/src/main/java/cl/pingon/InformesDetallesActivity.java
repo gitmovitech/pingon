@@ -58,8 +58,10 @@ public class InformesDetallesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_informes_detalles);
         getSupportActionBar();
-        this.setTitle(getIntent().getStringExtra("InformeSubtitle"));
-        getSupportActionBar().setSubtitle(getIntent().getStringExtra("TabSeccion"));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        this.setTitle(getIntent().getStringExtra("FRM_NOMBRE"));
+        getSupportActionBar().setSubtitle(getIntent().getStringExtra("CHK_NOMBRE"));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
@@ -272,5 +274,11 @@ public class InformesDetallesActivity extends AppCompatActivity {
         if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }
