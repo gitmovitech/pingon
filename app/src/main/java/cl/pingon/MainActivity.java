@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -569,6 +570,7 @@ public class MainActivity extends AppCompatActivity {
                                             ARN_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
                                             FRM_ID = CursorFormularios.getInt(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_ID));
                                             FRM_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
+                                            Log.d(String.valueOf(FRM_ID), FRM_NOMBRE+" - "+ARN_NOMBRE);
                                             if(ARN_ID == item.getInt(TblFormulariosDefinition.Entry.ARN_ID)){
                                                 addItem = false;
 

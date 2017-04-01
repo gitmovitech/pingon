@@ -50,27 +50,27 @@ public class InformesActivity extends AppCompatActivity {
         Integer FRM_ID;
         Log.d("ARN_ID", ARN_ID);
         Formularios = new TblFormulariosHelper(this);
-        Cursor cursor = Formularios.getByArnId(Integer.parseInt(ARN_ID));
+        Cursor CursorFormularios = Formularios.getByArnId(Integer.parseInt(ARN_ID));
 
-        IntentDetalle = new Intent(this, ReemplazoTabsActivity.class);
 
         ArrayInformes = new ArrayList<Informes>();
 
-        while(cursor.moveToNext()){
-            ARN_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
-            FRM_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
-            FRM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_ID));
-            ARN_ID = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_ID));
+        while(CursorFormularios.moveToNext()){
+            ARN_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
+            FRM_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
+            FRM_ID = CursorFormularios.getInt(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_ID));
+            ARN_ID = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_ID));
             Informes = new Informes(ARN_NOMBRE, FRM_NOMBRE, FRM_ID);
-            Log.d(ARN_ID, String.valueOf(FRM_ID)+" "+ARN_NOMBRE+" "+FRM_NOMBRE);
+            //Log.d(ARN_ID, String.valueOf(FRM_ID)+" "+ARN_NOMBRE+" "+FRM_NOMBRE);
             ArrayInformes.add(Informes);
         }
-        cursor.close();
+        CursorFormularios.close();
 
 
         ListDetalle = (ListView) findViewById(R.id.ListDetalle);
         ListDetalle.setAdapter(new AdapterInformes(this, ArrayInformes) {});
 
+        IntentDetalle = new Intent(this, ReemplazoTabsActivity.class);
         ListDetalle.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

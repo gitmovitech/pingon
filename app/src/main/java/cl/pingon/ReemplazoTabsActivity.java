@@ -25,9 +25,13 @@ public class ReemplazoTabsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reemplazo_tabs);
+
         getSupportActionBar();
-        this.setTitle(getIntent().getStringExtra("InformeTitle"));
-        getSupportActionBar().setSubtitle(getIntent().getStringExtra("InformeSubtitle"));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        this.setTitle(getIntent().getStringExtra("ARN_NOMBRE"));
+        getSupportActionBar().setSubtitle(getIntent().getStringExtra("FRM_NOMBRE"));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
@@ -50,4 +54,11 @@ public class ReemplazoTabsActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
 }
