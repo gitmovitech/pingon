@@ -65,7 +65,7 @@ public class ReemplazoTabsActivity extends AppCompatActivity {
         }
 
         Checklist = new TblChecklistHelper(this);
-        Cursor cursor = Checklist.getAllGroupByChkNombre();
+        Cursor cursor = Checklist.getAllGroupByChkNombre(FRM_ID);
         ArrayChecklist = new ArrayList<ModelChecklistSimple>();
         ModelChecklistSimple ChecklistItem;
         ListItems = new ArrayList<String>();

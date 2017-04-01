@@ -67,6 +67,15 @@ public class InformesDetallesActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
 
+
+
+
+
+
+
+
+
+
         IntentSign = new Intent(this, SignDrawActivity.class);
         CameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         ImageName = Environment.getExternalStorageDirectory() + "/tmp.jpg";
