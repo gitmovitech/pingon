@@ -85,7 +85,10 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     ViewReturn = Inflater.inflate(R.layout.item_texto, null);
                     TextoInput = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
                     TextoInput.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
-                    ChecklistFields.get(contador).setView(ViewReturn);
+                    EditText = (EditText) ViewReturn.findViewById(R.id.texto_input);
+                    if(ChecklistFields.get(contador).getCAM_MANDATORIO() == "S"){
+                        EditText.setError("Este campo es requerido");
+                    }
                     break;
                 case "firma":
                     ViewReturn = Inflater.inflate(R.layout.item_firma, null);
@@ -96,6 +99,10 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     ViewReturn = Inflater.inflate(R.layout.item_email, null);
                     TextoInput = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
                     TextoInput.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    ChecklistFields.get(contador).setView(ViewReturn);
+                    if(ChecklistFields.get(contador).getCAM_MANDATORIO() == "S"){
+                        EditText.setError("Este correo es requerido");
+                    }
                     break;
                 case "foto":
                     ViewReturn = Foto(Inflater, ChecklistFields.get(contador), contador);

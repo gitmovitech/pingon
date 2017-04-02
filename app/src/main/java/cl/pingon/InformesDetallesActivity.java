@@ -15,10 +15,12 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -64,6 +66,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
     TblChecklistHelper Checklist;
     AdapterChecklist AdapterChecklist;
     FloatingActionButton fabsave;
+    AlertDialog.Builder alert;
 
     Integer FRM_ID;
     Integer CHK_ID;
@@ -78,7 +81,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
     private String CAM_VAL_DEFECTO;
     private String CAM_PLACE_HOLDER;
 
-    private View WidgetView;
+    private EditText EditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +98,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
         }
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
+
+        alert = new AlertDialog.Builder(this);
 
         ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
         FRM_ID = getIntent().getIntExtra("FRM_ID", 0);
@@ -142,9 +147,21 @@ public class InformesDetallesActivity extends AppCompatActivity {
             public void onClick(View view) {
                 ArrayList<ModelChecklistFields> data = AdapterChecklist.getChecklistData();
                 for(int x = 0; x < data.size(); x++){
-                    Log.d("DATA FAB BUTTON", String.valueOf(data.get(x).getCAM_ID())+" - "+data.get(x).getCAM_NOMBRE_INTERNO()+" - "+data.get(x).getCAM_TIPO()+" - "+data.get(x).getCAM_MANDATORIO()+" - "+data.get(x).getValue());
-                    if(data.get(x).getValue() == null && data.get(x).getCAM_MANDATORIO().equals("S")){
-                        Log.d("Campo", "vacio");
+                    switch (data.get(x).getCAM_TIPO()){
+                        case "email":
+                            View WidgetView = data.get(x).getView();
+                            EditText = (EditText) WidgetView.findViewById(R.id.texto_input);
+                            if(data.get(x).getCAM_MANDATORIO().equals("S") && !EditText.getText().toString().contains("@")){
+                                EditText.setError("Este campo es requerido y debe ser un correo válido");
+                                EditText.requestFocus();
+                            } else {
+                                data.get(x).setValue(EditText.getText().toString());
+                                //GUARDAR EN BASE DE DATOS LOCAL
+                            }
+                            break;
+                        default:
+                            Log.d("DATA FAB BUTTON", String.valueOf(data.get(x).getCAM_ID())+" - "+data.get(x).getCAM_NOMBRE_INTERNO()+" - "+data.get(x).getCAM_TIPO()+" - "+data.get(x).getCAM_MANDATORIO()+" - "+data.get(x).getValue());
+                            break;
                     }
                 }
             }
