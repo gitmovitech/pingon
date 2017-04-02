@@ -2,11 +2,13 @@ package cl.pingon.Adapter;
 
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.design.widget.TextInputLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +19,8 @@ import java.util.ArrayList;
 
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.R;
+import cl.pingon.SQLite.TblListOptionsDefinition;
+import cl.pingon.SQLite.TblListOptionsHelper;
 
 public abstract class AdapterChecklist extends BaseAdapter {
 
@@ -152,6 +156,21 @@ public abstract class AdapterChecklist extends BaseAdapter {
         TextViewTitle = (TextView) view.findViewById(R.id.TextViewLabel);
         TextViewTitle.setHint(Fields.getCAM_NOMBRE_INTERNO());
         SpinnerSelect = (Spinner) view.findViewById(R.id.SpinnerSelect);
+
+        ArrayList<String> Listado = new ArrayList<String>();
+
+        Listado.add("Seleccione aquí");
+
+        TblListOptionsHelper DBHelper = new TblListOptionsHelper(context);
+        Cursor cursor = DBHelper.getAllByCamId(Fields.getCAM_ID());
+        while(cursor.moveToNext()){
+            Listado.add(cursor.getString(cursor.getColumnIndexOrThrow(TblListOptionsDefinition.Entry.OPC_VALOR)));
+        }
+        cursor.close();
+
+        ArrayAdapter ListadoAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, Listado);
+        SpinnerSelect.setAdapter(ListadoAdapter);
+
         return view;
     }
 }

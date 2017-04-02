@@ -54,4 +54,17 @@ public class TblListOptionsHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TblListOptionsDefinition.Entry.TABLE_NAME, projection, null, null, null, null, null);
         return cursor;
     }
+
+    public Cursor getAllByCamId(int CAM_ID){
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {
+                "FRM_ID",
+                "OPC_ID",
+                "CAM_ID",
+                "OPC_VALOR",
+                "OPC_NOMBRE"
+        };
+        Cursor cursor = db.query(TblListOptionsDefinition.Entry.TABLE_NAME, projection, "CAM_ID = ?", new String[]{String.valueOf(CAM_ID)}, null, null, null);
+        return cursor;
+    }
 }
