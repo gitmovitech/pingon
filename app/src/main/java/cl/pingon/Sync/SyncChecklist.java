@@ -3,7 +3,6 @@ package cl.pingon.Sync;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.support.v7.app.AlertDialog;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -28,7 +27,6 @@ public class SyncChecklist {
     Boolean addItem;
     JSONArray data;
     JSONObject item;
-    AlertDialog.Builder alert;
     Thread SyncThread;
     JSONObject RESTResponse;
     MainActivity MainActivity;
@@ -52,7 +50,6 @@ public class SyncChecklist {
         this.MainActivity = MainActivity;
         this.url = url;
 
-        alert = new AlertDialog.Builder(MainActivity.getApplicationContext());
         REST = new RESTService(MainActivity.getApplicationContext());
         HelperSQLite = new TblChecklistHelper(MainActivity.getApplicationContext());
     }
