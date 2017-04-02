@@ -22,4 +22,5 @@
     <string name="url_sync_emp_products">http://186.67.177.227:2234/emp-products</string>
     <string name="url_sync_formularios">http://186.67.177.227:2234/formularios</string>
     <string name="url_sync_checklist">http://186.67.177.227:2234/checklist</string>
+    <string name="url_sync_list_options">http://186.67.177.227:2234/list-options</string>
 </resources>

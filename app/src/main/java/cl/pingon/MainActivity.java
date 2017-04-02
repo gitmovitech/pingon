@@ -33,6 +33,7 @@ import cl.pingon.SQLite.TblEmpProjectsHelper;
 import cl.pingon.SQLite.TblFormulariosDefinition;
 import cl.pingon.SQLite.TblFormulariosHelper;
 import cl.pingon.Sync.SyncChecklist;
+import cl.pingon.Sync.SyncListOptions;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private Thread SyncFormulariosThread;
 
     String ChecklistUrl;
+    String ListOptionsUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
         REST = new RESTService(this);
         ChecklistUrl = getResources().getString(R.string.url_sync_checklist).toString()+"/"+session.getString("token","");
+        ListOptionsUrl = getResources().getString(R.string.url_sync_list_options).toString()+"/"+session.getString("token","");
 
         if(session.getString("token","") != "") {
 
@@ -86,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
 
             SyncChecklist Checklist = new SyncChecklist(this, ChecklistUrl);
             Checklist.Sync();
+            SyncListOptions ListOptions = new SyncListOptions(this, ListOptionsUrl);
+            ListOptions.Sync();
 
         }
     }
@@ -93,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void SyncReady(){
         Syncronized++;
-        if(Syncronized >= 6){
+        if(Syncronized >= 7){
             startActivity(IntentBuzon);
             finish();
         }
