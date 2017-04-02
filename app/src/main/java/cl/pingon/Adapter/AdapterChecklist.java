@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
     Button ButtonFoto;
     TextView TextViewTitle;
     EditText NumeroInput;
+    Spinner SpinnerSelect;
 
     public AdapterChecklist(Context context, ArrayList<ModelChecklistFields> ChecklistFields){
         this.ChecklistFields = ChecklistFields;
@@ -123,6 +125,14 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     TextViewTitle = (TextView) ViewReturn.findViewById(R.id.radio_label);
                     TextViewTitle.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
                     break;
+                case "lista":
+                    ViewReturn = Lista(Inflater, ChecklistFields.get(contador));
+                    break;
+                case "video":
+                    ViewReturn = Inflater.inflate(R.layout.item_video, null);
+                    TextViewTitle = (TextView) ViewReturn.findViewById(R.id.TextViewLabel);
+                    TextViewTitle.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    break;
                 default:
                     ViewReturn = Inflater.inflate(R.layout.item_title, null);
                     TextViewTitle = (TextView) ViewReturn.findViewById(R.id.TextViewTitle);
@@ -135,5 +145,13 @@ public abstract class AdapterChecklist extends BaseAdapter {
         contador++;
 
         return ViewReturn;
+    }
+
+    private View Lista(LayoutInflater Inflater, ModelChecklistFields Fields){
+        View view = Inflater.inflate(R.layout.item_select, null);
+        TextViewTitle = (TextView) view.findViewById(R.id.TextViewLabel);
+        TextViewTitle.setHint(Fields.getCAM_NOMBRE_INTERNO());
+        SpinnerSelect = (Spinner) view.findViewById(R.id.SpinnerSelect);
+        return view;
     }
 }

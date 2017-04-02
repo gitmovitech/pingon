@@ -15,12 +15,16 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/firma_label"
+            android:id="@+id/TextViewLabel"
             android:layout_width="match_parent"
             android:layout_marginBottom="10dp"
-            android:layout_height="match_parent"
-            android:text="Firma"/>
+            android:layout_height="match_parent"/>
 
+        <Spinner
+            android:id="@+id/SpinnerSelect"
+            android:spinnerMode="dialog"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
 
     </LinearLayout>
