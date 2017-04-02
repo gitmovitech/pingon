@@ -14,7 +14,10 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -60,6 +63,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
     SharedPreferences session;
     TblChecklistHelper Checklist;
     AdapterChecklist AdapterChecklist;
+    FloatingActionButton fabsave;
 
     Integer FRM_ID;
     Integer CHK_ID;
@@ -73,6 +77,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
     private String CAM_MANDATORIO;
     private String CAM_VAL_DEFECTO;
     private String CAM_PLACE_HOLDER;
+
+    private View WidgetView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +134,21 @@ public class InformesDetallesActivity extends AppCompatActivity {
         ListViewInformesDetalles.setAdapter(AdapterChecklist);
 
         ImageName = Environment.getExternalStorageDirectory() + "/pingon-foto-";
+
+
+        fabsave = (FloatingActionButton) findViewById(R.id.fabSave);
+        fabsave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ArrayList<ModelChecklistFields> data = AdapterChecklist.getChecklistData();
+                for(int x = 0; x < data.size(); x++){
+                    Log.d("DATA FAB BUTTON", String.valueOf(data.get(x).getCAM_ID())+" - "+data.get(x).getCAM_NOMBRE_INTERNO()+" - "+data.get(x).getCAM_TIPO()+" - "+data.get(x).getCAM_MANDATORIO()+" - "+data.get(x).getValue());
+                    if(data.get(x).getValue() == null && data.get(x).getCAM_MANDATORIO().equals("S")){
+                        Log.d("Campo", "vacio");
+                    }
+                }
+            }
+        });
 
         /*IntentSign = new Intent(this, SignDrawActivity.class);
 

@@ -42,6 +42,8 @@ public abstract class AdapterChecklist extends BaseAdapter {
     InformesDetallesActivity InformesDetallesActivity;
     ArrayList<ModelImage> ImageItems;
 
+    EditText EditText;
+
     public AdapterChecklist(Context context, ArrayList<ModelChecklistFields> ChecklistFields, InformesDetallesActivity InformesDetallesActivity){
         this.ChecklistFields = ChecklistFields;
         this.context = context;
@@ -83,6 +85,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     ViewReturn = Inflater.inflate(R.layout.item_texto, null);
                     TextoInput = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
                     TextoInput.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    ChecklistFields.get(contador).setView(ViewReturn);
                     break;
                 case "firma":
                     ViewReturn = Inflater.inflate(R.layout.item_firma, null);
@@ -155,6 +158,10 @@ public abstract class AdapterChecklist extends BaseAdapter {
         contador++;
 
         return ViewReturn;
+    }
+
+    public ArrayList<ModelChecklistFields> getChecklistData(){
+        return ChecklistFields;
     }
 
     private View Foto(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){

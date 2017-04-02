@@ -1,6 +1,8 @@
 package cl.pingon.Model;
 
 
+import android.view.View;
+
 public class ModelChecklistFields {
     private int CAM_ID;
     private int CAM_POSICION;
@@ -10,6 +12,9 @@ public class ModelChecklistFields {
     private String CAM_MANDATORIO;
     private String CAM_VAL_DEFECTO;
     private String CAM_PLACE_HOLDER;
+    private String VALUE;
+
+    private View view;
 
     public ModelChecklistFields(int CAM_ID, int CAM_POSICION, String CAM_NOMBRE_INTERNO, String CAM_NOMBRE_EXTERNO, String CAM_TIPO, String CAM_MANDATORIO, String CAM_VAL_DEFECTO, String CAM_PLACE_HOLDER){
         this.CAM_ID = CAM_ID;
@@ -20,6 +25,22 @@ public class ModelChecklistFields {
         this.CAM_MANDATORIO = CAM_MANDATORIO;
         this.CAM_VAL_DEFECTO = CAM_VAL_DEFECTO;
         this.CAM_PLACE_HOLDER = CAM_PLACE_HOLDER;
+    }
+
+    public void setView(View view){
+        this.view = view;
+    }
+
+    public View getView(){
+        return view;
+    }
+
+    public void setValue(String value){
+        this.VALUE = value;
+    }
+
+    public String getValue(){
+        return VALUE;
     }
 
     public int getCAM_ID(){
