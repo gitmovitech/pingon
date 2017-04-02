@@ -23,11 +23,12 @@
             android:text="Tomar una fotografía"/>
 
         <ImageButton
+            android:background="#FFFFFF"
             android:visibility="gone"
             android:id="@+id/ImageViewFoto"
             android:layout_width="match_parent"
-            android:scaleType="fitCenter"
-            android:layout_height="300dp" />
+            android:scaleType="centerCrop"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

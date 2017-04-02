@@ -1,7 +1,6 @@
 package cl.pingon.Sync;
 
 import android.content.ContentValues;
-import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -99,13 +98,13 @@ public class SyncFormularios {
 
                                 MainActivity.SyncReady();
 
-                                Cursor = HelperSQLite.getAll();
+                                /*Cursor = HelperSQLite.getAll();
                                 while(Cursor.moveToNext()) {
                                     FRM_ID = Cursor.getInt(Cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_ID));
                                     FRM_NOMBRE = Cursor.getString(Cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
                                     Log.d(String.valueOf(FRM_ID), FRM_NOMBRE);
                                     Log.d("----------", "--------------");
-                                }
+                                }*/
                             } else {
                                 MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
                             }

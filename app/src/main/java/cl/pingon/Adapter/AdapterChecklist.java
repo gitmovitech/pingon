@@ -3,6 +3,7 @@ package cl.pingon.Adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.support.design.widget.TextInputLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,12 +13,15 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import cl.pingon.InformesDetallesActivity;
 import cl.pingon.Model.ModelChecklistFields;
+import cl.pingon.Model.ModelImage;
 import cl.pingon.R;
 import cl.pingon.SQLite.TblListOptionsDefinition;
 import cl.pingon.SQLite.TblListOptionsHelper;
@@ -31,14 +35,18 @@ public abstract class AdapterChecklist extends BaseAdapter {
     private TextView Texto;
     TextInputLayout TextoInput;
     TextView TextViewLabel;
-    Button ButtonFoto;
     TextView TextViewTitle;
     EditText NumeroInput;
     Spinner SpinnerSelect;
 
-    public AdapterChecklist(Context context, ArrayList<ModelChecklistFields> ChecklistFields){
+    InformesDetallesActivity InformesDetallesActivity;
+    ArrayList<ModelImage> ImageItems;
+
+    public AdapterChecklist(Context context, ArrayList<ModelChecklistFields> ChecklistFields, InformesDetallesActivity InformesDetallesActivity){
         this.ChecklistFields = ChecklistFields;
         this.context = context;
+        this.InformesDetallesActivity = InformesDetallesActivity;
+        ImageItems = new ArrayList<ModelImage>();
     }
 
     @Override
@@ -87,9 +95,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     TextoInput.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
                     break;
                 case "foto":
-                    ViewReturn = Inflater.inflate(R.layout.item_foto, null);
-                    ButtonFoto = (Button) ViewReturn.findViewById(R.id.item_foto);
-                    ButtonFoto.setText(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    ViewReturn = Foto(Inflater, ChecklistFields.get(contador), contador);
                     break;
                 case "etiqueta":
                     ViewReturn = Inflater.inflate(R.layout.item_title, null);
@@ -151,6 +157,40 @@ public abstract class AdapterChecklist extends BaseAdapter {
         return ViewReturn;
     }
 
+    private View Foto(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
+        View view = Inflater.inflate(R.layout.item_foto, null);
+
+        Button ButtonFoto = (Button) view.findViewById(R.id.item_foto);
+        ButtonFoto.setText(Fields.getCAM_NOMBRE_INTERNO());
+        ButtonFoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InformesDetallesActivity.setCameraIntentAction(RowItemIndex);
+            }
+        });
+        ImageButton ImageButtonFoto = (ImageButton) view.findViewById(R.id.ImageViewFoto);
+        ImageButtonFoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InformesDetallesActivity.showPhoto(RowItemIndex);
+            }
+        });
+
+        ArrayList<ModelImage> ModelImageItems = new ArrayList<ModelImage>();
+        ImageItems.add(new ModelImage(RowItemIndex, ButtonFoto, ImageButtonFoto));
+
+        return view;
+    }
+
+    public void setImageButton(Bitmap ImageBitmapDecoded, int index){
+        for(int x = 0; x < ImageItems.size(); x++){
+            if(ImageItems.get(x).getIndex() == index){
+                ImageItems.get(x).getImageButtonFoto().setImageBitmap(ImageBitmapDecoded);
+                ImageItems.get(x).getImageButtonFoto().setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
     private View Lista(LayoutInflater Inflater, ModelChecklistFields Fields){
         View view = Inflater.inflate(R.layout.item_select, null);
         TextViewTitle = (TextView) view.findViewById(R.id.TextViewLabel);
@@ -173,4 +213,5 @@ public abstract class AdapterChecklist extends BaseAdapter {
 
         return view;
     }
+
 }

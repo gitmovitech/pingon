@@ -4,11 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -17,6 +22,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import cl.pingon.Adapter.AdapterChecklist;
@@ -53,6 +59,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
     SharedPreferences session;
     TblChecklistHelper Checklist;
+    AdapterChecklist AdapterChecklist;
 
     Integer FRM_ID;
     Integer CHK_ID;
@@ -117,13 +124,14 @@ public class InformesDetallesActivity extends AppCompatActivity {
         cursor.close();
 
         ListView ListViewInformesDetalles = (ListView) findViewById(R.id.ListViewInformesDetalles);
-        ListViewInformesDetalles.setAdapter(new AdapterChecklist(this, ArrayChecklist){});
+        AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this){};
+        ListViewInformesDetalles.setAdapter(AdapterChecklist);
 
+        ImageName = Environment.getExternalStorageDirectory() + "/pingon-foto-";
 
         /*IntentSign = new Intent(this, SignDrawActivity.class);
-        CameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        ImageName = Environment.getExternalStorageDirectory() + "/tmp.jpg";
-        CameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(ImageName)));
+
+
 
         //SOLUCION A LOS DIFERENTES TIPOS DE ITEMS http://android.amberfog.com/?p=296
 
@@ -164,26 +172,6 @@ public class InformesDetallesActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(IntentSign);
-            }
-        });
-
-
-        /**
-         * FOTOS
-         *
-        Button ButtonCamera = (Button) ItemFotoView.findViewById(R.id.item_foto);
-        ButtonCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivityForResult(CameraIntent, TAKE_PICTURE);
-            }
-        });
-
-        ImageButtonFoto = (ImageButton) ItemFotoView.findViewById(R.id.ImageViewFoto);
-        ImageButtonFoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showPhoto(Uri.fromFile(new File(ImageName)));
             }
         });
 
@@ -307,20 +295,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_VIDEO_CAPTURE){
-            Uri videoUri = data.getData();
-            VideoViewItem.setVideoURI(videoUri);
-            LinearLayoutVideo.setVisibility(View.VISIBLE);
-            VideoViewItem.setVisibility(View.VISIBLE);
-        }
-        if(requestCode == TAKE_PICTURE) {
-            Bitmap ImageBitmapDecoded = BitmapFactory.decodeFile(ImageName);
-            ImageButtonFoto.setImageBitmap(ImageBitmapDecoded);
-            ImageButtonFoto.setVisibility(View.VISIBLE);
-        }
-    }
+
 
     private void dispatchTakeVideoIntent() {
         Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
@@ -329,6 +304,65 @@ public class InformesDetallesActivity extends AppCompatActivity {
         }
     }*/
     }
+
+    public void showPhoto(int index){
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(new File(ImageName+index+".jpg")), "image/*");
+        startActivity(intent);
+    }
+
+    public void setCameraIntentAction(int index){
+        setRowItemIndex(index);
+        CameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        CameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(ImageName+index+".jpg")));
+        startActivityForResult(CameraIntent, TAKE_PICTURE);
+    }
+
+    int RowItemIndex = 0;
+    public void setRowItemIndex(int index){
+        this.RowItemIndex = index;
+    }
+
+    public int getRowItemIndex(){
+        return this.RowItemIndex;
+    }
+
+    private Bitmap ImageThumb(Bitmap Image){
+        int size = 400;
+        int width = Image.getWidth();
+        int height = Image.getHeight();
+        int nwidth = 0;
+        int nheight = 0;
+
+        if(height >= width){
+            nheight = (height*size) / width;
+            nwidth = size;
+        } else {
+            nwidth = (width*size) / height;
+            nheight = size;
+        }
+
+        Image = Bitmap.createScaledBitmap(Image, nwidth, nheight, false);
+        return Image;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(requestCode == TAKE_PICTURE) {
+            Bitmap ImageBitmapDecoded = ImageThumb(BitmapFactory.decodeFile(ImageName+RowItemIndex+".jpg"));
+            AdapterChecklist.setImageButton(ImageBitmapDecoded, RowItemIndex);
+        }
+
+        /*if (requestCode == REQUEST_VIDEO_CAPTURE){
+            Uri videoUri = data.getData();
+            VideoViewItem.setVideoURI(videoUri);
+            LinearLayoutVideo.setVisibility(View.VISIBLE);
+            VideoViewItem.setVisibility(View.VISIBLE);
+        }*/
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
