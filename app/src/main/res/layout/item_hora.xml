@@ -15,6 +15,7 @@
         android:layout_height="match_parent">
 
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/texto_input_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -22,7 +23,6 @@
                 android:id="@+id/hora_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Hora"
                 android:inputType="time"
                 android:maxLines="1" />
 

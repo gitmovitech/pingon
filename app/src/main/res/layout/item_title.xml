@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/activity_vertical_margin"
         android:id="@+id/TextViewTitle"
-        android:textSize="30dp"
+        android:textSize="20dp"
         android:textColor="@color/colorPrimary"
         android:text="Titulo"/>
 
