@@ -483,10 +483,10 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 ChecklistData = AdapterChecklist.getChecklistData();
                 String sign = data.getStringExtra("sign");
                 ModelChecklistFields Fields = ChecklistData.get(RowItemIndex);
-                Fields.setValue(sign);
                 ImageView signImage = (ImageView) Fields.getView().findViewById(R.id.ImageViewSign);
                 DrawSign firma = new DrawSign(sign);
                 firma.DrawToImageView(signImage);
+                Fields.setValue(firma.convertToBase64());
             }
         }
 

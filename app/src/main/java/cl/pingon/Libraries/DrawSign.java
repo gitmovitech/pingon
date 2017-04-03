@@ -6,7 +6,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.util.Base64;
 import android.widget.ImageView;
+
+import java.io.ByteArrayOutputStream;
 
 public class DrawSign {
 
@@ -15,6 +18,8 @@ public class DrawSign {
     Integer maxX = 0;
     Integer minY = 5000;
     Integer maxY = 0;
+
+    Bitmap image;
 
     public DrawSign(String sign){
         this.sign = cleanString(sign);
@@ -32,11 +37,23 @@ public class DrawSign {
         int width = maxX + minX;
         int height = maxY + minY;
 
-        Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(image);
         canvas.drawPath(path, paint);
 
         imageview.setImageBitmap(image);
+    }
+
+    public String convertToBase64(){
+        String out = "";
+        try {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            image.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream .toByteArray();
+            out = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        } catch (Exception e){}
+
+        return out;
     }
 
     private Path convertToPath(String sign){
