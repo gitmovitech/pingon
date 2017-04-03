@@ -486,7 +486,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 ImageView signImage = (ImageView) Fields.getView().findViewById(R.id.ImageViewSign);
                 DrawSign firma = new DrawSign(sign);
                 firma.DrawToImageView(signImage);
-                Fields.setValue(firma.convertToBase64());
+                Fields.setValue(sign+"<>"+firma.convertToBase64());
             }
         }
 
