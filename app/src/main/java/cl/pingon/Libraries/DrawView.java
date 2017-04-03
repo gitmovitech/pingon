@@ -35,8 +35,12 @@ public class DrawView extends View {
         Canvas = canvas;
     }
 
-    public ArrayList<SignPoints> getPath(){
+    public ArrayList<SignPoints> getPoints(){
         return SignPoints;
+    }
+
+    public Path getPath(){
+        return path;
     }
 
     public boolean onTouchEvent(MotionEvent event) {

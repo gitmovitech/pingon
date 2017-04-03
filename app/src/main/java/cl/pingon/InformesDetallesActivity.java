@@ -34,6 +34,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import cl.pingon.Adapter.AdapterChecklist;
+import cl.pingon.Libraries.DrawSign;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.SQLite.TblChecklistDefinition;
 import cl.pingon.SQLite.TblChecklistHelper;
@@ -483,7 +484,9 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 String sign = data.getStringExtra("sign");
                 ModelChecklistFields Fields = ChecklistData.get(RowItemIndex);
                 Fields.setValue(sign);
-                DrawImage(Fields.getView(), sign);
+                ImageView signImage = (ImageView) Fields.getView().findViewById(R.id.ImageViewSign);
+                DrawSign firma = new DrawSign(sign);
+                firma.DrawToImageView(signImage);
             }
         }
 
@@ -493,20 +496,6 @@ public class InformesDetallesActivity extends AppCompatActivity {
             LinearLayoutVideo.setVisibility(View.VISIBLE);
             VideoViewItem.setVisibility(View.VISIBLE);
         }*/
-    }
-
-    private void DrawImage(View view, String sign){
-        ImageView signImage = (ImageView) view.findViewById(R.id.ImageViewSign);
-        sign = sign.replace("[","");
-        sign = sign.replace("]","");
-        sign = sign.replace("{","");
-        sign = sign.replace("}","");
-        String[] signArray = sign.split(",");
-        String[] signItem;
-        for(int x = 0; x < signArray.length;x++){
-            signItem = signArray[x].split(":");
-            Log.d(">>>",signItem[0]+"x"+signItem[1]);
-        }
     }
 
     @Override
