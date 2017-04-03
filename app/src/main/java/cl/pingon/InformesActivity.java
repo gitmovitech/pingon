@@ -31,6 +31,7 @@ public class InformesActivity extends AppCompatActivity {
     String ARN_NOMBRE;
     String FRM_NOMBRE;
     Integer FRM_ID;
+    String USU_ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,7 @@ public class InformesActivity extends AppCompatActivity {
         }
 
         ARN_ID = session.getString("arn_id", "");
+        USU_ID = session.getString("user_id", "");
 
         Formularios = new TblFormulariosHelper(this);
         Cursor CursorFormularios = Formularios.getByArnId(Integer.parseInt(ARN_ID));

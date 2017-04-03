@@ -17,7 +17,8 @@ public class TblDocumentoHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String query = "CREATE TABLE "+ TblDocumentoDefinition.Entry.TABLE_NAME;
-        query += " ("+ TblDocumentoDefinition.Entry.DOC_ID+" INTEGER NOT NULL,";
+        query += " ("+ TblDocumentoDefinition.Entry.ID+" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,";
+        query += TblDocumentoDefinition.Entry.DOC_ID+" INTEGER NULL,";
         query += TblDocumentoDefinition.Entry.USU_ID+" INTEGER NOT NULL,";
         query += TblDocumentoDefinition.Entry.FRM_ID+" INTEGER NOT NULL,";
         query += TblDocumentoDefinition.Entry.DOC_NOMBRE+" TEXT NOT NULL,";
@@ -32,6 +33,7 @@ public class TblDocumentoHelper extends SQLiteOpenHelper {
         query += TblDocumentoDefinition.Entry.DOC_EXT_OBRA+ " TEXT NOT NULL,";
         query += TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE+ " INTEGER NOT NULL,";
         query += TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO+ " INTEGER NOT NULL)";
+        query += TblDocumentoDefinition.Entry.SEND_STATUS+ " TEXT NOT NULL)";
         db.execSQL(query);
     }
 

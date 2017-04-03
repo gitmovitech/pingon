@@ -65,6 +65,9 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     ArrayAdapter<String> ArrayAdapterEmpProduct;
     ArrayAdapter<String> ArrayAdapterEmpSerie;
 
+    Integer COMPANY_ID;
+    Integer PROYECTO_ID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -212,9 +215,23 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                IntentInformes.putExtra("DOC_EXT_ID_CLIENTE", COMPANY_ID);
+                IntentInformes.putExtra("DOC_EXT_NOMBRE_CLIENTE", AutocompleteClientes.getText().toString());
+                IntentInformes.putExtra("DOC_EXT_ID_PROYECTO", PROYECTO_ID);
+                IntentInformes.putExtra("DOC_EXT_OBRA", SpinnerObras.getSelectedItem().toString());
+                IntentInformes.putExtra("DOC_EXT_EQUIPO", SpinnerEquipo.getSelectedItem().toString());
+                IntentInformes.putExtra("DOC_EXT_MARCA_EQUIPO", SpinnerMarca.getSelectedItem().toString());
+                IntentInformes.putExtra("DOC_EXT_NUMERO_SERIE", SpinnerSerie.getSelectedItem().toString());
+
+                /*Log.d("DOC_EXT_ID_CLIENTE", String.valueOf(COMPANY_ID));
+                Log.d("DOC_EXT_NOMBRE_CLIENTE", AutocompleteClientes.getText().toString());
+                Log.d("DOC_EXT_ID_PROYECTO", String.valueOf(PROYECTO_ID));
+                Log.d("DOC_EXT_OBRA", SpinnerObras.getSelectedItem().toString());
+                Log.d("DOC_EXT_EQUIPO", SpinnerEquipo.getSelectedItem().toString());
+                Log.d("DOC_EXT_MARCA_EQUIPO", SpinnerMarca.getSelectedItem().toString());
+                Log.d("DOC_EXT_NUMERO_SERIE", SpinnerSerie.getSelectedItem().toString());*/
+
                 startActivity(IntentInformes);
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
             }
         });
 
@@ -239,6 +256,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
 
     private void getProjectsInSpinner(int Index){
         ModelEmpCompany Item = ArrayListModelEmpCompany.get(Index);
+        COMPANY_ID = Item.getID();
         Cursor cursor = EmpProject.getByCompanyId(Item.getID());
         int RowValueId;
         String RowValueName;
@@ -270,6 +288,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
 
     private void getBrandInSpinner(int Index){
         ModelEmpProjects Item = ArrayListModelEmpProjects.get(Index);
+        PROYECTO_ID = Item.getID();
         Cursor cursor = EmpBrand.getByProjectId(Item.getID());
         int RowValueId;
         String RowValueName;

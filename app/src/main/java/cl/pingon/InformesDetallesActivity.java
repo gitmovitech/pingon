@@ -1,5 +1,6 @@
 package cl.pingon;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,6 +35,8 @@ import cl.pingon.Adapter.AdapterChecklist;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.SQLite.TblChecklistDefinition;
 import cl.pingon.SQLite.TblChecklistHelper;
+import cl.pingon.SQLite.TblDocumentoDefinition;
+import cl.pingon.SQLite.TblDocumentoHelper;
 
 public class InformesDetallesActivity extends AppCompatActivity {
 
@@ -81,6 +84,11 @@ public class InformesDetallesActivity extends AppCompatActivity {
     private String CAM_VAL_DEFECTO;
     private String CAM_PLACE_HOLDER;
 
+    private int LOCAL_DOC_ID;
+    private int REG_ID;
+    private int USU_ID;
+    private int DOC_EXT_ID_CLIENTE;
+
     private EditText EditText;
 
     @Override
@@ -101,9 +109,14 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         alert = new AlertDialog.Builder(this);
 
+        USU_ID = Integer.parseInt(session.getString("user_id", ""));
         ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
         FRM_ID = getIntent().getIntExtra("FRM_ID", 0);
         CHK_ID = getIntent().getIntExtra("CHK_ID", 0);
+        LOCAL_DOC_ID = getIntent().getIntExtra("LOCAL_DOC_ID", 0);
+        REG_ID = getIntent().getIntExtra("REG_ID", 0);
+        DOC_EXT_ID_CLIENTE = getIntent().getIntExtra("DOC_EXT_ID_CLIENTE", 0);
+
         Checklist = new TblChecklistHelper(this);
         Cursor cursor = Checklist.getAllByFrmIdAndChkId(FRM_ID, CHK_ID);
         ArrayList<ModelChecklistFields> ArrayChecklist = new ArrayList<ModelChecklistFields>();
@@ -140,11 +153,19 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         ImageName = Environment.getExternalStorageDirectory() + "/pingon-foto-";
 
+        TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
+        final ContentValues InsertValues = new ContentValues();
 
         fabsave = (FloatingActionButton) findViewById(R.id.fabSave);
         fabsave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                InsertValues.put(TblDocumentoDefinition.Entry.USU_ID, USU_ID);
+                InsertValues.put(TblDocumentoDefinition.Entry.FRM_ID, FRM_ID);
+                InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE, DOC_EXT_ID_CLIENTE);
+                InsertValues.put(TblDocumentoDefinition.Entry.SEND_STATUS, "DRAFT");
+
                 ArrayList<ModelChecklistFields> data = AdapterChecklist.getChecklistData();
                 for(int x = 0; x < data.size(); x++){
                     switch (data.get(x).getCAM_TIPO()){
@@ -156,7 +177,6 @@ public class InformesDetallesActivity extends AppCompatActivity {
                                 EditText.requestFocus();
                             } else {
                                 data.get(x).setValue(EditText.getText().toString());
-                                //GUARDAR EN BASE DE DATOS LOCAL
                             }
                             break;
                         default:

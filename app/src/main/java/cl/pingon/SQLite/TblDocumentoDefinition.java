@@ -7,6 +7,7 @@ public class TblDocumentoDefinition {
     public static abstract class Entry implements BaseColumns {
         public static final String TABLE_NAME ="tbl_documento";
 
+        public static final String ID = "ID";
         public static final String DOC_ID = "DOC_ID";
         public static final String USU_ID = "USU_ID";
         public static final String FRM_ID = "FRM_ID";
@@ -22,5 +23,6 @@ public class TblDocumentoDefinition {
         public static final String DOC_EXT_OBRA = "DOC_EXT_OBRA";
         public static final String DOC_EXT_ID_CLIENTE = "DOC_EXT_ID_CLIENTE";
         public static final String DOC_EXT_ID_PROYECTO = "DOC_EXT_ID_PROYECTO";
+        public static final String SEND_STATUS = "SEND_STATUS";
     }
 }
