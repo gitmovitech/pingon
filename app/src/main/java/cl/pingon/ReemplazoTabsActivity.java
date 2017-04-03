@@ -89,6 +89,7 @@ public class ReemplazoTabsActivity extends AppCompatActivity {
         Listado.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
+                IntentDetalle.putExtras(getIntent().getExtras());
                 IntentDetalle.putExtra("CHK_ID", ArrayChecklist.get(index).getCHK_ID());
                 IntentDetalle.putExtra("CHK_NOMBRE", ArrayChecklist.get(index).getCHK_NOMBRE());
                 startActivity(IntentDetalle);

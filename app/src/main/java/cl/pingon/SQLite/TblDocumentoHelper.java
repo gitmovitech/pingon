@@ -21,18 +21,18 @@ public class TblDocumentoHelper extends SQLiteOpenHelper {
         query += TblDocumentoDefinition.Entry.DOC_ID+" INTEGER NULL,";
         query += TblDocumentoDefinition.Entry.USU_ID+" INTEGER NOT NULL,";
         query += TblDocumentoDefinition.Entry.FRM_ID+" INTEGER NOT NULL,";
-        query += TblDocumentoDefinition.Entry.DOC_NOMBRE+" TEXT NOT NULL,";
-        query += TblDocumentoDefinition.Entry.DOC_FECHA_CREACION+" TEXT NOT NULL,";
-        query += TblDocumentoDefinition.Entry.DOC_FECHA_MODIFICACION+" TEXT NOT NULL,";
-        query += TblDocumentoDefinition.Entry.DOC_PDF+ " TEXT NOT NULL,";
-        query += TblDocumentoDefinition.Entry.DOC_DECLARACION+ " TEXT NOT NULL,";
+        query += TblDocumentoDefinition.Entry.DOC_NOMBRE+" TEXT NULL,";
+        query += TblDocumentoDefinition.Entry.DOC_FECHA_CREACION+" TEXT NULL,";
+        query += TblDocumentoDefinition.Entry.DOC_FECHA_MODIFICACION+" TEXT NULL,";
+        query += TblDocumentoDefinition.Entry.DOC_PDF+ " TEXT NULL,";
+        query += TblDocumentoDefinition.Entry.DOC_DECLARACION+ " TEXT NULL,";
         query += TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO+ " TEXT NOT NULL,";
         query += TblDocumentoDefinition.Entry.DOC_EXT_MARCA_EQUIPO+ " TEXT NOT NULL,";
         query += TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE+ " TEXT NOT NULL,";
         query += TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE+ " TEXT NOT NULL,";
         query += TblDocumentoDefinition.Entry.DOC_EXT_OBRA+ " TEXT NOT NULL,";
         query += TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE+ " INTEGER NOT NULL,";
-        query += TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO+ " INTEGER NOT NULL)";
+        query += TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO+ " INTEGER NOT NULL,";
         query += TblDocumentoDefinition.Entry.SEND_STATUS+ " TEXT NOT NULL)";
         db.execSQL(query);
     }
@@ -42,9 +42,12 @@ public class TblDocumentoHelper extends SQLiteOpenHelper {
 
     }
 
-    public void insert(ContentValues values){
+    public int insert(ContentValues values){
         SQLiteDatabase db = getReadableDatabase();
         db.insert(TblDocumentoDefinition.Entry.TABLE_NAME, null, values);
+        Cursor cursor = getAll();
+        cursor.moveToLast();
+        return cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.ID));
     }
 
     public void update(Integer id, ContentValues values){
@@ -56,6 +59,7 @@ public class TblDocumentoHelper extends SQLiteOpenHelper {
     public Cursor getAll(){
         SQLiteDatabase db = getReadableDatabase();
         String[] projection = {
+                "ID",
                 "DOC_ID",
                 "USU_ID",
                 "FRM_ID",

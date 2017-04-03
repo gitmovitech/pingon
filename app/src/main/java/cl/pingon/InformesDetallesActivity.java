@@ -87,9 +87,18 @@ public class InformesDetallesActivity extends AppCompatActivity {
     private int LOCAL_DOC_ID;
     private int REG_ID;
     private int USU_ID;
-    private int DOC_EXT_ID_CLIENTE;
+
+    Integer DOC_EXT_ID_CLIENTE;
+    Integer DOC_EXT_ID_PROYECTO;
+    String DOC_EXT_OBRA;
+    String DOC_EXT_EQUIPO;
+    String DOC_EXT_MARCA_EQUIPO;
+    String DOC_EXT_NUMERO_SERIE;
+    String DOC_EXT_NOMBRE_CLIENTE;
 
     private EditText EditText;
+
+    TblDocumentoHelper Documentos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +124,14 @@ public class InformesDetallesActivity extends AppCompatActivity {
         CHK_ID = getIntent().getIntExtra("CHK_ID", 0);
         LOCAL_DOC_ID = getIntent().getIntExtra("LOCAL_DOC_ID", 0);
         REG_ID = getIntent().getIntExtra("REG_ID", 0);
+
         DOC_EXT_ID_CLIENTE = getIntent().getIntExtra("DOC_EXT_ID_CLIENTE", 0);
+        DOC_EXT_ID_PROYECTO = getIntent().getIntExtra("DOC_EXT_ID_PROYECTO", 0);
+        DOC_EXT_OBRA = getIntent().getStringExtra("DOC_EXT_OBRA");
+        DOC_EXT_EQUIPO = getIntent().getStringExtra("DOC_EXT_EQUIPO");
+        DOC_EXT_MARCA_EQUIPO = getIntent().getStringExtra("DOC_EXT_MARCA_EQUIPO");
+        DOC_EXT_NUMERO_SERIE = getIntent().getStringExtra("DOC_EXT_NUMERO_SERIE");
+        DOC_EXT_NOMBRE_CLIENTE = getIntent().getStringExtra("DOC_EXT_NOMBRE_CLIENTE");
 
         Checklist = new TblChecklistHelper(this);
         Cursor cursor = Checklist.getAllByFrmIdAndChkId(FRM_ID, CHK_ID);
@@ -153,7 +169,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         ImageName = Environment.getExternalStorageDirectory() + "/pingon-foto-";
 
-        TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
+        Documentos = new TblDocumentoHelper(this);
         final ContentValues InsertValues = new ContentValues();
 
         fabsave = (FloatingActionButton) findViewById(R.id.fabSave);
@@ -164,8 +180,15 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 InsertValues.put(TblDocumentoDefinition.Entry.USU_ID, USU_ID);
                 InsertValues.put(TblDocumentoDefinition.Entry.FRM_ID, FRM_ID);
                 InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE, DOC_EXT_ID_CLIENTE);
+                InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO, DOC_EXT_ID_PROYECTO);
+                InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_OBRA, DOC_EXT_OBRA);
+                InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO, DOC_EXT_EQUIPO);
+                InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_MARCA_EQUIPO, DOC_EXT_MARCA_EQUIPO);
+                InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE, DOC_EXT_NUMERO_SERIE);
+                InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE, DOC_EXT_NOMBRE_CLIENTE);
                 InsertValues.put(TblDocumentoDefinition.Entry.SEND_STATUS, "DRAFT");
 
+                int add = 1;
                 ArrayList<ModelChecklistFields> data = AdapterChecklist.getChecklistData();
                 for(int x = 0; x < data.size(); x++){
                     switch (data.get(x).getCAM_TIPO()){
@@ -175,6 +198,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                             if(data.get(x).getCAM_MANDATORIO().equals("S") && !EditText.getText().toString().contains("@")){
                                 EditText.setError("Este campo es requerido y debe ser un correo válido");
                                 EditText.requestFocus();
+                                add = 0;
                             } else {
                                 data.get(x).setValue(EditText.getText().toString());
                             }
@@ -183,6 +207,16 @@ public class InformesDetallesActivity extends AppCompatActivity {
                             Log.d("DATA FAB BUTTON", String.valueOf(data.get(x).getCAM_ID())+" - "+data.get(x).getCAM_NOMBRE_INTERNO()+" - "+data.get(x).getCAM_TIPO()+" - "+data.get(x).getCAM_MANDATORIO()+" - "+data.get(x).getValue());
                             break;
                     }
+                }
+
+                if(add == 1){
+                    int ID = Documentos.insert(InsertValues);
+                    session.edit().putInt("LOCAL_DOC_ID", ID).commit();
+
+                    for(int x = 0; x < data.size(); x++){
+
+                    }
+
                 }
             }
         });
