@@ -17,13 +17,15 @@ public class TblRegistroHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String query = "CREATE TABLE "+ TblRegistroDefinition.Entry.TABLE_NAME;
-        query += " ("+ TblRegistroDefinition.Entry.DOC_ID+" INTEGER NOT NULL,";
+        query += " ("+ TblRegistroDefinition.Entry.DOC_ID+" INTEGER NULL,";
+        query += TblRegistroDefinition.Entry.LOCAL_DOC_ID+" LOCAL_DOC_ID NOT NULL,";
         query += TblRegistroDefinition.Entry.CAM_ID+" INTEGER NOT NULL,";
         query += TblRegistroDefinition.Entry.FRM_ID+" INTEGER NOT NULL,";
-        query += TblRegistroDefinition.Entry.REG_ID+" INTEGER NOT NULL,";
+        query += TblRegistroDefinition.Entry.REG_ID+" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,";
         query += TblRegistroDefinition.Entry.REG_TIPO+" TEXT NOT NULL,";
         query += TblRegistroDefinition.Entry.REG_VALOR+" TEXT NOT NULL,";
-        query += TblRegistroDefinition.Entry.REG_METADATOS+ " INTEGER NOT NULL)";
+        query += TblRegistroDefinition.Entry.SEND_STATUS+" TEXT NOT NULL,";
+        query += TblRegistroDefinition.Entry.REG_METADATOS+ " INTEGER NULL)";
         db.execSQL(query);
     }
 

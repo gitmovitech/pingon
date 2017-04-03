@@ -37,6 +37,8 @@ import cl.pingon.SQLite.TblChecklistDefinition;
 import cl.pingon.SQLite.TblChecklistHelper;
 import cl.pingon.SQLite.TblDocumentoDefinition;
 import cl.pingon.SQLite.TblDocumentoHelper;
+import cl.pingon.SQLite.TblRegistroDefinition;
+import cl.pingon.SQLite.TblRegistroHelper;
 
 public class InformesDetallesActivity extends AppCompatActivity {
 
@@ -99,6 +101,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
     private EditText EditText;
 
     TblDocumentoHelper Documentos;
+    TblRegistroHelper Registros;
+    ContentValues InsertValues;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,7 +174,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
         ImageName = Environment.getExternalStorageDirectory() + "/pingon-foto-";
 
         Documentos = new TblDocumentoHelper(this);
-        final ContentValues InsertValues = new ContentValues();
+        Registros = new TblRegistroHelper(this);
+        InsertValues = new ContentValues();
 
         fabsave = (FloatingActionButton) findViewById(R.id.fabSave);
         fabsave.setOnClickListener(new View.OnClickListener() {
@@ -214,9 +219,22 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     session.edit().putInt("LOCAL_DOC_ID", ID).commit();
 
                     for(int x = 0; x < data.size(); x++){
-
+                        if(data.get(x).getValue() != null){
+                            InsertValues = new ContentValues();
+                            InsertValues.put(TblRegistroDefinition.Entry.LOCAL_DOC_ID, ID);
+                            InsertValues.put(TblRegistroDefinition.Entry.CAM_ID, data.get(x).getCAM_ID());
+                            InsertValues.put(TblRegistroDefinition.Entry.FRM_ID, FRM_ID);
+                            InsertValues.put(TblRegistroDefinition.Entry.REG_TIPO, data.get(x).getCAM_TIPO());
+                            InsertValues.put(TblRegistroDefinition.Entry.SEND_STATUS, "DRAFT");
+                            InsertValues.put(TblRegistroDefinition.Entry.REG_VALOR, data.get(x).getValue());
+                            Registros.insert(InsertValues);
+                        }
                     }
 
+                    Cursor cursor = Registros.getAll();
+                    while (cursor.moveToNext()){
+                        Log.d("REGISTRO", cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
+                    }
                 }
             }
         });
