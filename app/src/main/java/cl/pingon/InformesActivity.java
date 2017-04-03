@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -33,6 +34,14 @@ public class InformesActivity extends AppCompatActivity {
     Integer FRM_ID;
     String USU_ID;
 
+    Integer DOC_EXT_ID_CLIENTE;
+    Integer DOC_EXT_ID_PROYECTO;
+    String DOC_EXT_OBRA;
+    String DOC_EXT_EQUIPO;
+    String DOC_EXT_MARCA_EQUIPO;
+    String DOC_EXT_NUMERO_SERIE;
+    String DOC_EXT_NOMBRE_CLIENTE;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +49,16 @@ public class InformesActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        DOC_EXT_ID_CLIENTE = getIntent().getIntExtra("DOC_EXT_ID_CLIENTE", 0);
+        DOC_EXT_ID_PROYECTO = getIntent().getIntExtra("DOC_EXT_ID_PROYECTO", 0);
+        DOC_EXT_OBRA = getIntent().getStringExtra("DOC_EXT_OBRA");
+        DOC_EXT_EQUIPO = getIntent().getStringExtra("DOC_EXT_EQUIPO");
+        DOC_EXT_MARCA_EQUIPO = getIntent().getStringExtra("DOC_EXT_MARCA_EQUIPO");
+        DOC_EXT_NUMERO_SERIE = getIntent().getStringExtra("DOC_EXT_NUMERO_SERIE");
+        DOC_EXT_NOMBRE_CLIENTE = getIntent().getStringExtra("DOC_EXT_NOMBRE_CLIENTE");
+
+        Log.d("DOC_EXT_NOMBRE_CLIENTE", DOC_EXT_NOMBRE_CLIENTE);
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
 
@@ -75,6 +94,7 @@ public class InformesActivity extends AppCompatActivity {
         ListDetalle.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                IntentReemplazoTabs.putExtras(getIntent().getExtras());
                 IntentReemplazoTabs.putExtra("FRM_ID",ArrayInformes.get(i).getId());
                 IntentReemplazoTabs.putExtra("ARN_NOMBRE",ArrayInformes.get(i).getTitle());
                 IntentReemplazoTabs.putExtra("FRM_NOMBRE",ArrayInformes.get(i).getSubtitle());
