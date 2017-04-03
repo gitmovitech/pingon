@@ -29,8 +29,8 @@ public class DrawSign {
         paint.setStrokeWidth(5);
         paint.setStyle(Paint.Style.STROKE);
 
-        int width = maxX;
-        int height = maxY;
+        int width = maxX + minX;
+        int height = maxY + minY;
 
         Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(image);

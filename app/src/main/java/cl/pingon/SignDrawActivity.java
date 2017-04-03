@@ -87,4 +87,10 @@ public class SignDrawActivity extends AppCompatActivity {
         //bitmap = Bitmap.createBitmap(drawView.getWidth(), drawView.getHeight(), Bitmap.Config.ARGB_8888);
         //Canvas canvas = new Canvas(bitmap);
     }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 }
