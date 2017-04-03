@@ -235,6 +235,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     while (cursor.moveToNext()){
                         Log.d("REGISTRO", cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
                     }
+                    finish();
                 }
             }
         });
