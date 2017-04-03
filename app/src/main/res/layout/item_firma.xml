@@ -27,6 +27,11 @@
             android:drawableLeft="@android:drawable/ic_menu_edit"
             android:text="Firmar"/>
 
+        <ImageView
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:id="@+id/ImageViewSign"/>
 
     </LinearLayout>
 

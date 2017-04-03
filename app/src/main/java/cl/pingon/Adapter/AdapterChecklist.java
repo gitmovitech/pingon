@@ -2,6 +2,7 @@ package cl.pingon.Adapter;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.support.design.widget.TextInputLayout;
@@ -25,6 +26,7 @@ import cl.pingon.Model.ModelImage;
 import cl.pingon.R;
 import cl.pingon.SQLite.TblListOptionsDefinition;
 import cl.pingon.SQLite.TblListOptionsHelper;
+import cl.pingon.SignDrawActivity;
 
 public abstract class AdapterChecklist extends BaseAdapter {
 
@@ -41,6 +43,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
 
     InformesDetallesActivity InformesDetallesActivity;
     ArrayList<ModelImage> ImageItems;
+    Intent IntentSign;
 
     EditText EditText;
 
@@ -49,6 +52,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
         this.context = context;
         this.InformesDetallesActivity = InformesDetallesActivity;
         ImageItems = new ArrayList<ModelImage>();
+        IntentSign = new Intent(context, SignDrawActivity.class);
     }
 
     @Override
@@ -85,24 +89,16 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     ViewReturn = Inflater.inflate(R.layout.item_texto, null);
                     TextoInput = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
                     TextoInput.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
-                    EditText = (EditText) ViewReturn.findViewById(R.id.texto_input);
-                    if(ChecklistFields.get(contador).getCAM_MANDATORIO() == "S"){
-                        EditText.setError("Este campo es requerido");
-                    }
+                    ChecklistFields.get(contador).setView(ViewReturn);
                     break;
                 case "firma":
-                    ViewReturn = Inflater.inflate(R.layout.item_firma, null);
-                    TextViewLabel = (TextView) ViewReturn.findViewById(R.id.TextViewLabel);
-                    TextViewLabel.setText(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    ViewReturn = Firma(Inflater, ChecklistFields.get(contador), contador);
                     break;
                 case "email":
                     ViewReturn = Inflater.inflate(R.layout.item_email, null);
                     TextoInput = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
                     TextoInput.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
                     ChecklistFields.get(contador).setView(ViewReturn);
-                    if(ChecklistFields.get(contador).getCAM_MANDATORIO() == "S"){
-                        EditText.setError("Este correo es requerido");
-                    }
                     break;
                 case "foto":
                     ViewReturn = Foto(Inflater, ChecklistFields.get(contador), contador);
@@ -171,6 +167,22 @@ public abstract class AdapterChecklist extends BaseAdapter {
         return ChecklistFields;
     }
 
+    private View Firma(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
+        View view = Inflater.inflate(R.layout.item_firma, null);
+        TextViewLabel = (TextView) view.findViewById(R.id.TextViewLabel);
+        TextViewLabel.setText(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+        Button ButtonFirma = (Button) view.findViewById(R.id.item_firma);
+        ButtonFirma.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                IntentSign.putExtra("RowItemIndex", String.valueOf(RowItemIndex));
+                InformesDetallesActivity.startActivityForResult(IntentSign, 99);
+            }
+        });
+        Fields.setView(view);
+        return view;
+    }
+
     private View Foto(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
         View view = Inflater.inflate(R.layout.item_foto, null);
 
@@ -192,7 +204,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
 
         ArrayList<ModelImage> ModelImageItems = new ArrayList<ModelImage>();
         ImageItems.add(new ModelImage(RowItemIndex, ButtonFoto, ImageButtonFoto));
-
+        Fields.setView(view);
         return view;
     }
 

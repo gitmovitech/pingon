@@ -1,5 +1,6 @@
 package cl.pingon;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -54,6 +56,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
     private static int TAKE_PICTURE = 1;
     private static int SELECT_PICTURE = 2;
+    private static int SIGNED = 99;
     private String ImageName = "";
 
     private static final int REQUEST_VIDEO_CAPTURE = 1;
@@ -103,6 +106,10 @@ public class InformesDetallesActivity extends AppCompatActivity {
     TblDocumentoHelper Documentos;
     TblRegistroHelper Registros;
     ContentValues InsertValues;
+    View WidgetView;
+
+    public static Activity activity;
+    private ArrayList<ModelChecklistFields> ChecklistData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +124,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
+
+        activity = this;
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
 
@@ -198,10 +207,21 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 for(int x = 0; x < data.size(); x++){
                     switch (data.get(x).getCAM_TIPO()){
                         case "email":
-                            View WidgetView = data.get(x).getView();
+                            WidgetView = data.get(x).getView();
                             EditText = (EditText) WidgetView.findViewById(R.id.texto_input);
                             if(data.get(x).getCAM_MANDATORIO().equals("S") && !EditText.getText().toString().contains("@")){
                                 EditText.setError("Este campo es requerido y debe ser un correo válido");
+                                EditText.requestFocus();
+                                add = 0;
+                            } else {
+                                data.get(x).setValue(EditText.getText().toString());
+                            }
+                            break;
+                        case "texto":
+                            WidgetView = data.get(x).getView();
+                            EditText = (EditText) WidgetView.findViewById(R.id.texto_input);
+                            if(data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString() != null){
+                                EditText.setError("Este campo es requerido");
                                 EditText.requestFocus();
                                 add = 0;
                             } else {
@@ -235,12 +255,13 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     while (cursor.moveToNext()){
                         Log.d("REGISTRO", cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
                     }
+                    cursor.close();
                     finish();
                 }
             }
         });
 
-        /*IntentSign = new Intent(this, SignDrawActivity.class);
+        /*
 
 
 
@@ -274,17 +295,6 @@ public class InformesDetallesActivity extends AppCompatActivity {
         LinearLayoutInformesDetalles.addView(ItemFirmaView);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-
-        /**
-         * FIRMA
-         *
-        Button ButtonFirma = (Button) ItemFirmaView.findViewById(R.id.item_firma);
-        ButtonFirma.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(IntentSign);
-            }
-        });
 
 
         /**
@@ -466,12 +476,37 @@ public class InformesDetallesActivity extends AppCompatActivity {
             AdapterChecklist.setImageButton(ImageBitmapDecoded, RowItemIndex);
         }
 
+        if(requestCode == SIGNED){
+            if(resultCode == RESULT_OK) {
+                RowItemIndex = Integer.parseInt(data.getStringExtra("RowItemIndex"));
+                ChecklistData = AdapterChecklist.getChecklistData();
+                String sign = data.getStringExtra("sign");
+                ModelChecklistFields Fields = ChecklistData.get(RowItemIndex);
+                Fields.setValue(sign);
+                DrawImage(Fields.getView(), sign);
+            }
+        }
+
         /*if (requestCode == REQUEST_VIDEO_CAPTURE){
             Uri videoUri = data.getData();
             VideoViewItem.setVideoURI(videoUri);
             LinearLayoutVideo.setVisibility(View.VISIBLE);
             VideoViewItem.setVisibility(View.VISIBLE);
         }*/
+    }
+
+    private void DrawImage(View view, String sign){
+        ImageView signImage = (ImageView) view.findViewById(R.id.ImageViewSign);
+        sign = sign.replace("[","");
+        sign = sign.replace("]","");
+        sign = sign.replace("{","");
+        sign = sign.replace("}","");
+        String[] signArray = sign.split(",");
+        String[] signItem;
+        for(int x = 0; x < signArray.length;x++){
+            signItem = signArray[x].split(":");
+            Log.d(">>>",signItem[0]+"x"+signItem[1]);
+        }
     }
 
     @Override

@@ -1,5 +1,7 @@
 package cl.pingon;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,30 +11,61 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import cl.pingon.Libraries.DrawView;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import static cl.pingon.R.layout.activity_sign_draw;
+import java.util.ArrayList;
+
+import cl.pingon.Libraries.DrawView;
+import cl.pingon.Model.SignPoints;
 
 public class SignDrawActivity extends AppCompatActivity {
 
     DrawView drawView;
     Bitmap bitmap;
+    Activity activity;
+    CoordinatorLayout activity_sign_draw;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(activity_sign_draw);
-        this.setTitle("Escriba su firma");
+        setContentView(R.layout.activity_sign_draw);
+        this.setTitle("Haga su firma");
 
+        activity = this;
 
-        CoordinatorLayout activity_sign_draw = (CoordinatorLayout) findViewById(R.id.activity_sign_draw);
+        activity_sign_draw = (CoordinatorLayout) findViewById(R.id.activity_sign_draw);
 
         FloatingActionButton fabSave = (FloatingActionButton) findViewById(R.id.fabSave);
         fabSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Snackbar.make(view, "Firma Guardada", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+
+                ArrayList<SignPoints> points = drawView.getPath();
+                JSONObject JsonPoints;
+                JSONArray JsonArrayPoints = new JSONArray();
+                String PointX;
+                String PointY;
+
+                for(int x = 0;x < points.size(); x++){
+                    PointX = String.valueOf(Integer.parseInt(String.valueOf(Math.round(points.get(x).getX()))));
+                    PointY = String.valueOf(Integer.parseInt(String.valueOf(Math.round(points.get(x).getY()))));
+                    try {
+                        JsonPoints = new JSONObject();
+                        JsonPoints.put(PointX, PointY);
+                        JsonArrayPoints.put(JsonPoints);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 Toast.makeText(getApplicationContext(), "Firma Guardada", Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent();
+                intent.putExtras(getIntent().getExtras());
+                intent.putExtra("sign", JsonArrayPoints.toString());
+                setResult(RESULT_OK, intent);
                 finish();
             }
         });
@@ -40,11 +73,13 @@ public class SignDrawActivity extends AppCompatActivity {
         fabErase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                
+                drawView = new DrawView(activity);
+                drawView.setBackgroundColor(Color.WHITE);
+                activity_sign_draw.addView(drawView);
             }
         });
 
-        drawView = new DrawView(this);
+        drawView = new DrawView(activity);
         drawView.setBackgroundColor(Color.WHITE);
         activity_sign_draw.addView(drawView);
 
