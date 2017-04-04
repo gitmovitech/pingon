@@ -105,4 +105,9 @@ public class ReemplazoTabsActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
+    }
 }
