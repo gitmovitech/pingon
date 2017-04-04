@@ -51,6 +51,8 @@ public class ReemplazoTabsActivity extends AppCompatActivity {
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
 
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
+
         ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
         FRM_ID = getIntent().getIntExtra("FRM_ID",0);
         ARN_NOMBRE = getIntent().getStringExtra("ARN_NOMBRE");
