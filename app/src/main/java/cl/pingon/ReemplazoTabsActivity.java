@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,6 +19,10 @@ import cl.pingon.Model.Informes;
 import cl.pingon.Model.ModelChecklistSimple;
 import cl.pingon.SQLite.TblChecklistDefinition;
 import cl.pingon.SQLite.TblChecklistHelper;
+import cl.pingon.SQLite.TblFormulariosDefinition;
+import cl.pingon.SQLite.TblFormulariosHelper;
+import cl.pingon.SQLite.TblRegistroDefinition;
+import cl.pingon.SQLite.TblRegistroHelper;
 
 public class ReemplazoTabsActivity extends AppCompatActivity {
 
@@ -30,6 +35,7 @@ public class ReemplazoTabsActivity extends AppCompatActivity {
     Integer ARN_ID;
     String ARN_NOMBRE;
     String FRM_NOMBRE;
+    String SECCION;
 
     Integer CHK_ID;
     String CHK_NOMBRE;
@@ -49,6 +55,13 @@ public class ReemplazoTabsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
+        }
+
+        IntentDetalle = new Intent(this, InformesDetallesActivity.class);
+        IntentDetalle.putExtras(getIntent().getExtras());
+
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
 
         overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
@@ -58,13 +71,29 @@ public class ReemplazoTabsActivity extends AppCompatActivity {
         ARN_NOMBRE = getIntent().getStringExtra("ARN_NOMBRE");
         FRM_NOMBRE = getIntent().getStringExtra("FRM_NOMBRE");
 
+        SECCION = getIntent().getStringExtra("SECCION");
+        if(SECCION != null){
+            TblRegistroHelper Registros = new TblRegistroHelper(this);
+            Cursor cursor = Registros.getDraftsByFrmId(FRM_ID);
+            while(cursor.moveToNext()){
+                Log.d("TABS ACTIVITY", cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_ID)));
+            }
+            cursor.close();
+            this.setTitle("Borradores");
+            TblFormulariosHelper Formularios = new TblFormulariosHelper(this);
+            cursor = Formularios.getByArnId(ARN_ID);
+            while(cursor.moveToNext()){
+                ARN_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
+                if(FRM_ID == cursor.getInt(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_ID))){
+                    FRM_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
+                    break;
+                }
+            }
+            IntentDetalle.putExtra("ARN_NOMBRE", ARN_NOMBRE);
+            IntentDetalle.putExtra("FRM_NOMBRE", FRM_NOMBRE);
+        }
         this.setTitle(ARN_NOMBRE);
         getSupportActionBar().setSubtitle(FRM_NOMBRE);
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
-        }
 
         Checklist = new TblChecklistHelper(this);
         Cursor cursor = Checklist.getAllGroupByChkNombre(FRM_ID);
@@ -72,16 +101,13 @@ public class ReemplazoTabsActivity extends AppCompatActivity {
         ModelChecklistSimple ChecklistItem;
         ListItems = new ArrayList<String>();
 
-        while(cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             CHK_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_ID));
             CHK_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_NOMBRE));
             ChecklistItem = new ModelChecklistSimple(CHK_ID, CHK_NOMBRE);
             ArrayChecklist.add(ChecklistItem);
             ListItems.add(CHK_NOMBRE);
         }
-
-        IntentDetalle = new Intent(this, InformesDetallesActivity.class);
-        IntentDetalle.putExtras(getIntent().getExtras());
 
         ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ListItems);
 
@@ -91,7 +117,6 @@ public class ReemplazoTabsActivity extends AppCompatActivity {
         Listado.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
-                IntentDetalle.putExtras(getIntent().getExtras());
                 IntentDetalle.putExtra("CHK_ID", ArrayChecklist.get(index).getCHK_ID());
                 IntentDetalle.putExtra("CHK_NOMBRE", ArrayChecklist.get(index).getCHK_NOMBRE());
                 startActivity(IntentDetalle);

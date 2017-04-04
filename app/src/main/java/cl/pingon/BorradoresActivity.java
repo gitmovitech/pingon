@@ -97,12 +97,14 @@ public class BorradoresActivity extends AppCompatActivity {
                 String marca;
                 String modelo;
                 String serie;
+                String FRM_ID;
                 while (cursor.moveToNext()){
                     marca = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_MARCA_EQUIPO));
                     modelo = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO));
                     serie = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE));
+                    FRM_ID = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.FRM_ID));
                     List.add(marca+" > "+modelo+" > "+serie);
-                    Equipo.add(new ModelEquipo(marca, modelo, serie));
+                    Equipo.add(new ModelEquipo(marca, modelo, serie, FRM_ID));
                 }
                 cursor.close();
                 ListDetalle.setAdapter(new AdapterEquipo(this, Equipo) {});
@@ -134,6 +136,7 @@ public class BorradoresActivity extends AppCompatActivity {
                         IntentDetalle.putExtra("MARCA", Equipo.get(i).getMarca());
                         IntentDetalle.putExtra("MODELO", Equipo.get(i).getModelo());
                         IntentDetalle.putExtra("SERIE", Equipo.get(i).getSerie());
+                        IntentDetalle.putExtra("FRM_ID", Integer.parseInt(Equipo.get(i).getFRM_ID()));
                         startActivity(IntentDetalle);
                         break;
                 }

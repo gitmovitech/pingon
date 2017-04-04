@@ -119,6 +119,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
         getSupportActionBar();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
+
         this.setTitle(getIntent().getStringExtra("FRM_NOMBRE"));
         getSupportActionBar().setSubtitle(getIntent().getStringExtra("CHK_NOMBRE"));
 
@@ -502,5 +504,11 @@ public class InformesDetallesActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
     }
 }

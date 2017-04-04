@@ -76,6 +76,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
@@ -242,6 +243,12 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
     }
 
     private int getIndexFromClients(String clientname){

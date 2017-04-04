@@ -60,6 +60,26 @@ public class TblRegistroHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public Cursor getDraftsByFrmId(Integer FRM_ID){
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {
+                "DOC_ID",
+                "CAM_ID",
+                "FRM_ID",
+                "REG_ID",
+                "REG_TIPO",
+                "REG_VALOR",
+                "REG_METADATOS"
+        };
+        Cursor cursor = db.query(
+                TblRegistroDefinition.Entry.TABLE_NAME,
+                projection,
+                TblRegistroDefinition.Entry.SEND_STATUS+" = ? AND "+TblRegistroDefinition.Entry.FRM_ID+" = ?",
+                new String[]{"DRAFT", String.valueOf(FRM_ID)},
+                null, null, null);
+        return cursor;
+    }
+
     public Cursor getById(int ID){
         SQLiteDatabase db = getReadableDatabase();
         String[] projection = {
