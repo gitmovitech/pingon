@@ -25,6 +25,9 @@ public class BuzonActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
 
+
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
+
         final String[] ListItems = {"Nuevo informe", "Borradores", "Pendientes de envío", "Informes enviados", };
         ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ListItems);
 

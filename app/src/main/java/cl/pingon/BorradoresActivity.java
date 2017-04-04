@@ -43,6 +43,8 @@ public class BorradoresActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
 
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
+
         IntentBorradores = new Intent(getApplicationContext(), BorradoresActivity.class);
         IntentDetalle = new Intent(this, ReemplazoTabsActivity.class);
         TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
@@ -143,5 +145,11 @@ public class BorradoresActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
     }
 }
