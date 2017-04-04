@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,6 +16,7 @@ import java.util.ArrayList;
 
 import cl.pingon.Model.Informes;
 import cl.pingon.Model.ModelChecklistSimple;
+import cl.pingon.Model.ModelRegistros;
 import cl.pingon.SQLite.TblChecklistDefinition;
 import cl.pingon.SQLite.TblChecklistHelper;
 import cl.pingon.SQLite.TblFormulariosDefinition;
@@ -75,8 +75,20 @@ public class ReemplazoTabsActivity extends AppCompatActivity {
         if(SECCION != null){
             TblRegistroHelper Registros = new TblRegistroHelper(this);
             Cursor cursor = Registros.getDraftsByFrmId(FRM_ID);
+            ArrayList<ModelRegistros> ModelRegistros = new ArrayList<ModelRegistros>();
+            ModelRegistros VarModelRegistros;
             while(cursor.moveToNext()){
-                Log.d("TABS ACTIVITY", cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_ID)));
+                VarModelRegistros = new ModelRegistros();
+                VarModelRegistros.setREG_ID(cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_ID)));
+                VarModelRegistros.setDOC_ID(cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.DOC_ID)));
+                VarModelRegistros.setLOCAL_DOC_ID(cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.LOCAL_DOC_ID)));
+                VarModelRegistros.setCAM_ID(cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID)));
+                VarModelRegistros.setFRM_ID(cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.FRM_ID)));
+                VarModelRegistros.setREG_TIPO(cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)));
+                VarModelRegistros.setREG_VALOR(cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
+                VarModelRegistros.setREG_METADATOS(cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_METADATOS)));
+                VarModelRegistros.setSEND_STATUS(cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.SEND_STATUS)));
+                ModelRegistros.add(VarModelRegistros);
             }
             cursor.close();
             this.setTitle("Borradores");
