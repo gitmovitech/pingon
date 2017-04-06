@@ -268,6 +268,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 int add = 1;
                 ArrayList<ModelChecklistFields> data = AdapterChecklist.getChecklistData();
                 for(int x = 0; x < data.size(); x++){
+                    Log.d("DATA FAB BUTTON", String.valueOf(data.get(x).getCAM_ID())+" - "+data.get(x).getCAM_NOMBRE_INTERNO()+" - "+data.get(x).getCAM_TIPO()+" - "+data.get(x).getCAM_MANDATORIO()+" - "+data.get(x).getValue());
+
                     switch (data.get(x).getCAM_TIPO()){
                         case "email":
                             WidgetView = data.get(x).getView();
@@ -283,7 +285,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         case "texto":
                             WidgetView = data.get(x).getView();
                             EditText = (EditText) WidgetView.findViewById(R.id.texto_input);
-                            if(data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString() != null){
+                            Log.d("TEXTO",EditText.getText().toString());
+                            if(data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()){
                                 EditText.setError("Este campo es requerido");
                                 EditText.requestFocus();
                                 add = 0;
@@ -292,32 +295,30 @@ public class InformesDetallesActivity extends AppCompatActivity {
                             }
                             break;
                         default:
-                            Log.d("DATA FAB BUTTON", String.valueOf(data.get(x).getCAM_ID())+" - "+data.get(x).getCAM_NOMBRE_INTERNO()+" - "+data.get(x).getCAM_TIPO()+" - "+data.get(x).getCAM_MANDATORIO()+" - "+data.get(x).getValue());
                             break;
                     }
                 }
 
                 if(add == 1){
-                    int ID = Documentos.insert(InsertValues);
+                    if(LOCAL_DOC_ID != 0){
+                        Log.d("DONE", "PROCEDER A ACTUALIZAR REGISTROS EXISTENTES");
+                    } else {
+                        int ID = Documentos.insert(InsertValues);
 
-                    for(int x = 0; x < data.size(); x++){
-                        if(data.get(x).getValue() != null){
-                            InsertValues = new ContentValues();
-                            InsertValues.put(TblRegistroDefinition.Entry.LOCAL_DOC_ID, ID);
-                            InsertValues.put(TblRegistroDefinition.Entry.CAM_ID, data.get(x).getCAM_ID());
-                            InsertValues.put(TblRegistroDefinition.Entry.FRM_ID, FRM_ID);
-                            InsertValues.put(TblRegistroDefinition.Entry.REG_TIPO, data.get(x).getCAM_TIPO());
-                            InsertValues.put(TblRegistroDefinition.Entry.SEND_STATUS, "DRAFT");
-                            InsertValues.put(TblRegistroDefinition.Entry.REG_VALOR, data.get(x).getValue());
-                            Registros.insert(InsertValues);
+                        for (int x = 0; x < data.size(); x++) {
+                            if (data.get(x).getValue() != null) {
+                                InsertValues = new ContentValues();
+                                InsertValues.put(TblRegistroDefinition.Entry.LOCAL_DOC_ID, ID);
+                                InsertValues.put(TblRegistroDefinition.Entry.CAM_ID, data.get(x).getCAM_ID());
+                                InsertValues.put(TblRegistroDefinition.Entry.FRM_ID, FRM_ID);
+                                InsertValues.put(TblRegistroDefinition.Entry.REG_TIPO, data.get(x).getCAM_TIPO());
+                                InsertValues.put(TblRegistroDefinition.Entry.SEND_STATUS, "DRAFT");
+                                InsertValues.put(TblRegistroDefinition.Entry.REG_VALOR, data.get(x).getValue());
+                                Registros.insert(InsertValues);
+                            }
                         }
                     }
 
-                    Cursor cursor = Registros.getAll();
-                    while (cursor.moveToNext()){
-                        Log.d("REGISTRO", cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
-                    }
-                    cursor.close();
                     Intent intent = new Intent();
                     intent.putExtras(getIntent().getExtras());
                     intent.putExtra("LOCAL_DOC_ID", LOCAL_DOC_ID);

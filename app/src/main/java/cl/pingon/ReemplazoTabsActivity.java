@@ -78,6 +78,7 @@ public class ReemplazoTabsActivity extends AppCompatActivity {
             while(CursorFormularios.moveToNext()){
                 ARN_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
                 FRM_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
+                IntentDetalle.putExtra("FRM_NOMBRE", FRM_NOMBRE);
             }
         }
 

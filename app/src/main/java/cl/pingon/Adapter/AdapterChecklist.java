@@ -89,8 +89,11 @@ public abstract class AdapterChecklist extends BaseAdapter {
         if(contador < getCount()){
 
             switch(ChecklistFields.get(contador).getCAM_TIPO()){
-                case "texto":
-                    ViewReturn = Inflater.inflate(R.layout.item_texto, null);
+                case "firma":
+                    ViewReturn = Firma(Inflater, ChecklistFields.get(contador), contador);
+                    break;
+                case "email":
+                    ViewReturn = Inflater.inflate(R.layout.item_email, null);
                     TextoInputLayout = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
                     TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
                     if(ChecklistFields.get(contador).getCAM_VAL_DEFECTO() != null){
@@ -99,11 +102,8 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     }
                     ChecklistFields.get(contador).setView(ViewReturn);
                     break;
-                case "firma":
-                    ViewReturn = Firma(Inflater, ChecklistFields.get(contador), contador);
-                    break;
-                case "email":
-                    ViewReturn = Inflater.inflate(R.layout.item_email, null);
+                case "texto":
+                    ViewReturn = Inflater.inflate(R.layout.item_texto, null);
                     TextoInputLayout = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
                     TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
                     if(ChecklistFields.get(contador).getCAM_VAL_DEFECTO() != null){
