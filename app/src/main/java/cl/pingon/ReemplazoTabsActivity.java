@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -80,8 +79,6 @@ public class ReemplazoTabsActivity extends AppCompatActivity {
                 FRM_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
             }
         }
-
-        Log.d("EXTRAS",getIntent().getExtras().toString());
 
         this.setTitle(ARN_NOMBRE);
         getSupportActionBar().setSubtitle(FRM_NOMBRE);

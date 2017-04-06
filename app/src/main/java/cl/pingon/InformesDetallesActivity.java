@@ -149,6 +149,9 @@ public class InformesDetallesActivity extends AppCompatActivity {
         DOC_EXT_NUMERO_SERIE = getIntent().getStringExtra("DOC_EXT_NUMERO_SERIE");
         DOC_EXT_NOMBRE_CLIENTE = getIntent().getStringExtra("DOC_EXT_NOMBRE_CLIENTE");
 
+
+        Log.d("EXTRAS",getIntent().getExtras().toString());
+
         /*SECCION = getIntent().getStringExtra("SECCION");
         if(SECCION != null){
             TblRegistroHelper Registros = new TblRegistroHelper(this);

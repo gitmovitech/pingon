@@ -99,6 +99,7 @@ public class TblDocumentoHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         String[] projection = {
                 "ID",
+                TblDocumentoDefinition.Entry.DOC_ID,
                 "FRM_ID",
                 "DOC_EXT_EQUIPO",
                 "DOC_EXT_MARCA_EQUIPO",
