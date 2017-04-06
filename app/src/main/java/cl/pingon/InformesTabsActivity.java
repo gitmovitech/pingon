@@ -10,13 +10,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import cl.pingon.Adapter.AdapterTabs;
 import cl.pingon.Model.Informes;
 import cl.pingon.Model.ModelChecklistSimple;
+import cl.pingon.Model.ModelTabsItem;
 import cl.pingon.SQLite.TblChecklistDefinition;
 import cl.pingon.SQLite.TblChecklistHelper;
 import cl.pingon.SQLite.TblFormulariosDefinition;
@@ -33,7 +34,6 @@ public class InformesTabsActivity extends AppCompatActivity {
     Integer ARN_ID;
     String ARN_NOMBRE;
     String FRM_NOMBRE;
-    String SECCION;
 
     Integer CHK_ID;
     String CHK_NOMBRE;
@@ -41,7 +41,7 @@ public class InformesTabsActivity extends AppCompatActivity {
     SharedPreferences session;
 
     TblChecklistHelper Checklist;
-    ArrayList ListItems;
+    ArrayList<ModelTabsItem> ListItems;
     ArrayList<ModelChecklistSimple> ArrayChecklist;
 
     @Override
@@ -89,20 +89,22 @@ public class InformesTabsActivity extends AppCompatActivity {
         Cursor cursor = Checklist.getAllGroupByChkNombre(FRM_ID);
         ArrayChecklist = new ArrayList<ModelChecklistSimple>();
         ModelChecklistSimple ChecklistItem;
-        ListItems = new ArrayList<String>();
+        ListItems = new ArrayList<ModelTabsItem>();
 
         while (cursor.moveToNext()) {
             CHK_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_ID));
             CHK_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_NOMBRE));
             ChecklistItem = new ModelChecklistSimple(CHK_ID, CHK_NOMBRE);
             ArrayChecklist.add(ChecklistItem);
-            ListItems.add(CHK_NOMBRE);
+            ListItems.add(new ModelTabsItem(CHK_NOMBRE, "Total 0 de 4", "Requeridos 0 de 1", 0));
         }
+        cursor.close();
 
-        ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ListItems);
+        AdapterTabs list = new AdapterTabs(this, ListItems);
+        //ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ListItems);
 
         ListView Listado = (ListView) findViewById(R.id.list);
-        Listado.setAdapter(listAdapter);
+        Listado.setAdapter(list);
 
         Listado.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
