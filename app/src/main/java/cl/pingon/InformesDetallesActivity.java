@@ -149,6 +149,41 @@ public class InformesDetallesActivity extends AppCompatActivity {
         DOC_EXT_NUMERO_SERIE = getIntent().getStringExtra("DOC_EXT_NUMERO_SERIE");
         DOC_EXT_NOMBRE_CLIENTE = getIntent().getStringExtra("DOC_EXT_NOMBRE_CLIENTE");
 
+        /*SECCION = getIntent().getStringExtra("SECCION");
+        if(SECCION != null){
+            TblRegistroHelper Registros = new TblRegistroHelper(this);
+            Cursor cursor = Registros.getDraftsByFrmId(FRM_ID);
+            ArrayList<ModelRegistros> ModelRegistros = new ArrayList<ModelRegistros>();
+            ModelRegistros VarModelRegistros;
+            while(cursor.moveToNext()){
+                VarModelRegistros = new ModelRegistros();
+                VarModelRegistros.setREG_ID(cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_ID)));
+                VarModelRegistros.setDOC_ID(cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.DOC_ID)));
+                VarModelRegistros.setLOCAL_DOC_ID(cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.LOCAL_DOC_ID)));
+                VarModelRegistros.setCAM_ID(cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID)));
+                VarModelRegistros.setFRM_ID(cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.FRM_ID)));
+                VarModelRegistros.setREG_TIPO(cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)));
+                VarModelRegistros.setREG_VALOR(cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
+                VarModelRegistros.setREG_METADATOS(cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_METADATOS)));
+                VarModelRegistros.setSEND_STATUS(cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.SEND_STATUS)));
+                ModelRegistros.add(VarModelRegistros);
+            }
+            cursor.close();
+            this.setTitle("Borradores");
+            TblFormulariosHelper Formularios = new TblFormulariosHelper(this);
+            cursor = Formularios.getByArnId(ARN_ID);
+            while(cursor.moveToNext()){
+                ARN_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
+                if(FRM_ID == cursor.getInt(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_ID))){
+                    FRM_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
+                    break;
+                }
+            }
+            IntentDetalle.putExtra("ARN_NOMBRE", ARN_NOMBRE);
+            IntentDetalle.putExtra("FRM_NOMBRE", FRM_NOMBRE);
+            IntentDetalle.putParcelableArrayListExtra("ModelRegistros", ModelRegistros);
+        }*/
+
         Checklist = new TblChecklistHelper(this);
         Cursor cursor = Checklist.getAllByFrmIdAndChkId(FRM_ID, CHK_ID);
         ArrayList<ModelChecklistFields> ArrayChecklist = new ArrayList<ModelChecklistFields>();

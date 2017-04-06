@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,13 +17,10 @@ import java.util.ArrayList;
 
 import cl.pingon.Model.Informes;
 import cl.pingon.Model.ModelChecklistSimple;
-import cl.pingon.Model.ModelRegistros;
 import cl.pingon.SQLite.TblChecklistDefinition;
 import cl.pingon.SQLite.TblChecklistHelper;
 import cl.pingon.SQLite.TblFormulariosDefinition;
 import cl.pingon.SQLite.TblFormulariosHelper;
-import cl.pingon.SQLite.TblRegistroDefinition;
-import cl.pingon.SQLite.TblRegistroHelper;
 
 public class ReemplazoTabsActivity extends AppCompatActivity {
 
@@ -71,39 +69,20 @@ public class ReemplazoTabsActivity extends AppCompatActivity {
         ARN_NOMBRE = getIntent().getStringExtra("ARN_NOMBRE");
         FRM_NOMBRE = getIntent().getStringExtra("FRM_NOMBRE");
 
-        SECCION = getIntent().getStringExtra("SECCION");
-        if(SECCION != null){
-            TblRegistroHelper Registros = new TblRegistroHelper(this);
-            Cursor cursor = Registros.getDraftsByFrmId(FRM_ID);
-            ArrayList<ModelRegistros> ModelRegistros = new ArrayList<ModelRegistros>();
-            ModelRegistros VarModelRegistros;
-            while(cursor.moveToNext()){
-                VarModelRegistros = new ModelRegistros();
-                VarModelRegistros.setREG_ID(cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_ID)));
-                VarModelRegistros.setDOC_ID(cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.DOC_ID)));
-                VarModelRegistros.setLOCAL_DOC_ID(cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.LOCAL_DOC_ID)));
-                VarModelRegistros.setCAM_ID(cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID)));
-                VarModelRegistros.setFRM_ID(cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.FRM_ID)));
-                VarModelRegistros.setREG_TIPO(cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)));
-                VarModelRegistros.setREG_VALOR(cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
-                VarModelRegistros.setREG_METADATOS(cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_METADATOS)));
-                VarModelRegistros.setSEND_STATUS(cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.SEND_STATUS)));
-                ModelRegistros.add(VarModelRegistros);
-            }
-            cursor.close();
-            this.setTitle("Borradores");
+        /**
+         * Si no viene definido entonces viene de borradores
+         */
+        if(ARN_NOMBRE == null && FRM_NOMBRE == null){
             TblFormulariosHelper Formularios = new TblFormulariosHelper(this);
-            cursor = Formularios.getByArnId(ARN_ID);
-            while(cursor.moveToNext()){
-                ARN_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
-                if(FRM_ID == cursor.getInt(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_ID))){
-                    FRM_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
-                    break;
-                }
+            Cursor CursorFormularios = Formularios.getByArnId(ARN_ID);
+            while(CursorFormularios.moveToNext()){
+                ARN_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
+                FRM_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
             }
-            IntentDetalle.putExtra("ARN_NOMBRE", ARN_NOMBRE);
-            IntentDetalle.putExtra("FRM_NOMBRE", FRM_NOMBRE);
         }
+
+        Log.d("EXTRAS",getIntent().getExtras().toString());
+
         this.setTitle(ARN_NOMBRE);
         getSupportActionBar().setSubtitle(FRM_NOMBRE);
 
@@ -129,6 +108,7 @@ public class ReemplazoTabsActivity extends AppCompatActivity {
         Listado.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
+                IntentDetalle.putExtras(getIntent().getExtras());
                 IntentDetalle.putExtra("CHK_ID", ArrayChecklist.get(index).getCHK_ID());
                 IntentDetalle.putExtra("CHK_NOMBRE", ArrayChecklist.get(index).getCHK_NOMBRE());
                 startActivity(IntentDetalle);
