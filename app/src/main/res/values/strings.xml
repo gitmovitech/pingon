@@ -14,6 +14,11 @@
 
     <string name="login_message">Por favor inicie sesión con sus credenciales de acceso para continuar:</string>
 
+    <string name="buzon_button_nuevo_informe">Nuevo informe</string>
+    <string name="buzon_button_borradores">Borradores</string>
+    <string name="buzon_button_pendientes_envio">Pendientes de envío</string>
+    <string name="buzon_button_enviados">Enviados</string>
+
     <string name="url_signin">http://186.67.177.227:2234/signin</string>
     <string name="url_sync_area_negocio">http://186.67.177.227:2234/area-negocio</string>
     <string name="url_sync_emp_company">http://186.67.177.227:2234/emp-company</string>

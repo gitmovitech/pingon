@@ -12,10 +12,41 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ListView
-            android:id="@+id/ListadoBuzon"
+        <Button
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="70dp"
+            android:gravity="left|center"
+            android:id="@+id/ButtonNuevoInforme"
+            android:drawableRight="@drawable/book_minus"
+            android:text="@string/buzon_button_nuevo_informe" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:gravity="left|center"
+            android:id="@+id/ButtonBorradores"
+            android:drawableRight="@drawable/book_multiple"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:text="@string/buzon_button_borradores"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:gravity="left|center"
+            android:id="@+id/ButtonPendientesEnvio"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:drawableRight="@drawable/cloud_sync"
+            android:text="@string/buzon_button_pendientes_envio"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:gravity="left|center"
+            android:id="@+id/ButtonEnviados"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:drawableRight="@drawable/cloud_upload"
+            android:text="@string/buzon_button_enviados"/>
 
     </LinearLayout>
 

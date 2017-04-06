@@ -5,13 +5,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.Button;
 
 public class BuzonActivity extends AppCompatActivity {
 
-    ListView ListadoBuzon;
     Intent IntentNuevo;
     Intent IntentBorradores;
     Intent IntentPendientes;
@@ -25,34 +22,38 @@ public class BuzonActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
 
-        final String[] ListItems = {"Nuevo informe", "Borradores", "Pendientes de envío", "Informes enviados", };
-        ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ListItems);
-
         IntentNuevo = new Intent(this, NuevoFormularioActivity.class);
         IntentBorradores = new Intent(this, BorradoresActivity.class);
         IntentPendientes = new Intent(this, PendientesEnvioActivity.class);
         IntentEnviados = new Intent(this, EnviadosActivity.class);
 
-        ListadoBuzon = (ListView) findViewById(R.id.ListadoBuzon);
-        ListadoBuzon.setAdapter(listAdapter);
+        Button ButtonNuevo = (Button) findViewById(R.id.ButtonNuevoInforme);
+        Button ButtonBorradores = (Button) findViewById(R.id.ButtonBorradores);
+        Button ButtonPendientes = (Button) findViewById(R.id.ButtonPendientesEnvio);
+        Button ButtonEnviados = (Button) findViewById(R.id.ButtonEnviados);
 
-        ListadoBuzon.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ButtonNuevo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
-                switch(index){
-                    case 0:
-                        startActivity(IntentNuevo);
-                        break;
-                    case 1:
-                        startActivity(IntentBorradores);
-                        break;
-                    case 2:
-                        startActivity(IntentPendientes);
-                        break;
-                    case 3:
-                        startActivity(IntentEnviados);
-                        break;
-                }
+            public void onClick(View view) {
+                startActivity(IntentNuevo);
+            }
+        });
+        ButtonBorradores.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(IntentBorradores);
+            }
+        });
+        ButtonPendientes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(IntentPendientes);
+            }
+        });
+        ButtonEnviados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(IntentEnviados);
             }
         });
     }
