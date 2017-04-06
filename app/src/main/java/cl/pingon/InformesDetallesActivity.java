@@ -106,6 +106,9 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
     TblDocumentoHelper Documentos;
     TblRegistroHelper Registros;
+
+    Cursor CursorRegistros;
+
     ContentValues InsertValues;
     View WidgetView;
 
@@ -188,6 +191,9 @@ public class InformesDetallesActivity extends AppCompatActivity {
         }*/
 
         Checklist = new TblChecklistHelper(this);
+        Registros = new TblRegistroHelper(this);
+
+
         Cursor cursor = Checklist.getAllByFrmIdAndChkId(FRM_ID, CHK_ID);
         ArrayList<ModelChecklistFields> ArrayChecklist = new ArrayList<ModelChecklistFields>();
 
@@ -203,6 +209,21 @@ public class InformesDetallesActivity extends AppCompatActivity {
             CAM_VAL_DEFECTO = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_VAL_DEFECTO));
             CAM_PLACE_HOLDER = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_PLACE_HOLDER));
 
+            /**
+             * Completar campo con su valor en caso que exista
+             */
+            if(LOCAL_DOC_ID != 0){
+                CursorRegistros = Registros.getByLocalDocIdAndCamId(LOCAL_DOC_ID, CAM_ID);
+                while(CursorRegistros.moveToNext()){
+                    if(CursorRegistros.getInt(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID)) == CAM_ID){
+                        CAM_VAL_DEFECTO = CursorRegistros.getString(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
+                        break;
+                    }
+                }
+                CursorRegistros.close();
+            }
+
+            Log.d("CAMPO POR DEFECTO", CAM_VAL_DEFECTO);
             ArrayChecklist.add(index, new ModelChecklistFields(
                     CAM_ID,
                     CAM_POSICION,
@@ -216,6 +237,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
             index++;
         }
         cursor.close();
+
 
         ListView ListViewInformesDetalles = (ListView) findViewById(R.id.ListViewInformesDetalles);
         AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this){};
@@ -277,7 +299,6 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
                 if(add == 1){
                     int ID = Documentos.insert(InsertValues);
-                    session.edit().putInt("LOCAL_DOC_ID", ID).commit();
 
                     for(int x = 0; x < data.size(); x++){
                         if(data.get(x).getValue() != null){
@@ -297,6 +318,10 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         Log.d("REGISTRO", cursor.getString(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
                     }
                     cursor.close();
+                    Intent intent = new Intent();
+                    intent.putExtras(getIntent().getExtras());
+                    intent.putExtra("LOCAL_DOC_ID", LOCAL_DOC_ID);
+                    setResult(RESULT_OK, intent);
                     finish();
                 }
             }

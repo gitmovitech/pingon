@@ -98,12 +98,11 @@ public class TblDocumentoHelper extends SQLiteOpenHelper {
     public Cursor getDraftsByProyecto(String proyecto_id){
         SQLiteDatabase db = getReadableDatabase();
         String[] projection = {
-                "ID",
-                TblDocumentoDefinition.Entry.DOC_ID,
-                "FRM_ID",
-                "DOC_EXT_EQUIPO",
-                "DOC_EXT_MARCA_EQUIPO",
-                "DOC_EXT_NUMERO_SERIE"
+                TblDocumentoDefinition.Entry.ID,
+                TblDocumentoDefinition.Entry.FRM_ID,
+                TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO,
+                TblDocumentoDefinition.Entry.DOC_EXT_MARCA_EQUIPO,
+                TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE
         };
         Cursor cursor = db.query(
                 TblDocumentoDefinition.Entry.TABLE_NAME,

@@ -82,6 +82,50 @@ public class TblRegistroHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public Cursor getByLocalDocId(Integer LOCAL_DOC_ID){
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {
+                TblRegistroDefinition.Entry.CAM_ID,
+                TblRegistroDefinition.Entry.DOC_ID,
+                TblRegistroDefinition.Entry.FRM_ID,
+                TblRegistroDefinition.Entry.LOCAL_DOC_ID,
+                TblRegistroDefinition.Entry.REG_ID,
+                TblRegistroDefinition.Entry.REG_METADATOS,
+                TblRegistroDefinition.Entry.REG_TIPO,
+                TblRegistroDefinition.Entry.REG_VALOR,
+                TblRegistroDefinition.Entry.SEND_STATUS
+        };
+        Cursor cursor = db.query(
+                TblRegistroDefinition.Entry.TABLE_NAME,
+                projection,
+                TblRegistroDefinition.Entry.SEND_STATUS+" = ? AND "+TblRegistroDefinition.Entry.LOCAL_DOC_ID+" = ?",
+                new String[]{"DRAFT", String.valueOf(LOCAL_DOC_ID)},
+                null, null, null);
+        return cursor;
+    }
+
+    public Cursor getByLocalDocIdAndCamId(Integer LOCAL_DOC_ID, Integer CAM_ID){
+        SQLiteDatabase db = getReadableDatabase();
+        String[] select = {
+                TblRegistroDefinition.Entry.CAM_ID,
+                TblRegistroDefinition.Entry.DOC_ID,
+                TblRegistroDefinition.Entry.FRM_ID,
+                TblRegistroDefinition.Entry.LOCAL_DOC_ID,
+                TblRegistroDefinition.Entry.REG_ID,
+                TblRegistroDefinition.Entry.REG_METADATOS,
+                TblRegistroDefinition.Entry.REG_TIPO,
+                TblRegistroDefinition.Entry.REG_VALOR,
+                TblRegistroDefinition.Entry.SEND_STATUS
+        };
+        Cursor cursor = db.query(
+                TblRegistroDefinition.Entry.TABLE_NAME,
+                select,
+                TblRegistroDefinition.Entry.SEND_STATUS+" = ? AND "+TblRegistroDefinition.Entry.LOCAL_DOC_ID+" = ? AND "+TblRegistroDefinition.Entry.CAM_ID+" = ?",
+                new String[]{"DRAFT", String.valueOf(LOCAL_DOC_ID), String.valueOf(CAM_ID)},
+                null, null, null);
+        return cursor;
+    }
+
     public Cursor getById(int ID){
         SQLiteDatabase db = getReadableDatabase();
         String[] projection = {

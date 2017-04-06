@@ -67,7 +67,6 @@ public class SignDrawActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.putExtras(getIntent().getExtras());
                 intent.putExtra("sign", JsonArrayPoints.toString());
-                intent.putExtra("sign", JsonArrayPoints.toString());
                 setResult(RESULT_OK, intent);
                 finish();
             }

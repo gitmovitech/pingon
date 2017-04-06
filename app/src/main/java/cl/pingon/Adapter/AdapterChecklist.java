@@ -35,7 +35,8 @@ public abstract class AdapterChecklist extends BaseAdapter {
     private int contador = 0;
 
     private TextView Texto;
-    TextInputLayout TextoInput;
+    TextInputLayout TextoInputLayout;
+    EditText TextoInput;
     TextView TextViewLabel;
     TextView TextViewTitle;
     EditText NumeroInput;
@@ -87,8 +88,12 @@ public abstract class AdapterChecklist extends BaseAdapter {
             switch(ChecklistFields.get(contador).getCAM_TIPO()){
                 case "texto":
                     ViewReturn = Inflater.inflate(R.layout.item_texto, null);
-                    TextoInput = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
-                    TextoInput.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    TextoInputLayout = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
+                    TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    if(ChecklistFields.get(contador).getCAM_VAL_DEFECTO() != null){
+                        TextoInput = (EditText) ViewReturn.findViewById(R.id.texto_input);
+                        TextoInput.setText(ChecklistFields.get(contador).getCAM_VAL_DEFECTO());
+                    }
                     ChecklistFields.get(contador).setView(ViewReturn);
                     break;
                 case "firma":
@@ -96,8 +101,12 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     break;
                 case "email":
                     ViewReturn = Inflater.inflate(R.layout.item_email, null);
-                    TextoInput = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
-                    TextoInput.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    TextoInputLayout = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
+                    TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    if(ChecklistFields.get(contador).getCAM_VAL_DEFECTO() != null){
+                        TextoInput = (EditText) ViewReturn.findViewById(R.id.texto_input);
+                        TextoInput.setText(ChecklistFields.get(contador).getCAM_VAL_DEFECTO());
+                    }
                     ChecklistFields.get(contador).setView(ViewReturn);
                     break;
                 case "foto":
@@ -110,31 +119,31 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     break;
                 case "fecha":
                     ViewReturn = Inflater.inflate(R.layout.item_fecha, null);
-                    TextoInput = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
-                    TextoInput.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    TextoInputLayout = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
+                    TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
                     break;
                 case "hora":
                     ViewReturn = Inflater.inflate(R.layout.item_hora, null);
-                    TextoInput = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
-                    TextoInput.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    TextoInputLayout = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
+                    TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
                     break;
                 case "numero_entero":
                     ViewReturn = Inflater.inflate(R.layout.item_numero, null);
-                    TextoInput = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
-                    TextoInput.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    TextoInputLayout = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
+                    TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
                     break;
                 case "sistema":
                     ViewReturn = Inflater.inflate(R.layout.item_numero, null);
-                    TextoInput = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
-                    TextoInput.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    TextoInputLayout = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
+                    TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
                     NumeroInput = (EditText) ViewReturn.findViewById(R.id.numero_input);
                     NumeroInput.setText("$2.400.000");
                     NumeroInput.setEnabled(false);
                     break;
                 case "moneda":
                     ViewReturn = Inflater.inflate(R.layout.item_numero, null);
-                    TextoInput = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
-                    TextoInput.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    TextoInputLayout = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
+                    TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
                     break;
                 case "binario":
                     ViewReturn = Inflater.inflate(R.layout.item_radio, null);

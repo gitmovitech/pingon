@@ -100,13 +100,15 @@ public class BorradoresActivity extends AppCompatActivity {
                 String modelo;
                 String serie;
                 String FRM_ID;
+                Integer LOCAL_DOC_ID;
                 while (cursor.moveToNext()){
                     marca = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_MARCA_EQUIPO));
                     modelo = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO));
                     serie = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE));
                     FRM_ID = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.FRM_ID));
+                    LOCAL_DOC_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.ID));
                     List.add(marca+" > "+modelo+" > "+serie);
-                    Equipo.add(new ModelEquipo(marca, modelo, serie, FRM_ID));
+                    Equipo.add(new ModelEquipo(marca, modelo, serie, FRM_ID, LOCAL_DOC_ID));
                 }
                 cursor.close();
                 ListDetalle.setAdapter(new AdapterEquipo(this, Equipo) {});
@@ -138,6 +140,7 @@ public class BorradoresActivity extends AppCompatActivity {
                         IntentDetalle.putExtra("MARCA", Equipo.get(i).getMarca());
                         IntentDetalle.putExtra("MODELO", Equipo.get(i).getModelo());
                         IntentDetalle.putExtra("SERIE", Equipo.get(i).getSerie());
+                        IntentDetalle.putExtra("LOCAL_DOC_ID", Equipo.get(i).getLOCAL_DOC_ID());
                         IntentDetalle.putExtra("FRM_ID", Integer.parseInt(Equipo.get(i).getFRM_ID()));
                         startActivity(IntentDetalle);
                         break;
