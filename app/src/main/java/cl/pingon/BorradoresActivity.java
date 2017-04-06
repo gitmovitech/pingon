@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -77,7 +78,8 @@ public class BorradoresActivity extends AppCompatActivity {
             case "PROYECTO":
                 getSupportActionBar().setSubtitle("Seleccione proyecto u obra");
                 Proyecto = new ArrayList<ModelProyecto>();
-                cursor = Documentos.getDraftsGroupByProyecto();
+                Log.i("EXTRAS", getIntent().getExtras().toString());
+                cursor = Documentos.getDraftsGroupByProyecto(Integer.parseInt(getIntent().getStringExtra("CLIENTE_ID")));
                 String proyecto;
                 String proyecto_id;
                 while (cursor.moveToNext()){

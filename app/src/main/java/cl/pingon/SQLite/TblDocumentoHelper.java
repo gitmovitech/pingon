@@ -82,13 +82,13 @@ public class TblDocumentoHelper extends SQLiteOpenHelper {
 
     public Cursor getDraftsGroupByCliente(){
         SQLiteDatabase db = getReadableDatabase();
-        String[] projection = {
-                "DOC_EXT_ID_CLIENTE",
-                "DOC_EXT_NOMBRE_CLIENTE"
+        String[] select = {
+                TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE,
+                TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE
         };
         Cursor cursor = db.query(
                 TblDocumentoDefinition.Entry.TABLE_NAME,
-                projection,
+                select,
                 TblDocumentoDefinition.Entry.SEND_STATUS+" = ?",
                 new String[]{"DRAFT"},
                 TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE, null, null);
@@ -114,17 +114,17 @@ public class TblDocumentoHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public Cursor getDraftsGroupByProyecto(){
+    public Cursor getDraftsGroupByProyecto(int CLIENTE_ID){
         SQLiteDatabase db = getReadableDatabase();
-        String[] projection = {
-                "DOC_EXT_ID_PROYECTO",
-                "DOC_EXT_OBRA"
+        String[] select = {
+                TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO,
+                TblDocumentoDefinition.Entry.DOC_EXT_OBRA
         };
         Cursor cursor = db.query(
                 TblDocumentoDefinition.Entry.TABLE_NAME,
-                projection,
-                TblDocumentoDefinition.Entry.SEND_STATUS+" = ?",
-                new String[]{"DRAFT"},
+                select,
+                TblDocumentoDefinition.Entry.SEND_STATUS+" = ? AND "+TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE+" = ?",
+                new String[]{"DRAFT", String.valueOf(CLIENTE_ID)},
                 TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO, null, null);
         return cursor;
     }
