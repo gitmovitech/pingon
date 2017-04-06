@@ -15,12 +15,14 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import cl.pingon.InformesDetallesActivity;
+import cl.pingon.Libraries.DrawSign;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.Model.ModelImage;
 import cl.pingon.R;
@@ -41,6 +43,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
     TextView TextViewTitle;
     EditText NumeroInput;
     Spinner SpinnerSelect;
+    ImageView ImageView;
 
     InformesDetallesActivity InformesDetallesActivity;
     ArrayList<ModelImage> ImageItems;
@@ -180,6 +183,12 @@ public abstract class AdapterChecklist extends BaseAdapter {
         View view = Inflater.inflate(R.layout.item_firma, null);
         TextViewLabel = (TextView) view.findViewById(R.id.TextViewLabel);
         TextViewLabel.setText(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+        if(Fields.getCAM_VAL_DEFECTO() != null){
+            ImageView = (ImageView) view.findViewById(R.id.ImageViewSign);
+            String[] StringSign = Fields.getCAM_VAL_DEFECTO().split("<>");
+            DrawSign DrawSign = new DrawSign(StringSign[0]);
+            DrawSign.DrawToImageView(ImageView);
+        }
         Button ButtonFirma = (Button) view.findViewById(R.id.item_firma);
         ButtonFirma.setOnClickListener(new View.OnClickListener() {
             @Override
