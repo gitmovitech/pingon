@@ -22,7 +22,7 @@ import cl.pingon.SQLite.TblChecklistHelper;
 import cl.pingon.SQLite.TblFormulariosDefinition;
 import cl.pingon.SQLite.TblFormulariosHelper;
 
-public class ReemplazoTabsActivity extends AppCompatActivity {
+public class InformesTabsActivity extends AppCompatActivity {
 
     ListView ListDetalle;
     Intent IntentDetalle;

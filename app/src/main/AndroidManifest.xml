@@ -33,7 +33,7 @@
         <activity android:name=".PendientesEnvioActivity" />
         <activity android:name=".EnviadosActivity" />
         <activity android:name=".InformesDetallesActivity" />
-        <activity android:name=".ReemplazoTabsActivity" />
+        <activity android:name=".InformesTabsActivity" />
         <activity android:name=".SignDrawActivity">
             <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />

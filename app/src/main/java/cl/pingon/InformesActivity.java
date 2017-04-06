@@ -92,7 +92,7 @@ public class InformesActivity extends AppCompatActivity {
         ListDetalle = (ListView) findViewById(R.id.ListDetalle);
         ListDetalle.setAdapter(new AdapterInformes(this, ArrayInformes) {});
 
-        IntentReemplazoTabs = new Intent(this, ReemplazoTabsActivity.class);
+        IntentReemplazoTabs = new Intent(this, InformesTabsActivity.class);
         ListDetalle.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

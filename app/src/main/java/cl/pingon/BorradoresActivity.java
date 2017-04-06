@@ -47,7 +47,7 @@ public class BorradoresActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
 
         IntentBorradores = new Intent(getApplicationContext(), BorradoresActivity.class);
-        IntentDetalle = new Intent(this, ReemplazoTabsActivity.class);
+        IntentDetalle = new Intent(this, InformesTabsActivity.class);
         TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
 
         SECCION = getIntent().getStringExtra("SECCION");

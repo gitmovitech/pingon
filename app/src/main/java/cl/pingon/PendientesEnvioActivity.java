@@ -30,7 +30,7 @@ public class PendientesEnvioActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
 
-        IntentDetalle = new Intent(this, ReemplazoTabsActivity.class);
+        IntentDetalle = new Intent(this, InformesTabsActivity.class);
 
         ArrayInformes = new ArrayList<Informes>();
         /*Informes = new Informes("Producción", "Asistencia Técnica Grúas", "1");
