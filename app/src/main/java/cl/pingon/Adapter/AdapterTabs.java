@@ -54,7 +54,7 @@ public class AdapterTabs extends BaseAdapter {
 
         title.setText(list.get(position).getTitle());
         if(list.get(position).getCheck() == 1){
-            title.setCompoundDrawablesWithIntrinsicBounds(R.drawable.check_circle,0,0,0);
+            title.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.check_circle,0);
         } else {
             title.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0);
         }

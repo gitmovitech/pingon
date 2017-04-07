@@ -17,11 +17,14 @@ import java.util.ArrayList;
 import cl.pingon.Adapter.AdapterTabs;
 import cl.pingon.Model.Informes;
 import cl.pingon.Model.ModelChecklistSimple;
+import cl.pingon.Model.ModelContadorTabs;
 import cl.pingon.Model.ModelTabsItem;
 import cl.pingon.SQLite.TblChecklistDefinition;
 import cl.pingon.SQLite.TblChecklistHelper;
 import cl.pingon.SQLite.TblFormulariosDefinition;
 import cl.pingon.SQLite.TblFormulariosHelper;
+import cl.pingon.SQLite.TblRegistroDefinition;
+import cl.pingon.SQLite.TblRegistroHelper;
 
 public class InformesTabsActivity extends AppCompatActivity {
 
@@ -37,6 +40,8 @@ public class InformesTabsActivity extends AppCompatActivity {
 
     Integer CHK_ID;
     String CHK_NOMBRE;
+    Integer LOCAL_DOC_ID;
+    Integer CAM_ID;
 
     SharedPreferences session;
 
@@ -68,6 +73,7 @@ public class InformesTabsActivity extends AppCompatActivity {
         FRM_ID = getIntent().getIntExtra("FRM_ID",0);
         ARN_NOMBRE = getIntent().getStringExtra("ARN_NOMBRE");
         FRM_NOMBRE = getIntent().getStringExtra("FRM_NOMBRE");
+        LOCAL_DOC_ID = getIntent().getIntExtra("LOCAL_DOC_ID", 0);
 
         /**
          * Si no viene definido entonces viene de borradores
@@ -90,18 +96,25 @@ public class InformesTabsActivity extends AppCompatActivity {
         ArrayChecklist = new ArrayList<ModelChecklistSimple>();
         ModelChecklistSimple ChecklistItem;
         ListItems = new ArrayList<ModelTabsItem>();
+        ModelContadorTabs ContadorTabs;
 
         while (cursor.moveToNext()) {
             CHK_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_ID));
             CHK_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_NOMBRE));
+            CAM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_ID));
             ChecklistItem = new ModelChecklistSimple(CHK_ID, CHK_NOMBRE);
             ArrayChecklist.add(ChecklistItem);
-            ListItems.add(new ModelTabsItem(CHK_NOMBRE, "Total 0 de 4", "Requeridos 0 de 1", 0));
+
+            ContadorTabs = getContadoresTabsRegistros(this, CAM_ID, CHK_ID);
+            ListItems.add(new ModelTabsItem(
+                    CHK_NOMBRE,
+                    "Total "+ContadorTabs.getContador_total_completados()+" de "+ContadorTabs.getContador_total(),
+                    "Obligatorios "+ContadorTabs.getContador_mandatorios_completados()+" de "+ContadorTabs.getContador_mandatorios(),
+                    ContadorTabs.getCheck()));
         }
         cursor.close();
 
         AdapterTabs list = new AdapterTabs(this, ListItems);
-        //ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ListItems);
 
         ListView Listado = (ListView) findViewById(R.id.list);
         Listado.setAdapter(list);
@@ -116,6 +129,67 @@ public class InformesTabsActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
+    /**
+     * Contador de total de items contestados
+     * @param context
+     * @param CAM_ID
+     * @return String
+     */
+    private ModelContadorTabs getContadoresTabsRegistros(Context context, int CAM_ID, int CHK_ID){
+
+        TblRegistroHelper Registros = new TblRegistroHelper(context);
+        TblChecklistHelper Checklist = new TblChecklistHelper(context);
+        ModelContadorTabs ContadorTabs = new ModelContadorTabs();
+        int contador_total_completados = 0;
+        int contador_total = 0;
+        int contador_obligatorios = 0;
+        int contador_obligatorios_completados = 0;
+
+        Cursor CursorChecklist = Checklist.getAllByFrmIdAndChkId(FRM_ID, CHK_ID);
+        Cursor CursorRegistros;
+
+        String CAM_MANDATORIO;
+
+        while(CursorChecklist.moveToNext()){
+            contador_total++;
+            CAM_MANDATORIO = CursorChecklist.getString(CursorChecklist.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_MANDATORIO));
+            if(CAM_MANDATORIO.contains("S")){
+                contador_obligatorios++;
+            }
+            if(LOCAL_DOC_ID != 0){
+                CursorRegistros = Registros.getByLocalDocId(LOCAL_DOC_ID);
+                while(CursorRegistros.moveToNext()){
+                    if(CAM_ID == CursorRegistros.getInt(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID))){
+                        contador_total_completados++;
+                        if(CAM_MANDATORIO.contains("S")){
+                            contador_obligatorios_completados++;
+                        }
+                    }
+                }
+                CursorRegistros.close();
+            }
+        }
+        CursorChecklist.close();
+
+        ContadorTabs.setContador_total(contador_total);
+        ContadorTabs.setContador_mandatorios(contador_obligatorios);
+        ContadorTabs.setContador_total_completados(contador_total_completados);
+        ContadorTabs.setContador_mandatorios_completados(contador_obligatorios_completados);
+
+        if(contador_obligatorios == contador_obligatorios_completados){
+            ContadorTabs.setCheck(1);
+        } else {
+            ContadorTabs.setCheck(0);
+        }
+
+        //Log.d("EXTRAS TOTAL STRING", getIntent().getExtras().toString());
+        return ContadorTabs;
+    }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
