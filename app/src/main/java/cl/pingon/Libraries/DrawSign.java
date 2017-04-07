@@ -37,11 +37,15 @@ public class DrawSign {
         int width = maxX + minX;
         int height = maxY + minY;
 
-        image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(image);
-        canvas.drawPath(path, paint);
+        try {
+            image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(image);
+            canvas.drawPath(path, paint);
 
-        imageview.setImageBitmap(image);
+            imageview.setImageBitmap(image);
+        } catch (Exception e){
+
+        }
     }
 
     public String convertToBase64(){
@@ -64,21 +68,25 @@ public class DrawSign {
 
         Path path = new Path();
 
-        int next = 0;
-        for(int i = 0; i < signArray.length;i++){
-            signItem = signArray[i].split(":");
-            x = Integer.parseInt(signItem[0]);
-            y = Integer.parseInt(signItem[1]);
-            if(y == 0 && x == 0){
-                next = 1;
-            } else {
-                if(next == 1){
-                    path.moveTo(x, y);
-                    next = 0;
+        try {
+            int next = 0;
+            for (int i = 0; i < signArray.length; i++) {
+                signItem = signArray[i].split(":");
+                x = Integer.parseInt(signItem[0]);
+                y = Integer.parseInt(signItem[1]);
+                if (y == 0 && x == 0) {
+                    next = 1;
+                } else {
+                    if (next == 1) {
+                        path.moveTo(x, y);
+                        next = 0;
+                    }
+                    path.lineTo(x, y);
+                    setMinMax(x, y);
                 }
-                path.lineTo(x, y);
-                setMinMax(x, y);
             }
+        }catch (Exception e){
+
         }
         return path;
     }

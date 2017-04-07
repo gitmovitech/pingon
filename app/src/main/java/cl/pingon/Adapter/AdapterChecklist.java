@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import cl.pingon.InformesDetallesActivity;
-import cl.pingon.Libraries.DrawSign;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.Model.ModelImage;
 import cl.pingon.R;
@@ -103,42 +102,25 @@ public abstract class AdapterChecklist extends BaseAdapter {
                 case "firma":
                     ViewReturn = Firma(Inflater, ChecklistFields.get(contador), contador);
                     break;
-                case "email":
-                    ViewReturn = Inflater.inflate(R.layout.item_email, null);
-                    TextoInputLayout = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
-                    TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
-                    if(ChecklistFields.get(contador).getCAM_VAL_DEFECTO() != null){
-                        TextoInput = (EditText) ViewReturn.findViewById(R.id.texto_input);
-                        TextoInput.setText(ChecklistFields.get(contador).getCAM_VAL_DEFECTO());
-                    }
-                    ChecklistFields.get(contador).setView(ViewReturn);
-                    break;
-                case "texto":
-                    ViewReturn = Inflater.inflate(R.layout.item_texto, null);
-                    TextoInputLayout = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
-                    TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
-                    if(ChecklistFields.get(contador).getCAM_VAL_DEFECTO() != null){
-                        TextoInput = (EditText) ViewReturn.findViewById(R.id.texto_input);
-                        TextoInput.setText(ChecklistFields.get(contador).getCAM_VAL_DEFECTO());
-                    }
-                    ChecklistFields.get(contador).setView(ViewReturn);
-                    break;
-                case "foto":
-                    ViewReturn = Foto(Inflater, ChecklistFields.get(contador), contador);
-                    break;
-                case "etiqueta":
-                    ViewReturn = Inflater.inflate(R.layout.item_title, null);
-                    TextViewTitle = (TextView) ViewReturn.findViewById(R.id.TextViewTitle);
-                    TextViewTitle.setText(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
-                    break;
                 case "fecha":
                     ViewReturn = Fecha(Inflater, ChecklistFields.get(contador), contador);
                     break;
                 case "hora":
                     ViewReturn = Hora(Inflater, ChecklistFields.get(contador), contador);
-                    /*ViewReturn = Inflater.inflate(R.layout.item_hora, null);
-                    TextoInputLayout = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
-                    TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());*/
+                    break;
+                case "foto":
+                    ViewReturn = Foto(Inflater, ChecklistFields.get(contador), contador);
+                    break;
+                case "email":
+                    ViewReturn = Email(Inflater, ChecklistFields.get(contador), contador);
+                    break;
+                case "texto":
+                    ViewReturn = Texto(Inflater, ChecklistFields.get(contador), contador);
+                    break;
+                case "etiqueta":
+                    ViewReturn = Inflater.inflate(R.layout.item_title, null);
+                    TextViewTitle = (TextView) ViewReturn.findViewById(R.id.TextViewTitle);
+                    TextViewTitle.setText(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
                     break;
                 case "numero_entero":
                     ViewReturn = Inflater.inflate(R.layout.item_numero, null);
@@ -191,6 +173,48 @@ public abstract class AdapterChecklist extends BaseAdapter {
 
 
     /**
+     * CONSTRUCTOR DE CAMPO DE TEXTO
+     * @param Inflater
+     * @param Fields
+     * @param RowItemIndex
+     * @return
+     */
+    private View Texto(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
+        View view = Inflater.inflate(R.layout.item_texto, null);
+        TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
+        TextoInputLayout.setHint(Fields.getCAM_NOMBRE_INTERNO());
+        if(Fields.getCAM_VAL_DEFECTO() != null){
+            TextoInput = (EditText) view.findViewById(R.id.texto_input);
+            TextoInput.setText(Fields.getCAM_VAL_DEFECTO());
+        }
+        Fields.setView(view);
+        return view;
+    }
+
+
+
+    /**
+     * CONSTRUCTOR DE CAMPO EMAIL
+     * @param Inflater
+     * @param Fields
+     * @param RowItemIndex
+     * @return
+     */
+    private View Email(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
+        View view = Inflater.inflate(R.layout.item_email, null);
+        TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
+        TextoInputLayout.setHint(Fields.getCAM_NOMBRE_INTERNO());
+        if(Fields.getCAM_VAL_DEFECTO() != null){
+            TextoInput = (EditText) view.findViewById(R.id.texto_input);
+            TextoInput.setText(Fields.getCAM_VAL_DEFECTO());
+        }
+        Fields.setView(view);
+        return view;
+    }
+
+
+
+    /**
      * CONSTRUCTOR DE HORA
      * @param Inflater
      * @param Fields
@@ -200,7 +224,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
     private View Hora(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
         View view = Inflater.inflate(R.layout.item_hora, null);
         TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
-        TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+        TextoInputLayout.setHint(Fields.getCAM_NOMBRE_INTERNO());
         Button = (Button) view.findViewById(R.id.button_hora);
         final EditText EditTextHora = (EditText) view.findViewById(R.id.hora_input);
         Button.setOnClickListener(new View.OnClickListener() {
@@ -218,8 +242,11 @@ public abstract class AdapterChecklist extends BaseAdapter {
                 TimePickerDialog.show();
             }
         });
+        Fields.setView(view);
         return view;
     }
+
+
 
 
     /**
@@ -232,7 +259,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
     private View Fecha(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
         View view = Inflater.inflate(R.layout.item_fecha, null);
         TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
-        TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+        TextoInputLayout.setHint(Fields.getCAM_NOMBRE_INTERNO());
         Button = (Button) view.findViewById(R.id.button_fecha);
         final EditText EditTextFecha = (EditText) view.findViewById(R.id.fecha_input);
         Button.setOnClickListener(new View.OnClickListener() {
@@ -251,8 +278,11 @@ public abstract class AdapterChecklist extends BaseAdapter {
                 DatePickerDialog.show();
             }
         });
+        Fields.setView(view);
         return view;
     }
+
+
 
 
     /**
@@ -264,18 +294,19 @@ public abstract class AdapterChecklist extends BaseAdapter {
      */
     private View Firma(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
         View view = Inflater.inflate(R.layout.item_firma, null);
-        TextViewLabel = (TextView) view.findViewById(R.id.TextViewLabel);
-        TextViewLabel.setText(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
-        if(Fields.getCAM_VAL_DEFECTO() != null){
-            ImageView = (ImageView) view.findViewById(R.id.ImageViewSign);
+        TextView TextViewLabel = (TextView) view.findViewById(R.id.TextViewLabel);
+        TextViewLabel.setText(Fields.getCAM_NOMBRE_INTERNO());
+        /*if(Fields.getCAM_VAL_DEFECTO() != null){
+            ImageView ImageView = (ImageView) view.findViewById(R.id.ImageViewSign);
             String[] StringSign = Fields.getCAM_VAL_DEFECTO().split("<>");
             DrawSign DrawSign = new DrawSign(StringSign[0]);
             DrawSign.DrawToImageView(ImageView);
-        }
+        }*/
         Button ButtonFirma = (Button) view.findViewById(R.id.item_firma);
         ButtonFirma.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent IntentSign = new Intent(context, SignDrawActivity.class);
                 IntentSign.putExtra("RowItemIndex", String.valueOf(RowItemIndex));
                 InformesDetallesActivity.startActivityForResult(IntentSign, 99);
             }
@@ -283,6 +314,8 @@ public abstract class AdapterChecklist extends BaseAdapter {
         Fields.setView(view);
         return view;
     }
+
+
 
 
     /**
@@ -325,6 +358,8 @@ public abstract class AdapterChecklist extends BaseAdapter {
             }
         }
     }
+
+
 
 
     /**
