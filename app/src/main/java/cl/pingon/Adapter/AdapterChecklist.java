@@ -27,6 +27,7 @@ import android.widget.TimePicker;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import cl.pingon.Fields.FieldsEmail;
 import cl.pingon.Fields.FieldsText;
 import cl.pingon.InformesDetallesActivity;
 import cl.pingon.Model.ModelChecklistFields;
@@ -113,7 +114,8 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     ViewReturn = Foto(Inflater, ChecklistFields.get(contador), contador);
                     break;
                 case "email":
-                    ViewReturn = Email(Inflater, ChecklistFields.get(contador), contador);
+                    FieldsEmail FieldsEmail = new FieldsEmail(Inflater, ChecklistFields.get(contador), contador);
+                    ViewReturn = FieldsEmail.getView();
                     break;
                 case "texto":
                     FieldsText FieldsText = new FieldsText(Inflater, ChecklistFields.get(contador), contador);
@@ -173,31 +175,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
         return ChecklistFields;
     }
 
-
-
-
-
-
-    /**
-     * CONSTRUCTOR DE CAMPO EMAIL
-     * @param Inflater
-     * @param Fields
-     * @param RowItemIndex
-     * @return
-     */
-    private View Email(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
-        View view = Inflater.inflate(R.layout.item_email, null);
-        TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
-        TextoInputLayout.setHint(Fields.getCAM_NOMBRE_INTERNO());
-        if(Fields.getCAM_VAL_DEFECTO() != null){
-            TextoInput = (EditText) view.findViewById(R.id.texto_input);
-            TextoInput.setText(Fields.getCAM_VAL_DEFECTO());
-        }
-        Fields.setView(view);
-        return view;
-    }
-
-
+    
 
     /**
      * CONSTRUCTOR DE HORA
