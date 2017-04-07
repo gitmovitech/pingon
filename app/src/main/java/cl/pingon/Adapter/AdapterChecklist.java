@@ -29,6 +29,7 @@ import java.util.Calendar;
 
 import cl.pingon.Fields.FieldsEmail;
 import cl.pingon.Fields.FieldsText;
+import cl.pingon.Fields.FieldsTitle;
 import cl.pingon.InformesDetallesActivity;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.Model.ModelImage;
@@ -101,6 +102,18 @@ public abstract class AdapterChecklist extends BaseAdapter {
         if(contador < getCount()){
 
             switch(ChecklistFields.get(contador).getCAM_TIPO()){
+                case "email":
+                    FieldsEmail FieldsEmail = new FieldsEmail(Inflater, ChecklistFields.get(contador), contador);
+                    ViewReturn = FieldsEmail.getView();
+                    break;
+                case "texto":
+                    FieldsText FieldsText = new FieldsText(Inflater, ChecklistFields.get(contador), contador);
+                    ViewReturn = FieldsText.getView();
+                    break;
+                case "etiqueta":
+                    FieldsTitle FieldsTitle = new FieldsTitle(Inflater, ChecklistFields.get(contador));
+                    ViewReturn = FieldsTitle.getView();
+                    break;
                 case "firma":
                     ViewReturn = Firma(Inflater, ChecklistFields.get(contador), contador);
                     break;
@@ -112,19 +125,6 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     break;
                 case "foto":
                     ViewReturn = Foto(Inflater, ChecklistFields.get(contador), contador);
-                    break;
-                case "email":
-                    FieldsEmail FieldsEmail = new FieldsEmail(Inflater, ChecklistFields.get(contador), contador);
-                    ViewReturn = FieldsEmail.getView();
-                    break;
-                case "texto":
-                    FieldsText FieldsText = new FieldsText(Inflater, ChecklistFields.get(contador), contador);
-                    ViewReturn = FieldsText.getView();
-                    break;
-                case "etiqueta":
-                    ViewReturn = Inflater.inflate(R.layout.item_title, null);
-                    TextViewTitle = (TextView) ViewReturn.findViewById(R.id.TextViewTitle);
-                    TextViewTitle.setText(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
                     break;
                 case "numero_entero":
                     ViewReturn = Inflater.inflate(R.layout.item_numero, null);
@@ -175,7 +175,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
         return ChecklistFields;
     }
 
-    
+
 
     /**
      * CONSTRUCTOR DE HORA
