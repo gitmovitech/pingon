@@ -1,11 +1,14 @@
 package cl.pingon.Adapter;
 
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,13 +16,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import cl.pingon.InformesDetallesActivity;
 import cl.pingon.Libraries.DrawSign;
@@ -49,15 +55,20 @@ public abstract class AdapterChecklist extends BaseAdapter {
     ArrayList<ModelImage> ImageItems;
     Intent IntentSign;
 
+    FragmentManager fm;
     EditText EditText;
+    Button Button;
 
-    public AdapterChecklist(Context context, ArrayList<ModelChecklistFields> ChecklistFields, InformesDetallesActivity InformesDetallesActivity){
+    public AdapterChecklist(Context context, ArrayList<ModelChecklistFields> ChecklistFields, InformesDetallesActivity InformesDetallesActivity, FragmentManager fm){
         this.ChecklistFields = ChecklistFields;
         this.context = context;
         this.InformesDetallesActivity = InformesDetallesActivity;
+        this.fm = fm;
         ImageItems = new ArrayList<ModelImage>();
         IntentSign = new Intent(context, SignDrawActivity.class);
     }
+
+
 
     @Override
     public int getCount() {
@@ -121,14 +132,13 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     TextViewTitle.setText(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
                     break;
                 case "fecha":
-                    ViewReturn = Inflater.inflate(R.layout.item_fecha, null);
-                    TextoInputLayout = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
-                    TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    ViewReturn = Fecha(Inflater, ChecklistFields.get(contador), contador);
                     break;
                 case "hora":
-                    ViewReturn = Inflater.inflate(R.layout.item_hora, null);
+                    ViewReturn = Hora(Inflater, ChecklistFields.get(contador), contador);
+                    /*ViewReturn = Inflater.inflate(R.layout.item_hora, null);
                     TextoInputLayout = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
-                    TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());*/
                     break;
                 case "numero_entero":
                     ViewReturn = Inflater.inflate(R.layout.item_numero, null);
@@ -179,6 +189,79 @@ public abstract class AdapterChecklist extends BaseAdapter {
         return ChecklistFields;
     }
 
+
+    /**
+     * CONSTRUCTOR DE HORA
+     * @param Inflater
+     * @param Fields
+     * @param RowItemIndex
+     * @return
+     */
+    private View Hora(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
+        View view = Inflater.inflate(R.layout.item_hora, null);
+        TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
+        TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+        Button = (Button) view.findViewById(R.id.button_hora);
+        final EditText EditTextHora = (EditText) view.findViewById(R.id.hora_input);
+        Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar c = Calendar.getInstance();
+                int hour = c.get(Calendar.HOUR);
+                int minute = c.get(Calendar.MINUTE);
+                TimePickerDialog TimePickerDialog = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+                        EditTextHora.setText(hour+":"+minute);
+                    }
+                },hour, minute, true);
+                TimePickerDialog.show();
+            }
+        });
+        return view;
+    }
+
+
+    /**
+     * CONSTRUCTOR DE FECHA
+     * @param Inflater
+     * @param Fields
+     * @param RowItemIndex
+     * @return
+     */
+    private View Fecha(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
+        View view = Inflater.inflate(R.layout.item_fecha, null);
+        TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
+        TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+        Button = (Button) view.findViewById(R.id.button_fecha);
+        final EditText EditTextFecha = (EditText) view.findViewById(R.id.fecha_input);
+        Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar c = Calendar.getInstance();
+                int year = c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH);
+                int day = c.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog DatePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                        EditTextFecha.setText(day+"-"+month+"-"+year);
+                    }
+                }, year, month, day);
+                DatePickerDialog.show();
+            }
+        });
+        return view;
+    }
+
+
+    /**
+     * CONSTRUCTOR DE FIRMA
+     * @param Inflater
+     * @param Fields
+     * @param RowItemIndex
+     * @return
+     */
     private View Firma(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
         View view = Inflater.inflate(R.layout.item_firma, null);
         TextViewLabel = (TextView) view.findViewById(R.id.TextViewLabel);
@@ -201,6 +284,14 @@ public abstract class AdapterChecklist extends BaseAdapter {
         return view;
     }
 
+
+    /**
+     * CONSTRUCTOR DE FOTO
+     * @param Inflater
+     * @param Fields
+     * @param RowItemIndex
+     * @return
+     */
     private View Foto(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
         View view = Inflater.inflate(R.layout.item_foto, null);
 
@@ -235,6 +326,13 @@ public abstract class AdapterChecklist extends BaseAdapter {
         }
     }
 
+
+    /**
+     * CONSTRUCTOR DE LISTA
+     * @param Inflater
+     * @param Fields
+     * @return
+     */
     private View Lista(LayoutInflater Inflater, ModelChecklistFields Fields){
         View view = Inflater.inflate(R.layout.item_select, null);
         TextViewTitle = (TextView) view.findViewById(R.id.TextViewLabel);

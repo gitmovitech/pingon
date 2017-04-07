@@ -26,6 +26,13 @@
                 android:inputType="time"
                 android:maxLines="1" />
 
+            <Button
+                style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Seleccione Hora"
+                android:id="@+id/button_hora"/>
+
         </android.support.design.widget.TextInputLayout>
 
     </LinearLayout>

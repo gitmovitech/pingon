@@ -240,7 +240,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
 
         ListView ListViewInformesDetalles = (ListView) findViewById(R.id.ListViewInformesDetalles);
-        AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this){};
+        AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this, getSupportFragmentManager()){};
         ListViewInformesDetalles.setAdapter(AdapterChecklist);
 
         ImageName = Environment.getExternalStorageDirectory() + "/pingon-foto-";
@@ -563,6 +563,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
             VideoViewItem.setVisibility(View.VISIBLE);
         }*/
     }
+
+
 
     @Override
     public boolean onSupportNavigateUp() {
