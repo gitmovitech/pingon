@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -74,6 +75,8 @@ public class BorradoresActivity extends AppCompatActivity {
                         Cliente.add(new ModelCliente(cliente_id, cliente));
                     }
                 } else {
+                    ImageView NotFound = (ImageView) findViewById(R.id.NotFound);
+                    NotFound.setVisibility(View.VISIBLE);
                     Snackbar.make(findViewById(R.id.ListDetalle), "No hay borradores guardados", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
                 cursor.close();
