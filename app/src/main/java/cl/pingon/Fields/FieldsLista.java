@@ -3,6 +3,7 @@ package cl.pingon.Fields;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -32,11 +33,15 @@ public class FieldsLista {
         Listado.add("Seleccione aquí");
 
         TblListOptionsHelper DBHelper = new TblListOptionsHelper(context);
-        Cursor cursor = DBHelper.getAllByCamId(Fields.getCAM_ID());
-        while(cursor.moveToNext()){
-            Listado.add(cursor.getString(cursor.getColumnIndexOrThrow(TblListOptionsDefinition.Entry.OPC_VALOR)));
+        try {
+            Cursor cursor = DBHelper.getAllByCamId(Fields.getCAM_ID());
+            while(cursor.moveToNext()){
+                Listado.add(cursor.getString(cursor.getColumnIndexOrThrow(TblListOptionsDefinition.Entry.OPC_VALOR)));
+            }
+            cursor.close();
+        } catch (Exception e){
+            Log.e("ERROR CAMPO VACIO", e.toString());
         }
-        cursor.close();
 
         ArrayAdapter ListadoAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, Listado);
         SpinnerSelect.setAdapter(ListadoAdapter);

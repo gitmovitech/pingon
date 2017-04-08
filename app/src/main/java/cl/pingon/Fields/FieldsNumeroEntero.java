@@ -2,6 +2,7 @@ package cl.pingon.Fields;
 
 
 import android.support.design.widget.TextInputLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -16,7 +17,11 @@ public class FieldsNumeroEntero {
 
         this.view = Inflater.inflate(R.layout.item_numero, null);
         TextInputLayout TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
-        TextoInputLayout.setHint(Fields.getCAM_NOMBRE_INTERNO());
+        try {
+            TextoInputLayout.setHint(Fields.getCAM_NOMBRE_INTERNO());
+        } catch (Exception e){
+            Log.e("ERROR CAMPO VACIO", e.toString());
+        }
         Fields.setView(view);
 
     }
