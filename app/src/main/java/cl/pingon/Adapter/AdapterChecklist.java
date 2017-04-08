@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -22,9 +23,13 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import cl.pingon.Fields.FieldsBinario;
 import cl.pingon.Fields.FieldsEmail;
 import cl.pingon.Fields.FieldsFecha;
 import cl.pingon.Fields.FieldsHora;
+import cl.pingon.Fields.FieldsMoneda;
+import cl.pingon.Fields.FieldsNumeroEntero;
+import cl.pingon.Fields.FieldsSistema;
 import cl.pingon.Fields.FieldsText;
 import cl.pingon.Fields.FieldsTitle;
 import cl.pingon.InformesDetallesActivity;
@@ -126,27 +131,20 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     ViewReturn = Foto(Inflater, ChecklistFields.get(contador), contador);
                     break;
                 case "numero_entero":
-                    ViewReturn = Inflater.inflate(R.layout.item_numero, null);
-                    TextoInputLayout = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
-                    TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    FieldsNumeroEntero FieldsNumeroEntero = new FieldsNumeroEntero(Inflater, ChecklistFields.get(contador));
+                    ViewReturn = FieldsNumeroEntero.getView();
                     break;
                 case "sistema":
-                    ViewReturn = Inflater.inflate(R.layout.item_numero, null);
-                    TextoInputLayout = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
-                    TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
-                    NumeroInput = (EditText) ViewReturn.findViewById(R.id.numero_input);
-                    NumeroInput.setText("$2.400.000");
-                    NumeroInput.setEnabled(false);
+                    FieldsSistema FieldsSistema = new FieldsSistema(Inflater, ChecklistFields.get(contador));
+                    ViewReturn = FieldsSistema.getView();
                     break;
                 case "moneda":
-                    ViewReturn = Inflater.inflate(R.layout.item_numero, null);
-                    TextoInputLayout = (TextInputLayout) ViewReturn.findViewById(R.id.texto_input_layout);
-                    TextoInputLayout.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    FieldsMoneda FieldsMoneda = new FieldsMoneda(Inflater, ChecklistFields.get(contador));
+                    ViewReturn = FieldsMoneda.getView();
                     break;
                 case "binario":
-                    ViewReturn = Inflater.inflate(R.layout.item_radio, null);
-                    TextViewTitle = (TextView) ViewReturn.findViewById(R.id.radio_label);
-                    TextViewTitle.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    FieldsBinario FieldsBinario = new FieldsBinario(Inflater, ChecklistFields.get(contador));
+                    ViewReturn = FieldsBinario.getView();
                     break;
                 case "lista":
                     ViewReturn = Lista(Inflater, ChecklistFields.get(contador));
@@ -157,9 +155,9 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     TextViewTitle.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
                     break;
                 default:
-                    ViewReturn = Inflater.inflate(R.layout.item_title, null);
-                    TextViewTitle = (TextView) ViewReturn.findViewById(R.id.TextViewTitle);
-                    TextViewTitle.setText(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    ViewReturn = view;
+                    Snackbar.make(view, ChecklistFields.get(contador).getCAM_TIPO(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
+
                     Log.d("CAM_TIPO", ChecklistFields.get(contador).getCAM_TIPO());
                     break;
             }
