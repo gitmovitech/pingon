@@ -85,8 +85,6 @@ public class NuevoFormularioActivity extends AppCompatActivity {
 
         IntentInformes = new Intent(this, InformesActivity.class);
 
-        //final String[] list = {"Constructora Belmar Y Ribba Limitada","Constructora Belmar Y Ribba Limitada","Constructora Belmar Y Ribba Limitada" };
-
         EmpCompany = new TblEmpCompanyHelper(this);
         EmpProject = new TblEmpProjectsHelper(this);
         EmpBrand = new TblEmpBrandsHelper(this);
@@ -119,6 +117,10 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         ArrayListModelEmpProducts.add(Index, new ModelEmpProducts(0, null, null, null, 0));
         ArrayListModelEmpSerie.add(Index, new ModelEmpProducts(0, null, null, null, 0));
 
+
+        /**
+         * OBTIENE LOS CLIENTES PARA AGREGARLOS AL AutoCompleteTextView
+         */
         int RowValueId;
         String RowValueName;
         String RowValueRut;
