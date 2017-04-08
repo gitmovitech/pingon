@@ -44,7 +44,11 @@ public class FieldsHora {
                 TimePickerDialog.show();
             }
         });
-        Fields.setView(view);
+        try {
+            Fields.setView(view);
+        } catch (Exception e){
+            Log.e("ERROR VIEW", e.toString());
+        }
 
     }
 

@@ -46,7 +46,11 @@ public class FieldsLista {
         ArrayAdapter ListadoAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, Listado);
         SpinnerSelect.setAdapter(ListadoAdapter);
 
-        Fields.setView(view);
+        try {
+            Fields.setView(view);
+        } catch (Exception e){
+            Log.e("ERROR VIEW", e.toString());
+        }
 
     }
 

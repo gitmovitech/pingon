@@ -26,7 +26,11 @@ public class FieldsSistema {
         EditText NumeroInput = (EditText) view.findViewById(R.id.numero_input);
         NumeroInput.setEnabled(false);
 
-        Fields.setView(view);
+        try {
+            Fields.setView(view);
+        } catch (Exception e){
+            Log.e("ERROR VIEW", e.toString());
+        }
 
     }
 

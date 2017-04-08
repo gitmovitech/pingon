@@ -26,7 +26,11 @@ public class FieldsEmail {
             EditText TextoInput = (EditText) view.findViewById(R.id.texto_input);
             TextoInput.setText(Fields.getCAM_VAL_DEFECTO());
         }
-        Fields.setView(view);
+        try {
+            Fields.setView(view);
+        } catch (Exception e){
+            Log.e("ERROR VIEW", e.toString());
+        }
     }
 
     public View getView(){

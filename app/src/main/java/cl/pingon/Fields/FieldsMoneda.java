@@ -22,7 +22,11 @@ public class FieldsMoneda {
             Log.e("ERROR CAMPO VACIO", e.toString());
         }
 
-        Fields.setView(view);
+        try {
+            Fields.setView(view);
+        } catch (Exception e){
+            Log.e("ERROR VIEW", e.toString());
+        }
 
     }
 

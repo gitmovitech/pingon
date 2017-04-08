@@ -47,7 +47,11 @@ public class FieldsFecha {
                 DatePickerDialog.show();
             }
         });
-        Fields.setView(view);
+        try {
+            Fields.setView(view);
+        } catch (Exception e){
+            Log.e("ERROR VIEW", e.toString());
+        }
 
     }
 
