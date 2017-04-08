@@ -224,31 +224,11 @@ public class NuevoFormularioActivity extends AppCompatActivity {
                 IntentInformes.putExtra("DOC_EXT_MARCA_EQUIPO", SpinnerMarca.getSelectedItem().toString());
                 IntentInformes.putExtra("DOC_EXT_NUMERO_SERIE", SpinnerSerie.getSelectedItem().toString());
 
-                /*Log.d("DOC_EXT_ID_CLIENTE", String.valueOf(COMPANY_ID));
-                Log.d("DOC_EXT_NOMBRE_CLIENTE", AutocompleteClientes.getText().toString());
-                Log.d("DOC_EXT_ID_PROYECTO", String.valueOf(PROYECTO_ID));
-                Log.d("DOC_EXT_OBRA", SpinnerObras.getSelectedItem().toString());
-                Log.d("DOC_EXT_EQUIPO", SpinnerEquipo.getSelectedItem().toString());
-                Log.d("DOC_EXT_MARCA_EQUIPO", SpinnerMarca.getSelectedItem().toString());
-                Log.d("DOC_EXT_NUMERO_SERIE", SpinnerSerie.getSelectedItem().toString());*/
-
                 startActivity(IntentInformes);
             }
         });
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
     }
 
     private int getIndexFromClients(String clientname){
@@ -261,6 +241,11 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         return index;
     }
 
+
+    /**
+     * OBTIENE LOS PROYECTOS/OBRAS SEGUN CLIENTE Y LOS AGREGA AL SPINNER
+     * @param Index
+     */
     private void getProjectsInSpinner(int Index){
         ModelEmpCompany Item = ArrayListModelEmpCompany.get(Index);
         COMPANY_ID = Item.getID();
@@ -293,6 +278,11 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * OBTIENE LAS MARCAS SEGUN PROYECTO Y LOS AGREGA AL SPINNER
+     * @param Index
+     */
     private void getBrandInSpinner(int Index){
         ModelEmpProjects Item = ArrayListModelEmpProjects.get(Index);
         PROYECTO_ID = Item.getID();
@@ -321,6 +311,11 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * OBTIENE LOS EQUIPOS Y SERIES SEGUN MARCAS Y LAS AGREGA A LOS SPINNERS
+     * @param Index
+     */
     private void getProductInSpinner(int Index){
         ModelEmpBrands Item = ArrayListModelEmpBrands.get(Index);
         Cursor cursor = EmpProduct.getByBrandId(Item.getID());
@@ -355,6 +350,19 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             ListadoArrayListModelEmpProduct.add(Index, RowValueName);
             ListadoArrayListModelEmpSerie.add(Index, RowValueCode);
         }
+    }
+
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
     }
 
 }
