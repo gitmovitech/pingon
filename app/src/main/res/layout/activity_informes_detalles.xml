@@ -20,7 +20,7 @@
                 android:paddingRight="10dp"
                 android:id="@+id/ListViewInformesDetalles"
                 android:layout_width="match_parent"
-                android:layout_height="500dp"
+                android:layout_height="511dp"
                 android:orientation="vertical"/>
 
         </LinearLayout>
