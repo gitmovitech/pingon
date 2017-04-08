@@ -1,8 +1,6 @@
 package cl.pingon.Adapter;
 
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -16,18 +14,17 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import cl.pingon.Fields.FieldsEmail;
+import cl.pingon.Fields.FieldsFecha;
+import cl.pingon.Fields.FieldsHora;
 import cl.pingon.Fields.FieldsText;
 import cl.pingon.Fields.FieldsTitle;
 import cl.pingon.InformesDetallesActivity;
@@ -118,10 +115,12 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     ViewReturn = Firma(Inflater, ChecklistFields.get(contador), contador);
                     break;
                 case "fecha":
-                    ViewReturn = Fecha(Inflater, ChecklistFields.get(contador), contador);
+                    FieldsFecha FieldsFecha = new FieldsFecha(context, Inflater, ChecklistFields.get(contador));
+                    ViewReturn = FieldsFecha.getView();
                     break;
                 case "hora":
-                    ViewReturn = Hora(Inflater, ChecklistFields.get(contador), contador);
+                    FieldsHora FieldsHora = new FieldsHora(context, Inflater, ChecklistFields.get(contador));
+                    ViewReturn = FieldsHora.getView();
                     break;
                 case "foto":
                     ViewReturn = Foto(Inflater, ChecklistFields.get(contador), contador);
@@ -174,78 +173,6 @@ public abstract class AdapterChecklist extends BaseAdapter {
     public ArrayList<ModelChecklistFields> getChecklistData(){
         return ChecklistFields;
     }
-
-
-
-    /**
-     * CONSTRUCTOR DE HORA
-     * @param Inflater
-     * @param Fields
-     * @param RowItemIndex
-     * @return
-     */
-    private View Hora(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
-        View view = Inflater.inflate(R.layout.item_hora, null);
-        TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
-        TextoInputLayout.setHint(Fields.getCAM_NOMBRE_INTERNO());
-        Button = (Button) view.findViewById(R.id.button_hora);
-        final EditText EditTextHora = (EditText) view.findViewById(R.id.hora_input);
-        Button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Calendar c = Calendar.getInstance();
-                int hour = c.get(Calendar.HOUR);
-                int minute = c.get(Calendar.MINUTE);
-                TimePickerDialog TimePickerDialog = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-                        EditTextHora.setText(hour+":"+minute);
-                    }
-                },hour, minute, true);
-                TimePickerDialog.show();
-            }
-        });
-        Fields.setView(view);
-        return view;
-    }
-
-
-
-
-    /**
-     * CONSTRUCTOR DE FECHA
-     * @param Inflater
-     * @param Fields
-     * @param RowItemIndex
-     * @return
-     */
-    private View Fecha(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
-        View view = Inflater.inflate(R.layout.item_fecha, null);
-        TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
-        TextoInputLayout.setHint(Fields.getCAM_NOMBRE_INTERNO());
-        Button = (Button) view.findViewById(R.id.button_fecha);
-        final EditText EditTextFecha = (EditText) view.findViewById(R.id.fecha_input);
-        Button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Calendar c = Calendar.getInstance();
-                int year = c.get(Calendar.YEAR);
-                int month = c.get(Calendar.MONTH);
-                int day = c.get(Calendar.DAY_OF_MONTH);
-                DatePickerDialog DatePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                        EditTextFecha.setText(day+"-"+month+"-"+year);
-                    }
-                }, year, month, day);
-                DatePickerDialog.show();
-            }
-        });
-        Fields.setView(view);
-        return view;
-    }
-
-
 
 
     /**
