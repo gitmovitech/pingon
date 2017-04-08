@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -65,11 +66,15 @@ public class BorradoresActivity extends AppCompatActivity {
                 cursor = Documentos.getDraftsGroupByCliente();
                 String cliente;
                 String cliente_id;
-                while (cursor.moveToNext()){
-                    cliente_id = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE));
-                    cliente = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE));
-                    List.add(cliente);
-                    Cliente.add(new ModelCliente(cliente_id, cliente));
+                if(cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                        cliente_id = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE));
+                        cliente = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE));
+                        List.add(cliente);
+                        Cliente.add(new ModelCliente(cliente_id, cliente));
+                    }
+                } else {
+                    Snackbar.make(findViewById(R.id.ListDetalle), "No hay borradores guardados", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
                 cursor.close();
                 adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, List);
