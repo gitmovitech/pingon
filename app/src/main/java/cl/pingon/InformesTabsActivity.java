@@ -15,7 +15,6 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import cl.pingon.Adapter.AdapterTabs;
-import cl.pingon.Model.Informes;
 import cl.pingon.Model.ModelChecklistSimple;
 import cl.pingon.Model.ModelContadorTabs;
 import cl.pingon.Model.ModelTabsItem;
@@ -28,10 +27,7 @@ import cl.pingon.SQLite.TblRegistroHelper;
 
 public class InformesTabsActivity extends AppCompatActivity {
 
-    ListView ListDetalle;
     Intent IntentDetalle;
-    Informes Informes;
-    ArrayList<Informes> ArrayInformes;
 
     Integer FRM_ID;
     Integer ARN_ID;
@@ -86,6 +82,7 @@ public class InformesTabsActivity extends AppCompatActivity {
                 FRM_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
                 IntentDetalle.putExtra("FRM_NOMBRE", FRM_NOMBRE);
             }
+            CursorFormularios.close();
         }
 
         this.setTitle(ARN_NOMBRE);
@@ -98,6 +95,10 @@ public class InformesTabsActivity extends AppCompatActivity {
         ListItems = new ArrayList<ModelTabsItem>();
         ModelContadorTabs ContadorTabs;
 
+
+        /**
+         * CURSOR CHECKLIST
+         */
         while (cursor.moveToNext()) {
             CHK_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_ID));
             CHK_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_NOMBRE));
@@ -133,7 +134,7 @@ public class InformesTabsActivity extends AppCompatActivity {
 
 
     /**
-     * Contador de total de items contestados
+     * CONTADOR DE TOTAL DE ITEMS NORMALES Y OLBIGATORIOS CONTESTADOS
      * @param context
      * @param CAM_ID
      * @return String
@@ -148,6 +149,7 @@ public class InformesTabsActivity extends AppCompatActivity {
         int contador_obligatorios = 0;
         int contador_obligatorios_completados = 0;
 
+        Log.d("OBTENIENDO FRM Y CHK_ID", FRM_ID+":"+CHK_ID);
         Cursor CursorChecklist = Checklist.getAllByFrmIdAndChkId(FRM_ID, CHK_ID);
         Cursor CursorRegistros;
 
