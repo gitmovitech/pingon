@@ -3,22 +3,15 @@ package cl.pingon.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -27,6 +20,7 @@ import cl.pingon.Fields.FieldsBinario;
 import cl.pingon.Fields.FieldsEmail;
 import cl.pingon.Fields.FieldsFecha;
 import cl.pingon.Fields.FieldsHora;
+import cl.pingon.Fields.FieldsLista;
 import cl.pingon.Fields.FieldsMoneda;
 import cl.pingon.Fields.FieldsNumeroEntero;
 import cl.pingon.Fields.FieldsSistema;
@@ -36,8 +30,6 @@ import cl.pingon.InformesDetallesActivity;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.Model.ModelImage;
 import cl.pingon.R;
-import cl.pingon.SQLite.TblListOptionsDefinition;
-import cl.pingon.SQLite.TblListOptionsHelper;
 import cl.pingon.SignDrawActivity;
 
 public abstract class AdapterChecklist extends BaseAdapter {
@@ -46,28 +38,16 @@ public abstract class AdapterChecklist extends BaseAdapter {
     private ArrayList<ModelChecklistFields> ChecklistFields;
     private int contador = 0;
 
-    private TextView Texto;
-    TextInputLayout TextoInputLayout;
-    EditText TextoInput;
-    TextView TextViewLabel;
     TextView TextViewTitle;
-    EditText NumeroInput;
-    Spinner SpinnerSelect;
-    ImageView ImageView;
 
     InformesDetallesActivity InformesDetallesActivity;
     ArrayList<ModelImage> ImageItems;
     Intent IntentSign;
 
-    FragmentManager fm;
-    EditText EditText;
-    Button Button;
-
-    public AdapterChecklist(Context context, ArrayList<ModelChecklistFields> ChecklistFields, InformesDetallesActivity InformesDetallesActivity, FragmentManager fm){
+    public AdapterChecklist(Context context, ArrayList<ModelChecklistFields> ChecklistFields, InformesDetallesActivity InformesDetallesActivity){
         this.ChecklistFields = ChecklistFields;
         this.context = context;
         this.InformesDetallesActivity = InformesDetallesActivity;
-        this.fm = fm;
         ImageItems = new ArrayList<ModelImage>();
         IntentSign = new Intent(context, SignDrawActivity.class);
     }
@@ -147,7 +127,8 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     ViewReturn = FieldsBinario.getView();
                     break;
                 case "lista":
-                    ViewReturn = Lista(Inflater, ChecklistFields.get(contador));
+                    FieldsLista FieldsLista = new FieldsLista(context, Inflater, ChecklistFields.get(contador));
+                    ViewReturn = FieldsLista.getView();
                     break;
                 case "video":
                     ViewReturn = Inflater.inflate(R.layout.item_video, null);
@@ -247,36 +228,5 @@ public abstract class AdapterChecklist extends BaseAdapter {
         }
     }
 
-
-
-
-    /**
-     * CONSTRUCTOR DE LISTA
-     * @param Inflater
-     * @param Fields
-     * @return
-     */
-    private View Lista(LayoutInflater Inflater, ModelChecklistFields Fields){
-        View view = Inflater.inflate(R.layout.item_select, null);
-        TextViewTitle = (TextView) view.findViewById(R.id.TextViewLabel);
-        TextViewTitle.setHint(Fields.getCAM_NOMBRE_INTERNO());
-        SpinnerSelect = (Spinner) view.findViewById(R.id.SpinnerSelect);
-
-        ArrayList<String> Listado = new ArrayList<String>();
-
-        Listado.add("Seleccione aquí");
-
-        TblListOptionsHelper DBHelper = new TblListOptionsHelper(context);
-        Cursor cursor = DBHelper.getAllByCamId(Fields.getCAM_ID());
-        while(cursor.moveToNext()){
-            Listado.add(cursor.getString(cursor.getColumnIndexOrThrow(TblListOptionsDefinition.Entry.OPC_VALOR)));
-        }
-        cursor.close();
-
-        ArrayAdapter ListadoAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, Listado);
-        SpinnerSelect.setAdapter(ListadoAdapter);
-
-        return view;
-    }
 
 }
