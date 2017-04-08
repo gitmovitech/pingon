@@ -52,8 +52,6 @@ public class InformesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        Log.d("EXTRAS",getIntent().getExtras().toString());
-
         DOC_EXT_ID_CLIENTE = getIntent().getIntExtra("DOC_EXT_ID_CLIENTE", 0);
         DOC_EXT_ID_PROYECTO = getIntent().getIntExtra("DOC_EXT_ID_PROYECTO", 0);
         DOC_EXT_OBRA = getIntent().getStringExtra("DOC_EXT_OBRA");
@@ -63,8 +61,6 @@ public class InformesActivity extends AppCompatActivity {
         DOC_EXT_NOMBRE_CLIENTE = getIntent().getStringExtra("DOC_EXT_NOMBRE_CLIENTE");
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
-
-        Log.d("EXTRAS TOTAL STRING", getIntent().getExtras().toString());
 
         this.setTitle("Informes");
 

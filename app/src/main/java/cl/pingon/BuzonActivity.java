@@ -31,9 +31,9 @@ public class BuzonActivity extends AppCompatActivity {
          * UNIT TEST
          */
         Intent IntentInformes = new Intent(this, InformesActivity.class);
-        IntentInformes.putExtra("DOC_EXT_ID_CLIENTE", "308");
+        IntentInformes.putExtra("DOC_EXT_ID_CLIENTE", 308);
         IntentInformes.putExtra("DOC_EXT_NOMBRE_CLIENTE", "Renta Equipos Simunovic SPA");
-        IntentInformes.putExtra("DOC_EXT_ID_PROYECTO", "222");
+        IntentInformes.putExtra("DOC_EXT_ID_PROYECTO", 222);
         IntentInformes.putExtra("DOC_EXT_OBRA", "Simunovic SPA");
         IntentInformes.putExtra("DOC_EXT_EQUIPO", "J 50.10");
         IntentInformes.putExtra("DOC_EXT_MARCA_EQUIPO", "Jaso");

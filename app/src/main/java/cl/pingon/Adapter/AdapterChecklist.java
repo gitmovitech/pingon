@@ -85,7 +85,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
 
             switch(ChecklistFields.get(contador).getCAM_TIPO()){
                 case "email":
-                    FieldsEmail FieldsEmail = new FieldsEmail(Inflater, ChecklistFields.get(contador), contador);
+                    FieldsEmail FieldsEmail = new FieldsEmail(Inflater, ChecklistFields.get(contador));
                     ViewReturn = FieldsEmail.getView();
                     break;
                 case "texto":
@@ -136,7 +136,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     TextViewTitle.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
                     break;
                 default:
-                    ViewReturn = view;
+                    ViewReturn = Inflater.inflate(R.layout.item_title, null);
                     Snackbar.make(view, ChecklistFields.get(contador).getCAM_TIPO(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
 
                     Log.d("CAM_TIPO", ChecklistFields.get(contador).getCAM_TIPO());

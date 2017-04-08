@@ -131,6 +131,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
 
+        Log.d("EXTRAS",getIntent().getExtras().toString());
+
         activity = this;
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
