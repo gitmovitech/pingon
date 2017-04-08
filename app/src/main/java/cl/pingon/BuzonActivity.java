@@ -27,6 +27,19 @@ public class BuzonActivity extends AppCompatActivity {
         IntentPendientes = new Intent(this, PendientesEnvioActivity.class);
         IntentEnviados = new Intent(this, EnviadosActivity.class);
 
+        /**
+         * UNIT TEST
+         */
+        Intent IntentInformes = new Intent(this, InformesActivity.class);
+        IntentInformes.putExtra("DOC_EXT_ID_CLIENTE", "308");
+        IntentInformes.putExtra("DOC_EXT_NOMBRE_CLIENTE", "Renta Equipos Simunovic SPA");
+        IntentInformes.putExtra("DOC_EXT_ID_PROYECTO", "222");
+        IntentInformes.putExtra("DOC_EXT_OBRA", "Simunovic SPA");
+        IntentInformes.putExtra("DOC_EXT_EQUIPO", "J 50.10");
+        IntentInformes.putExtra("DOC_EXT_MARCA_EQUIPO", "Jaso");
+        IntentInformes.putExtra("DOC_EXT_NUMERO_SERIE", "1017");
+        startActivity(IntentInformes); finish();
+
         Button ButtonNuevo = (Button) findViewById(R.id.ButtonNuevoInforme);
         Button ButtonBorradores = (Button) findViewById(R.id.ButtonBorradores);
         Button ButtonPendientes = (Button) findViewById(R.id.ButtonPendientesEnvio);

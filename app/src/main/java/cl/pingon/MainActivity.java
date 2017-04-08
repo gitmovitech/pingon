@@ -75,6 +75,11 @@ public class MainActivity extends AppCompatActivity {
 
         IntentBuzon = new Intent(this, BuzonActivity.class);
 
+        /**
+         * UNIT TEST
+         */
+        startActivity(IntentBuzon); finish();
+
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
         REST = new RESTService(this);
         FormulariosUrl = getResources().getString(R.string.url_sync_formularios).toString()+"/"+session.getString("token","");

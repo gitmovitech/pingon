@@ -64,6 +64,8 @@ public class InformesActivity extends AppCompatActivity {
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
 
+        Log.d("EXTRAS TOTAL STRING", getIntent().getExtras().toString());
+
         this.setTitle("Informes");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
