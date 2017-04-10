@@ -23,12 +23,15 @@ public class FieldsLista {
 
     public FieldsLista(Context context, LayoutInflater Inflater, ModelChecklistFields Fields){
 
-        View view = Inflater.inflate(R.layout.item_select, null);
-        TextView TextViewTitle = (TextView) view.findViewById(R.id.TextViewLabel);
-        TextViewTitle.setHint(Fields.getCAM_NOMBRE_INTERNO());
+        this.view = Inflater.inflate(R.layout.item_select, null);
+        ArrayList<String> Listado = new ArrayList<String>();
+        Listado.add("Seleccione aquí");
         Spinner SpinnerSelect = (Spinner) view.findViewById(R.id.SpinnerSelect);
 
         try{
+            TextView TextViewTitle = (TextView) view.findViewById(R.id.TextViewLabel);
+            TextViewTitle.setHint(Fields.getCAM_NOMBRE_INTERNO());
+
             if(Fields.getCAM_MANDATORIO().contains("S")){
                 TextView label = (TextView) view.findViewById(R.id.label_obligatorio);
                 label.setVisibility(view.VISIBLE);
@@ -37,12 +40,9 @@ public class FieldsLista {
 
         }
 
-        ArrayList<String> Listado = new ArrayList<String>();
 
-        Listado.add("Seleccione aquí");
-
-        TblListOptionsHelper DBHelper = new TblListOptionsHelper(context);
         try {
+            TblListOptionsHelper DBHelper = new TblListOptionsHelper(context);
             Cursor cursor = DBHelper.getAllByCamId(Fields.getCAM_ID());
             while(cursor.moveToNext()){
                 Listado.add(cursor.getString(cursor.getColumnIndexOrThrow(TblListOptionsDefinition.Entry.OPC_VALOR)));

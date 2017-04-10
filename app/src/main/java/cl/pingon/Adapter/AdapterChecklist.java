@@ -4,8 +4,6 @@ package cl.pingon.Adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,12 +133,9 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     TextViewTitle = (TextView) ViewReturn.findViewById(R.id.TextViewLabel);
                     TextViewTitle.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
                     break;
-                default:
-                    ViewReturn = Inflater.inflate(R.layout.item_title, null);
-                    Snackbar.make(view, ChecklistFields.get(contador).getCAM_TIPO(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
-
-                    Log.d("CAM_TIPO", ChecklistFields.get(contador).getCAM_TIPO());
-                    break;
+                /*default:
+                    ViewReturn = Inflater.inflate(R.layout.item_empty, null);
+                    break;*/
             }
 
         }
