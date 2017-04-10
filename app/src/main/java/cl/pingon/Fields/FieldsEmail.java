@@ -18,7 +18,7 @@ public class FieldsEmail {
 
         TextInputLayout TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
         try {
-            TextoInputLayout.setHint(Fields.getCAM_NOMBRE_INTERNO());
+            TextoInputLayout.setHint(Fields.getCAM_POSICION()+":"+Fields.getCAM_NOMBRE_INTERNO()+ ":"+ Fields.getCAM_TIPO()+":"+Fields.getCAM_MANDATORIO());
         } catch (Exception e){
             Log.e("ERROR CAMPO VACIO", e.toString());
         }
