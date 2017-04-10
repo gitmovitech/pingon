@@ -28,6 +28,15 @@ public class FieldsLista {
         TextViewTitle.setHint(Fields.getCAM_NOMBRE_INTERNO());
         Spinner SpinnerSelect = (Spinner) view.findViewById(R.id.SpinnerSelect);
 
+        try{
+            if(Fields.getCAM_MANDATORIO().contains("S")){
+                TextView label = (TextView) view.findViewById(R.id.label_obligatorio);
+                label.setVisibility(view.VISIBLE);
+            }
+        } catch(Exception e){
+
+        }
+
         ArrayList<String> Listado = new ArrayList<String>();
 
         Listado.add("Seleccione aquí");

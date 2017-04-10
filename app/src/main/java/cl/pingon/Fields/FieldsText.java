@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.R;
@@ -19,14 +20,19 @@ public class FieldsText {
 
         TextInputLayout TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
         try {
+            if(Fields.getCAM_MANDATORIO().contains("S")){
+                TextView label = (TextView) view.findViewById(R.id.label_obligatorio);
+                label.setVisibility(view.VISIBLE);
+            }
             TextoInputLayout.setHint(Fields.getCAM_NOMBRE_INTERNO());
+            if(Fields.getCAM_VAL_DEFECTO() != null){
+                EditText TextoInput = (EditText) view.findViewById(R.id.texto_input);
+                TextoInput.setText(Fields.getCAM_VAL_DEFECTO());
+            }
         } catch (Exception e){
             Log.e("ERROR CAMPO VACIO", e.toString());
         }
-        if(Fields.getCAM_VAL_DEFECTO() != null){
-            EditText TextoInput = (EditText) view.findViewById(R.id.texto_input);
-            TextoInput.setText(Fields.getCAM_VAL_DEFECTO());
-        }
+
         try {
             Fields.setView(view);
         } catch (Exception e){

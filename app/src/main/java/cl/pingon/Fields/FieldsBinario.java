@@ -17,6 +17,10 @@ public class FieldsBinario {
         this.view = Inflater.inflate(R.layout.item_radio, null);
         TextView TextViewTitle = (TextView) view.findViewById(R.id.radio_label);
         try {
+            if(Fields.getCAM_MANDATORIO().contains("S")){
+                TextView label = (TextView) view.findViewById(R.id.label_obligatorio);
+                label.setVisibility(view.VISIBLE);
+            }
             TextViewTitle.setHint(Fields.getCAM_NOMBRE_INTERNO());
         } catch (Exception e){
             Log.e("ERROR CAMPO VACIO", e.toString());

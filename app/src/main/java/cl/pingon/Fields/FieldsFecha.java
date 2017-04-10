@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.Calendar;
 
@@ -25,6 +26,10 @@ public class FieldsFecha {
         this.view = Inflater.inflate(R.layout.item_fecha, null);
         TextInputLayout TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
         try {
+            if(Fields.getCAM_MANDATORIO().contains("S")){
+                TextView label = (TextView) view.findViewById(R.id.label_obligatorio);
+                label.setVisibility(view.VISIBLE);
+            }
             TextoInputLayout.setHint(Fields.getCAM_NOMBRE_INTERNO());
         } catch(Exception e){
             Log.e("ERROR CAMPO VACIO", e.toString());

@@ -165,6 +165,16 @@ public abstract class AdapterChecklist extends BaseAdapter {
         View view = Inflater.inflate(R.layout.item_firma, null);
         TextView TextViewLabel = (TextView) view.findViewById(R.id.TextViewLabel);
         TextViewLabel.setText(Fields.getCAM_NOMBRE_INTERNO());
+
+        try{
+            if(Fields.getCAM_MANDATORIO().contains("S")){
+                TextView label = (TextView) view.findViewById(R.id.label_obligatorio);
+                label.setVisibility(view.VISIBLE);
+            }
+        } catch(Exception e){
+
+        }
+
         /*if(Fields.getCAM_VAL_DEFECTO() != null){
             ImageView ImageView = (ImageView) view.findViewById(R.id.ImageViewSign);
             String[] StringSign = Fields.getCAM_VAL_DEFECTO().split("<>");
@@ -196,6 +206,15 @@ public abstract class AdapterChecklist extends BaseAdapter {
      */
     private View Foto(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
         View view = Inflater.inflate(R.layout.item_foto, null);
+
+        try{
+            if(Fields.getCAM_MANDATORIO().contains("S")){
+                TextView label = (TextView) view.findViewById(R.id.label_obligatorio);
+                label.setVisibility(view.VISIBLE);
+            }
+        } catch(Exception e){
+
+        }
 
         Button ButtonFoto = (Button) view.findViewById(R.id.item_foto);
         ButtonFoto.setText(Fields.getCAM_NOMBRE_INTERNO());
