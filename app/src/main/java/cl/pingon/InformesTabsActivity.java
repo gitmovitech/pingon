@@ -106,6 +106,9 @@ public class InformesTabsActivity extends AppCompatActivity {
             ChecklistItem = new ModelChecklistSimple(CHK_ID, CHK_NOMBRE);
             ArrayChecklist.add(ChecklistItem);
 
+            /**
+             * @TODO: REVISAR LOS CONTADORES SE SUMAN CON LAS OTRAS SECCIONES
+             */
             ContadorTabs = getContadoresTabsRegistros(this, CAM_ID, CHK_ID);
             ListItems.add(new ModelTabsItem(
                     CHK_NOMBRE,
