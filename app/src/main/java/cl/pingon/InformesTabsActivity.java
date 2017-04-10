@@ -126,7 +126,7 @@ public class InformesTabsActivity extends AppCompatActivity {
                 IntentDetalle.putExtras(getIntent().getExtras());
                 IntentDetalle.putExtra("CHK_ID", ArrayChecklist.get(index).getCHK_ID());
                 IntentDetalle.putExtra("CHK_NOMBRE", ArrayChecklist.get(index).getCHK_NOMBRE());
-                startActivityForResult(IntentDetalle, 1);
+                startActivityForResult(IntentDetalle, 98);
             }
         });
     }
@@ -195,8 +195,8 @@ public class InformesTabsActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == 1) {
-            Log.d("EXTRAS ACTIVITY RESULT", getIntent().getExtras().toString());
+        if(requestCode == 98) {
+            Log.d("VUELTA DE ACTIVITIES", getIntent().getExtras().toString());
         }
     }
 

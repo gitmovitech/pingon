@@ -351,6 +351,9 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     }
 
                     session.edit().putInt("LOCAL_DOC_ID", LOCAL_DOC_ID).commit();
+                    Intent intent = new Intent();
+                    intent.putExtras(getIntent().getExtras());
+                    setResult(RESULT_OK, intent);
                     finish();
                 }
             }
