@@ -69,7 +69,7 @@ public class InformesTabsActivity extends AppCompatActivity {
         FRM_ID = getIntent().getIntExtra("FRM_ID",0);
         ARN_NOMBRE = getIntent().getStringExtra("ARN_NOMBRE");
         FRM_NOMBRE = getIntent().getStringExtra("FRM_NOMBRE");
-        LOCAL_DOC_ID = getIntent().getIntExtra("LOCAL_DOC_ID", 0);
+        LOCAL_DOC_ID = session.getInt("LOCAL_DOC_ID", 0);
 
         /**
          * Si no viene definido entonces viene de borradores

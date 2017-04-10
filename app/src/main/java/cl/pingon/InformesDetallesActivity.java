@@ -27,6 +27,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -112,6 +113,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
     ContentValues InsertValues;
     View WidgetView;
 
+    ScrollView SV;
+
     public static Activity activity;
     private ArrayList<ModelChecklistFields> ChecklistData;
 
@@ -135,6 +138,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         activity = this;
 
+        SV = (ScrollView) findViewById(R.id.Scroll);
+
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
 
         alert = new AlertDialog.Builder(this);
@@ -143,7 +148,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
         FRM_ID = getIntent().getIntExtra("FRM_ID", 0);
         CHK_ID = getIntent().getIntExtra("CHK_ID", 0);
-        LOCAL_DOC_ID = getIntent().getIntExtra("LOCAL_DOC_ID", 0);
+        LOCAL_DOC_ID = session.getInt("LOCAL_DOC_ID", 0);
         REG_ID = getIntent().getIntExtra("REG_ID", 0);
 
         DOC_EXT_ID_CLIENTE = getIntent().getIntExtra("DOC_EXT_ID_CLIENTE", 0);
@@ -159,6 +164,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         Checklist = new TblChecklistHelper(this);
         Registros = new TblRegistroHelper(this);
+
 
 
         Cursor cursor = Checklist.getAllByFrmIdAndChkId(FRM_ID, CHK_ID);
@@ -182,6 +188,19 @@ public class InformesDetallesActivity extends AppCompatActivity {
             if(LOCAL_DOC_ID != 0){
                 CursorRegistros = Registros.getByLocalDocIdAndCamId(LOCAL_DOC_ID, CAM_ID);
                 while(CursorRegistros.moveToNext()){
+
+                    Log.d("NEXT", "-------------------------------------------------------------");
+                    Log.d(TblRegistroDefinition.Entry.CAM_ID, ":"+ CursorRegistros.getString(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID)));
+                    Log.d(TblRegistroDefinition.Entry.FRM_ID, ":"+ CursorRegistros.getString(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.FRM_ID)));
+                    Log.d(TblRegistroDefinition.Entry.REG_TIPO, ":"+ CursorRegistros.getString(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)));
+                    Log.d(TblRegistroDefinition.Entry.REG_VALOR, ":"+ CursorRegistros.getString(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
+                    Log.d(TblRegistroDefinition.Entry.DOC_ID, ":"+ CursorRegistros.getString(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.DOC_ID)));
+                    Log.d(TblRegistroDefinition.Entry.LOCAL_DOC_ID, ":"+ CursorRegistros.getString(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.LOCAL_DOC_ID)));
+                    Log.d(TblRegistroDefinition.Entry.REG_ID, ":"+ CursorRegistros.getString(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_ID)));
+                    Log.d(TblRegistroDefinition.Entry.REG_METADATOS,":"+  CursorRegistros.getString(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_METADATOS)));
+                    Log.d(TblRegistroDefinition.Entry.SEND_STATUS,":"+  CursorRegistros.getString(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.SEND_STATUS)));
+                    Log.d("NEXT", "-------------------------------------------------------------");
+
                     if(CursorRegistros.getInt(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID)) == CAM_ID){
                         CAM_VAL_DEFECTO = CursorRegistros.getString(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
                         break;
@@ -231,48 +250,96 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE, DOC_EXT_NOMBRE_CLIENTE);
                 InsertValues.put(TblDocumentoDefinition.Entry.SEND_STATUS, "DRAFT");
 
+                if(LOCAL_DOC_ID == 0){
+                    LOCAL_DOC_ID = Documentos.insert(InsertValues);
+                }
+
+
                 int add = 1;
                 ArrayList<ModelChecklistFields> data = AdapterChecklist.getChecklistData();
                 for(int x = 0; x < data.size(); x++){
                     switch (data.get(x).getCAM_TIPO()){
                         case "email":
-                            WidgetView = data.get(x).getView();
-                            EditText = (EditText) WidgetView.findViewById(R.id.texto_input);
-                            if(data.get(x).getCAM_MANDATORIO().equals("S") && !EditText.getText().toString().contains("@")){
-                                EditText.setError("Este campo es requerido y debe ser un correo válido");
-                                EditText.requestFocus();
-                                add = 0;
-                            } else {
-                                data.get(x).setValue(EditText.getText().toString());
+                            try {
+                                WidgetView = data.get(x).getView();
+                                EditText = (EditText) WidgetView.findViewById(R.id.texto_input);
+                                if (data.get(x).getCAM_MANDATORIO().equals("S") && !EditText.getText().toString().contains("@")) {
+                                    EditText.setError("Este campo es requerido y debe ser un correo válido");
+                                    EditText.requestFocus();
+                                    add = 0;
+                                } else {
+                                    data.get(x).setValue(EditText.getText().toString());
+                                }
+                            } catch (Exception e){
+
                             }
                             break;
                         case "texto":
-                            WidgetView = data.get(x).getView();
-                            EditText = (EditText) WidgetView.findViewById(R.id.texto_input);
-                            Log.d("TEXTO",EditText.getText().toString());
-                            if(data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()){
-                                EditText.setError("Este campo es requerido");
-                                EditText.requestFocus();
-                                add = 0;
-                            } else {
-                                data.get(x).setValue(EditText.getText().toString());
+                            try {
+                                WidgetView = data.get(x).getView();
+                                EditText = (EditText) WidgetView.findViewById(R.id.texto_input);
+                                Log.d("TEXTO", EditText.getText().toString());
+                                if (data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()) {
+                                    EditText.setError("Este campo es requerido");
+                                    EditText.requestFocus();
+                                    add = 0;
+                                } else {
+                                    data.get(x).setValue(EditText.getText().toString());
+                                }
+                            } catch(Exception e){
+
                             }
                             break;
+                        case "firma":
+                            break;
+                        case "foto":
+                            break;
+                        case "fecha":
+                            break;
+                        case "hora":
+                            break;
+                        case "lista":
+                            break;
+                        case "binario":
+                            break;
+                        case "numero_entero":
+                            break;
+                        case "moneda":
+                            break;
+                        case "sistema":
+                            break;
+                        case "etiqueta":
+                            break;
                         default:
+                            Log.d("POR OTRA PARTE", data.get(x).getCAM_TIPO());
                             break;
                     }
                 }
 
                 if(add == 1){
-                    if(LOCAL_DOC_ID != 0){
-                        Log.d("DONE", "PROCEDER A ACTUALIZAR REGISTROS EXISTENTES");
-                    } else {
-                        int ID = Documentos.insert(InsertValues);
 
-                        for (int x = 0; x < data.size(); x++) {
-                            if (data.get(x).getValue() != null) {
+                    int insert = 0;
+                    for (int x = 0; x < data.size(); x++) {
+                        if (data.get(x).getValue() != null) {
+
+                            insert = 1;
+
+                            CursorRegistros = Registros.getByLocalDocIdAndCamId(LOCAL_DOC_ID, data.get(x).getCAM_ID());
+                            while(CursorRegistros.moveToNext()){
+                                if(CursorRegistros.getInt(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID)) == CAM_ID){
+                                    insert = 0;
+                                    InsertValues = new ContentValues();
+                                    InsertValues.put(TblRegistroDefinition.Entry.REG_VALOR, data.get(x).getValue());
+                                    Registros.update(CursorRegistros.getInt(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_ID)), InsertValues);
+                                    break;
+                                }
+                            }
+                            CursorRegistros.close();
+
+                            if(insert == 1 && !data.get(x).getValue().isEmpty()) {
+                                Log.d("CONTENT VALUES", insert+":"+data.get(x).getValue());
                                 InsertValues = new ContentValues();
-                                InsertValues.put(TblRegistroDefinition.Entry.LOCAL_DOC_ID, ID);
+                                InsertValues.put(TblRegistroDefinition.Entry.LOCAL_DOC_ID, LOCAL_DOC_ID);
                                 InsertValues.put(TblRegistroDefinition.Entry.CAM_ID, data.get(x).getCAM_ID());
                                 InsertValues.put(TblRegistroDefinition.Entry.FRM_ID, FRM_ID);
                                 InsertValues.put(TblRegistroDefinition.Entry.REG_TIPO, data.get(x).getCAM_TIPO());
@@ -283,10 +350,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         }
                     }
 
-                    Intent intent = new Intent();
-                    intent.putExtras(getIntent().getExtras());
-                    intent.putExtra("LOCAL_DOC_ID", LOCAL_DOC_ID);
-                    setResult(RESULT_OK, intent);
+                    session.edit().putInt("LOCAL_DOC_ID", LOCAL_DOC_ID).commit();
                     finish();
                 }
             }
