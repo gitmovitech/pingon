@@ -4,6 +4,7 @@ package cl.pingon.Adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,6 +96,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     ViewReturn = FieldsTitle.getView();
                     break;
                 case "firma":
+                    Log.d("AQUI LA FIRMA", ChecklistFields.get(contador).getCAM_VAL_DEFECTO());
                     ViewReturn = Firma(Inflater, ChecklistFields.get(contador), contador);
                     break;
                 case "fecha":

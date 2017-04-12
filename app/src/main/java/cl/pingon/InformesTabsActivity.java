@@ -63,6 +63,7 @@ public class InformesTabsActivity extends AppCompatActivity {
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
 
+
         overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
 
         ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
@@ -109,7 +110,7 @@ public class InformesTabsActivity extends AppCompatActivity {
             /**
              * @TODO: REVISAR LOS CONTADORES SE SUMAN CON LAS OTRAS SECCIONES
              */
-            ContadorTabs = getContadoresTabsRegistros(this, CAM_ID, CHK_ID);
+            ContadorTabs = getContadoresTabsRegistros(this, FRM_ID, CHK_ID);
             ListItems.add(new ModelTabsItem(
                     CHK_NOMBRE,
                     "Total "+ContadorTabs.getContador_total_completados()+" de "+ContadorTabs.getContador_total(),
@@ -139,10 +140,10 @@ public class InformesTabsActivity extends AppCompatActivity {
     /**
      * CONTADOR DE TOTAL DE ITEMS NORMALES Y OLBIGATORIOS CONTESTADOS
      * @param context
-     * @param CAM_ID
+     * @param FRM_ID
      * @return String
      */
-    private ModelContadorTabs getContadoresTabsRegistros(Context context, int CAM_ID, int CHK_ID){
+    private ModelContadorTabs getContadoresTabsRegistros(Context context, int FRM_ID, int CHK_ID){
 
         TblRegistroHelper Registros = new TblRegistroHelper(context);
         TblChecklistHelper Checklist = new TblChecklistHelper(context);
@@ -152,13 +153,13 @@ public class InformesTabsActivity extends AppCompatActivity {
         int contador_obligatorios = 0;
         int contador_obligatorios_completados = 0;
 
-        Log.d("OBTENIENDO FRM Y CHK_ID", FRM_ID+":"+CHK_ID);
         Cursor CursorChecklist = Checklist.getAllByFrmIdAndChkId(FRM_ID, CHK_ID);
         Cursor CursorRegistros;
 
         String CAM_MANDATORIO;
 
         while(CursorChecklist.moveToNext()){
+            Log.d("OBTENIENDO FRM Y CHK_ID", FRM_ID+":"+CHK_ID);
             contador_total++;
             CAM_MANDATORIO = CursorChecklist.getString(CursorChecklist.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_MANDATORIO));
             if(CAM_MANDATORIO.contains("S")){

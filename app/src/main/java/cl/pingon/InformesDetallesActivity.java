@@ -112,6 +112,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
     ContentValues InsertValues;
     View WidgetView;
+    ImageView ImageView;
 
     ScrollView SV;
 
@@ -228,7 +229,24 @@ public class InformesDetallesActivity extends AppCompatActivity {
         AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this){};
         ListViewInformesDetalles.setAdapter(AdapterChecklist);
 
-        ImageName = Environment.getExternalStorageDirectory() + "/pingon-foto-";
+        //CREACION DE DIRECTORIO PARA GUARDAR LAS IMAGENES
+        File folder = new File(Environment.getExternalStorageDirectory() + "/Pingon");
+        try{
+            folder.mkdirs();
+            folder = new File(Environment.getExternalStorageDirectory() + "/Pingon/fotos");
+            if (!folder.exists()) {
+                if(folder.mkdirs()){
+                    Log.e("SUCCESS", "DIRECTORIO CREADO EN: "+Environment.getExternalStorageDirectory() + "/Pingon/fotos");
+                } else {
+                    Log.e("ERROR", "NO SE PUDO CREAR EL DIRECTORIO 2");
+                }
+            }
+        } catch (Exception e) {
+            Log.e("ERROR", e.toString());
+        }
+
+
+        ImageName = Environment.getExternalStorageDirectory() + "/Pingon/fotos/imagen-";
 
         Documentos = new TblDocumentoHelper(this);
         Registros = new TblRegistroHelper(this);
@@ -291,7 +309,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                             }
                             break;
                         case "firma":
-                            break;
+
                         case "foto":
                             break;
                         case "fecha":

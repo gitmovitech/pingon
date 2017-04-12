@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
@@ -19,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.HashMap;
 
 import cl.pingon.Libraries.RESTService;
@@ -82,6 +84,31 @@ public class MainActivity extends AppCompatActivity {
         FormulariosUrl = getResources().getString(R.string.url_sync_formularios).toString()+"/"+session.getString("token","");
         ChecklistUrl = getResources().getString(R.string.url_sync_checklist).toString()+"/"+session.getString("token","");
         ListOptionsUrl = getResources().getString(R.string.url_sync_list_options).toString()+"/"+session.getString("token","");
+
+
+
+        File file = new File(Environment.getExternalStorageDirectory() + "/Pingon");
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        file = new File(Environment.getExternalStorageDirectory() + "/Pingon/fotos");
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        file = new File(Environment.getExternalStorageDirectory() + "/Pingon/firmas");
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        file = new File(Environment.getExternalStorageDirectory() + "/Pingon/videos");
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        file = new File(Environment.getExternalStorageDirectory() + "/Pingon/audios");
+        if(!file.exists()){
+            file.mkdirs();
+        }
+
+
 
         if(session.getString("token","") != "") {
 
