@@ -229,23 +229,6 @@ public class InformesDetallesActivity extends AppCompatActivity {
         AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this){};
         ListViewInformesDetalles.setAdapter(AdapterChecklist);
 
-        //CREACION DE DIRECTORIO PARA GUARDAR LAS IMAGENES
-        File folder = new File(Environment.getExternalStorageDirectory() + "/Pingon");
-        try{
-            folder.mkdirs();
-            folder = new File(Environment.getExternalStorageDirectory() + "/Pingon/fotos");
-            if (!folder.exists()) {
-                if(folder.mkdirs()){
-                    Log.e("SUCCESS", "DIRECTORIO CREADO EN: "+Environment.getExternalStorageDirectory() + "/Pingon/fotos");
-                } else {
-                    Log.e("ERROR", "NO SE PUDO CREAR EL DIRECTORIO 2");
-                }
-            }
-        } catch (Exception e) {
-            Log.e("ERROR", e.toString());
-        }
-
-
         ImageName = Environment.getExternalStorageDirectory() + "/Pingon/fotos/imagen-";
 
         Documentos = new TblDocumentoHelper(this);
@@ -258,7 +241,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 InsertValues.put(TblDocumentoDefinition.Entry.USU_ID, USU_ID);
-                InsertValues.put(TblDocumentoDefinition.Entry.FRM_ID, FRM_ID);
+                InsertValues.put(TblDocumentoDefinition.Entry.FRM_ID, FRM_ID);Log.d("FRM_ID",String.valueOf(FRM_ID));
                 InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE, DOC_EXT_ID_CLIENTE);
                 InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO, DOC_EXT_ID_PROYECTO);
                 InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_OBRA, DOC_EXT_OBRA);
