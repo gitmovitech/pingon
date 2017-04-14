@@ -114,8 +114,6 @@ public class InformesDetallesActivity extends AppCompatActivity {
     View WidgetView;
     ImageView ImageView;
 
-    ScrollView SV;
-
     public static Activity activity;
     private ArrayList<ModelChecklistFields> ChecklistData;
 
@@ -138,8 +136,6 @@ public class InformesDetallesActivity extends AppCompatActivity {
         Log.d("EXTRAS",getIntent().getExtras().toString());
 
         activity = this;
-
-        SV = (ScrollView) findViewById(R.id.Scroll);
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
 
