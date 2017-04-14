@@ -1,5 +1,6 @@
 package cl.pingon;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +13,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import cl.pingon.Adapter.AdapterTabs;
 import cl.pingon.Model.ModelChecklistSimple;
@@ -20,6 +23,8 @@ import cl.pingon.Model.ModelContadorTabs;
 import cl.pingon.Model.ModelTabsItem;
 import cl.pingon.SQLite.TblChecklistDefinition;
 import cl.pingon.SQLite.TblChecklistHelper;
+import cl.pingon.SQLite.TblDocumentoDefinition;
+import cl.pingon.SQLite.TblDocumentoHelper;
 import cl.pingon.SQLite.TblFormulariosDefinition;
 import cl.pingon.SQLite.TblFormulariosHelper;
 import cl.pingon.SQLite.TblRegistroDefinition;
@@ -33,11 +38,20 @@ public class InformesTabsActivity extends AppCompatActivity {
     Integer ARN_ID;
     String ARN_NOMBRE;
     String FRM_NOMBRE;
+    Integer USU_ID;
 
     Integer CHK_ID;
     String CHK_NOMBRE;
     Integer LOCAL_DOC_ID;
     Integer CAM_ID;
+    Integer DOC_EXT_ID_CLIENTE;
+    Integer DOC_EXT_ID_PROYECTO;
+    String DOC_EXT_OBRA;
+    String DOC_EXT_EQUIPO;
+    String DOC_EXT_MARCA_EQUIPO;
+    String DOC_EXT_NUMERO_SERIE;
+    String DOC_EXT_NOMBRE_CLIENTE;
+    String INFORME_STATUS;
 
     SharedPreferences session;
 
@@ -47,16 +61,16 @@ public class InformesTabsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_informes_tabs);
-
         getSupportActionBar();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
 
         IntentDetalle = new Intent(this, InformesDetallesActivity.class);
         IntentDetalle.putExtras(getIntent().getExtras());
@@ -64,13 +78,38 @@ public class InformesTabsActivity extends AppCompatActivity {
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
 
 
-        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
-
         ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
+        USU_ID = Integer.parseInt(session.getString("user_id", ""));
         FRM_ID = getIntent().getIntExtra("FRM_ID",0);
         ARN_NOMBRE = getIntent().getStringExtra("ARN_NOMBRE");
         FRM_NOMBRE = getIntent().getStringExtra("FRM_NOMBRE");
+        DOC_EXT_ID_CLIENTE = getIntent().getIntExtra("DOC_EXT_ID_CLIENTE", 0);
+        DOC_EXT_ID_PROYECTO = getIntent().getIntExtra("DOC_EXT_ID_PROYECTO", 0);
+        DOC_EXT_OBRA = getIntent().getStringExtra("DOC_EXT_OBRA");
+        DOC_EXT_EQUIPO = getIntent().getStringExtra("DOC_EXT_EQUIPO");
+        DOC_EXT_MARCA_EQUIPO = getIntent().getStringExtra("DOC_EXT_MARCA_EQUIPO");
+        DOC_EXT_NUMERO_SERIE = getIntent().getStringExtra("DOC_EXT_NUMERO_SERIE");
+        DOC_EXT_NOMBRE_CLIENTE = getIntent().getStringExtra("DOC_EXT_NOMBRE_CLIENTE");
         LOCAL_DOC_ID = session.getInt("LOCAL_DOC_ID", 0);
+        INFORME_STATUS = getIntent().getStringExtra("INFORME_STATUS");
+
+
+        /**
+         * INICIALIZACION DE VARIABLES
+         */
+        Checklist = new TblChecklistHelper(this);
+        Cursor cursor = Checklist.getAllGroupByChkNombre(FRM_ID);
+        ArrayChecklist = new ArrayList<ModelChecklistSimple>();
+        ModelChecklistSimple ChecklistItem;
+        ListItems = new ArrayList<ModelTabsItem>();
+        ModelContadorTabs ContadorTabs;
+        AdapterTabs list = new AdapterTabs(this, ListItems);
+        ListView Listado = (ListView) findViewById(R.id.list);
+
+
+        if(LOCAL_DOC_ID != 0)
+            LOCAL_DOC_ID = GetInforme();
+
 
         /**
          * Si no viene definido entonces viene de borradores
@@ -88,13 +127,6 @@ public class InformesTabsActivity extends AppCompatActivity {
 
         this.setTitle(ARN_NOMBRE);
         getSupportActionBar().setSubtitle(FRM_NOMBRE);
-
-        Checklist = new TblChecklistHelper(this);
-        Cursor cursor = Checklist.getAllGroupByChkNombre(FRM_ID);
-        ArrayChecklist = new ArrayList<ModelChecklistSimple>();
-        ModelChecklistSimple ChecklistItem;
-        ListItems = new ArrayList<ModelTabsItem>();
-        ModelContadorTabs ContadorTabs;
 
 
         /**
@@ -119,20 +151,51 @@ public class InformesTabsActivity extends AppCompatActivity {
         }
         cursor.close();
 
-        AdapterTabs list = new AdapterTabs(this, ListItems);
 
-        ListView Listado = (ListView) findViewById(R.id.list);
+
         Listado.setAdapter(list);
 
         Listado.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
                 IntentDetalle.putExtras(getIntent().getExtras());
+                IntentDetalle.putExtra("LOCAL_DOC_ID", LOCAL_DOC_ID);
                 IntentDetalle.putExtra("CHK_ID", ArrayChecklist.get(index).getCHK_ID());
                 IntentDetalle.putExtra("CHK_NOMBRE", ArrayChecklist.get(index).getCHK_NOMBRE());
                 startActivityForResult(IntentDetalle, 1);
             }
         });
+    }
+
+
+    /**
+     * INSERTA UN NUEVO INFORME EN LA BASE DE DATOS
+     * @return
+     */
+    public int GetInforme(){
+        int ID = 0;
+        if(INFORME_STATUS.contentEquals("NUEVO")){
+            TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
+            ContentValues InsertValues = new ContentValues();
+
+            SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+
+            InsertValues.put(TblDocumentoDefinition.Entry.USU_ID, USU_ID);
+            InsertValues.put(TblDocumentoDefinition.Entry.FRM_ID, FRM_ID);
+            InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE, DOC_EXT_ID_CLIENTE);
+            InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO, DOC_EXT_ID_PROYECTO);
+            InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_OBRA, DOC_EXT_OBRA);
+            InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO, DOC_EXT_EQUIPO);
+            InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_MARCA_EQUIPO, DOC_EXT_MARCA_EQUIPO);
+            InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE, DOC_EXT_NUMERO_SERIE);
+            InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE, DOC_EXT_NOMBRE_CLIENTE);
+            InsertValues.put(TblDocumentoDefinition.Entry.DOC_FECHA_CREACION, ft.format(new Date()));
+            InsertValues.put(TblDocumentoDefinition.Entry.DOC_FECHA_MODIFICACION, ft.format(new Date()));
+            InsertValues.put(TblDocumentoDefinition.Entry.SEND_STATUS, "EMPTY");
+
+            ID = Documentos.insert(InsertValues);
+        }
+        return ID;
     }
 
 
@@ -217,5 +280,23 @@ public class InformesTabsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
+    }
+
+    public void getRegistersDatabase(){
+        TblRegistroHelper Registros = new TblRegistroHelper(getApplicationContext());
+        Cursor c = Registros.getAll();
+        Log.i("CANTIDAD DE REGISTROS:", String.valueOf(c.getCount()));
+        Log.i("C", "LOCAL_DOC_ID | CAM_ID | FRM_ID | REG_ID | REG_TIPO | REG_VALOR | REG_METADATOS | SEND_STATUS");
+        while(c.moveToNext()){
+            Log.i("R", c.getString(c.getColumnIndexOrThrow("LOCAL_DOC_ID"))+" | "+
+                    c.getString(c.getColumnIndexOrThrow("CAM_ID"))+" | "+
+                    c.getString(c.getColumnIndexOrThrow("FRM_ID"))+" | "+
+                    c.getString(c.getColumnIndexOrThrow("REG_ID"))+" | "+
+                    c.getString(c.getColumnIndexOrThrow("REG_TIPO"))+" | "+
+                    c.getString(c.getColumnIndexOrThrow("REG_VALOR"))+" | "+
+                    c.getString(c.getColumnIndexOrThrow("REG_METADATOS"))+" | "+
+                    c.getString(c.getColumnIndexOrThrow("SEND_STATUS")));
+        }
+        c.close();
     }
 }

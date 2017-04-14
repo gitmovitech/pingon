@@ -27,7 +27,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -121,6 +120,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_informes_detalles);
+
         getSupportActionBar();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -156,13 +156,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
         DOC_EXT_NUMERO_SERIE = getIntent().getStringExtra("DOC_EXT_NUMERO_SERIE");
         DOC_EXT_NOMBRE_CLIENTE = getIntent().getStringExtra("DOC_EXT_NOMBRE_CLIENTE");
 
-
-        Log.d("EXTRAS",getIntent().getExtras().toString());
-
         Checklist = new TblChecklistHelper(this);
         Registros = new TblRegistroHelper(this);
-
-
 
         Cursor cursor = Checklist.getAllByFrmIdAndChkId(FRM_ID, CHK_ID);
         ArrayList<ModelChecklistFields> ArrayChecklist = new ArrayList<ModelChecklistFields>();
@@ -237,7 +232,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 InsertValues.put(TblDocumentoDefinition.Entry.USU_ID, USU_ID);
-                InsertValues.put(TblDocumentoDefinition.Entry.FRM_ID, FRM_ID);Log.d("FRM_ID",String.valueOf(FRM_ID));
+                InsertValues.put(TblDocumentoDefinition.Entry.FRM_ID, FRM_ID);
                 InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE, DOC_EXT_ID_CLIENTE);
                 InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO, DOC_EXT_ID_PROYECTO);
                 InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_OBRA, DOC_EXT_OBRA);
@@ -604,5 +599,23 @@ public class InformesDetallesActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
+    }
+
+    public void getChecklistDatabase(){
+        TblChecklistHelper Checklist = new TblChecklistHelper(getApplicationContext());
+        Cursor c = Checklist.getAll();
+        Log.i("CANTIDAD DE REGISTROS:", String.valueOf(c.getCount()));
+        Log.i("C", "LOCAL_DOC_ID | CAM_ID | FRM_ID | REG_ID | REG_TIPO | REG_VALOR | REG_METADATOS | SEND_STATUS");
+        while(c.moveToNext()){
+            Log.i("R", c.getString(c.getColumnIndexOrThrow("LOCAL_DOC_ID"))+" | "+
+                    c.getString(c.getColumnIndexOrThrow("CAM_ID"))+" | "+
+                    c.getString(c.getColumnIndexOrThrow("FRM_ID"))+" | "+
+                    c.getString(c.getColumnIndexOrThrow("REG_ID"))+" | "+
+                    c.getString(c.getColumnIndexOrThrow("REG_TIPO"))+" | "+
+                    c.getString(c.getColumnIndexOrThrow("REG_VALOR"))+" | "+
+                    c.getString(c.getColumnIndexOrThrow("REG_METADATOS"))+" | "+
+                    c.getString(c.getColumnIndexOrThrow("SEND_STATUS")));
+        }
+        c.close();
     }
 }

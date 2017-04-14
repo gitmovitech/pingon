@@ -49,12 +49,14 @@ public class TblRegistroHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         String[] projection = {
                 "DOC_ID",
+                "LOCAL_DOC_ID",
                 "CAM_ID",
                 "FRM_ID",
                 "REG_ID",
                 "REG_TIPO",
                 "REG_VALOR",
-                "REG_METADATOS"
+                "REG_METADATOS",
+                "SEND_STATUS"
         };
         Cursor cursor = db.query(TblRegistroDefinition.Entry.TABLE_NAME, projection, null, null, null, null, null);
         return cursor;

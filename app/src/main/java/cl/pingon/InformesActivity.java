@@ -103,7 +103,7 @@ public class InformesActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 InformesTabsActivity.putExtras(getIntent().getExtras());
-                Log.i("FRM_ID", String.valueOf(ArrayInformes.get(i).getId()));
+                InformesTabsActivity.putExtra("INFORME_STATUS","NUEVO");
                 InformesTabsActivity.putExtra("FRM_ID",ArrayInformes.get(i).getId());
                 InformesTabsActivity.putExtra("ARN_NOMBRE",ArrayInformes.get(i).getTitle());
                 InformesTabsActivity.putExtra("FRM_NOMBRE",ArrayInformes.get(i).getSubtitle());
@@ -117,7 +117,8 @@ public class InformesActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 1) {
-            Log.i("VUELTA DE INFORM ACTI", getIntent().getExtras().toString());
+            //Log.i("VUELTA DE INFORM ACTI", getIntent().getExtras().toString());
+            getDocumentsDatabase();
         }
     }
 
