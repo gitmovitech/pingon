@@ -55,7 +55,7 @@ public class InformesTabsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
+            getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
         IntentDetalle = new Intent(this, InformesDetallesActivity.class);

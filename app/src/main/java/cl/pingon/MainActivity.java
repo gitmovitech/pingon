@@ -33,6 +33,9 @@ import cl.pingon.SQLite.TblEmpProductsHelper;
 import cl.pingon.SQLite.TblEmpProjectsDefinition;
 import cl.pingon.SQLite.TblEmpProjectsHelper;
 import cl.pingon.SQLite.TblFormulariosHelper;
+import cl.pingon.Sync.SyncChecklist;
+import cl.pingon.Sync.SyncFormularios;
+import cl.pingon.Sync.SyncListOptions;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -120,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(session.getString("token","") != "") {
 
-            /*SyncEmpCompany();
+            SyncEmpCompany();
             SyncEmpProjects();
             SyncEmpBrands();
             SyncEmpProducts();
@@ -132,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             Checklist.Sync();
 
             SyncListOptions ListOptions = new SyncListOptions(this, ListOptionsUrl);
-            ListOptions.Sync();*/
+            ListOptions.Sync();
 
         }
     }
@@ -141,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
     public void SyncReady(){
         Syncronized++;
         if(Syncronized >= 7){
-            startActivity(IntentBuzon);
+            //startActivity(IntentBuzon);
             finish();
         }
     }

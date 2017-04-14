@@ -1,12 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_informes"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="cl.pingon.InformesActivity">
 
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_margin="0dp"
+        app:cardCornerRadius="0dp"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:padding="10dp"
+            android:background="@color/colorPrimaryDark"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/marca"
+                android:textColor="#FFFFFF"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="17sp"
+                android:text="Marca"/>
+
+            <TextView
+                android:id="@+id/equipo_serie"
+                android:textColor="#FFFFFF"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="Equipo y serie"/>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
     <LinearLayout
+        android:layout_marginTop="53dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -14,7 +49,7 @@
         <ListView
             android:id="@+id/ListDetalle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></ListView>
+            android:layout_height="match_parent"/>
 
     </LinearLayout>
 

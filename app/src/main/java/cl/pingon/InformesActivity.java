@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -63,10 +64,16 @@ public class InformesActivity extends AppCompatActivity {
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
 
-        this.setTitle("Informes");
+        this.setTitle(DOC_EXT_NOMBRE_CLIENTE);
+        getSupportActionBar().setSubtitle(DOC_EXT_OBRA);
+        TextView marca = (TextView) findViewById(R.id.marca);
+        marca.setText("MARCA: "+DOC_EXT_MARCA_EQUIPO);
+        TextView equipo_serie = (TextView) findViewById(R.id.equipo_serie);
+        equipo_serie.setText("EQUIPO Y SERIE: "+DOC_EXT_EQUIPO+" - "+DOC_EXT_NUMERO_SERIE);
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
+            getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
         ARN_ID = session.getString("arn_id", "");
@@ -96,6 +103,7 @@ public class InformesActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 InformesTabsActivity.putExtras(getIntent().getExtras());
+                Log.i("FRM_ID", String.valueOf(ArrayInformes.get(i).getId()));
                 InformesTabsActivity.putExtra("FRM_ID",ArrayInformes.get(i).getId());
                 InformesTabsActivity.putExtra("ARN_NOMBRE",ArrayInformes.get(i).getTitle());
                 InformesTabsActivity.putExtra("FRM_NOMBRE",ArrayInformes.get(i).getSubtitle());
@@ -109,7 +117,7 @@ public class InformesActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 1) {
-            Log.d("VUELTA DE INFORM ACTI", getIntent().getExtras().toString());
+            Log.i("VUELTA DE INFORM ACTI", getIntent().getExtras().toString());
         }
     }
 
@@ -136,6 +144,7 @@ public class InformesActivity extends AppCompatActivity {
             Log.i("R", c.getString(c.getColumnIndexOrThrow("ID"))+" | "+
                     c.getString(c.getColumnIndexOrThrow("DOC_ID"))+" | "+
                     c.getString(c.getColumnIndexOrThrow("USU_ID"))+" | "+
+                    c.getString(c.getColumnIndexOrThrow("FRM_ID"))+" | "+
                     c.getString(c.getColumnIndexOrThrow("DOC_NOMBRE"))+" | "+
                     c.getString(c.getColumnIndexOrThrow("DOC_FECHA_CREACION"))+" | "+
                     c.getString(c.getColumnIndexOrThrow("DOC_FECHA_MODIFICACION"))+" | "+

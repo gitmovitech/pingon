@@ -132,7 +132,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         getSupportActionBar().setSubtitle(getIntent().getStringExtra("CHK_NOMBRE"));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
+            getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
         Log.d("EXTRAS",getIntent().getExtras().toString());
