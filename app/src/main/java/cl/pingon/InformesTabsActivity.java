@@ -48,7 +48,7 @@ public class InformesTabsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reemplazo_tabs);
+        setContentView(R.layout.activity_informes_tabs);
 
         getSupportActionBar();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
