@@ -74,7 +74,8 @@ public class TblDocumentoHelper extends SQLiteOpenHelper {
                 "DOC_EXT_NOMBRE_CLIENTE",
                 "DOC_EXT_OBRA",
                 "DOC_EXT_ID_CLIENTE",
-                "DOC_EXT_ID_PROYECTO"
+                "DOC_EXT_ID_PROYECTO",
+                "SEND_STATUS"
         };
         Cursor cursor = db.query(TblDocumentoDefinition.Entry.TABLE_NAME, projection, null, null, null, null, null);
         return cursor;
@@ -145,7 +146,8 @@ public class TblDocumentoHelper extends SQLiteOpenHelper {
                 "DOC_EXT_NOMBRE_CLIENTE",
                 "DOC_EXT_OBRA",
                 "DOC_EXT_ID_CLIENTE",
-                "DOC_EXT_ID_PROYECTO"
+                "DOC_EXT_ID_PROYECTO",
+                "SEND_STATUS"
         };
         Cursor cursor = db.query(TblDocumentoDefinition.Entry.TABLE_NAME, projection, "DOC_ID = ?", new String[]{String.valueOf(ID)}, null, null, null);
         return cursor;

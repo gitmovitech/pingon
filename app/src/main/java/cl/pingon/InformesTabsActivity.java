@@ -130,7 +130,7 @@ public class InformesTabsActivity extends AppCompatActivity {
                 IntentDetalle.putExtras(getIntent().getExtras());
                 IntentDetalle.putExtra("CHK_ID", ArrayChecklist.get(index).getCHK_ID());
                 IntentDetalle.putExtra("CHK_NOMBRE", ArrayChecklist.get(index).getCHK_NOMBRE());
-                startActivityForResult(IntentDetalle, 98);
+                startActivityForResult(IntentDetalle, 1);
             }
         });
     }
@@ -159,7 +159,7 @@ public class InformesTabsActivity extends AppCompatActivity {
         String CAM_MANDATORIO;
 
         while(CursorChecklist.moveToNext()){
-            Log.d("OBTENIENDO FRM Y CHK_ID", FRM_ID+":"+CHK_ID);
+            //Log.d("OBTENIENDO FRM Y CHK_ID", FRM_ID+":"+CHK_ID);
             contador_total++;
             CAM_MANDATORIO = CursorChecklist.getString(CursorChecklist.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_MANDATORIO));
             if(CAM_MANDATORIO.contains("S")){
@@ -199,7 +199,10 @@ public class InformesTabsActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == 98) {
+        if(requestCode == 1) {
+            Intent intent = new Intent();
+            intent.putExtras(getIntent().getExtras());
+            setResult(RESULT_OK, intent);
             Log.d("VUELTA DE ACTIVITIES", getIntent().getExtras().toString());
         }
     }

@@ -189,7 +189,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
             if(LOCAL_DOC_ID != 0){
                 CursorRegistros = Registros.getByLocalDocIdAndCamId(LOCAL_DOC_ID, CAM_ID);
                 while(CursorRegistros.moveToNext()){
-
+/*
                     Log.d("NEXT", "-------------------------------------------------------------");
                     Log.d(TblRegistroDefinition.Entry.CAM_ID, ":"+ CursorRegistros.getString(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID)));
                     Log.d(TblRegistroDefinition.Entry.FRM_ID, ":"+ CursorRegistros.getString(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.FRM_ID)));
@@ -201,7 +201,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     Log.d(TblRegistroDefinition.Entry.REG_METADATOS,":"+  CursorRegistros.getString(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_METADATOS)));
                     Log.d(TblRegistroDefinition.Entry.SEND_STATUS,":"+  CursorRegistros.getString(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.SEND_STATUS)));
                     Log.d("NEXT", "-------------------------------------------------------------");
-
+*/
                     if(CursorRegistros.getInt(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID)) == CAM_ID){
                         CAM_VAL_DEFECTO = CursorRegistros.getString(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
                         break;
