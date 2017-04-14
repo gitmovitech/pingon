@@ -1,6 +1,5 @@
 package cl.pingon;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,9 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import cl.pingon.Adapter.AdapterTabs;
 import cl.pingon.Model.ModelChecklistSimple;
@@ -23,8 +20,6 @@ import cl.pingon.Model.ModelContadorTabs;
 import cl.pingon.Model.ModelTabsItem;
 import cl.pingon.SQLite.TblChecklistDefinition;
 import cl.pingon.SQLite.TblChecklistHelper;
-import cl.pingon.SQLite.TblDocumentoDefinition;
-import cl.pingon.SQLite.TblDocumentoHelper;
 import cl.pingon.SQLite.TblFormulariosDefinition;
 import cl.pingon.SQLite.TblFormulariosHelper;
 import cl.pingon.SQLite.TblRegistroDefinition;
@@ -107,10 +102,6 @@ public class InformesTabsActivity extends AppCompatActivity {
         ListView Listado = (ListView) findViewById(R.id.list);
 
 
-        if(LOCAL_DOC_ID != 0)
-            LOCAL_DOC_ID = GetInforme();
-
-
         /**
          * Si no viene definido entonces viene de borradores
          */
@@ -166,39 +157,6 @@ public class InformesTabsActivity extends AppCompatActivity {
             }
         });
     }
-
-
-    /**
-     * INSERTA UN NUEVO INFORME EN LA BASE DE DATOS
-     * @return
-     */
-    public int GetInforme(){
-        int ID = 0;
-        if(INFORME_STATUS.contentEquals("NUEVO")){
-            TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
-            ContentValues InsertValues = new ContentValues();
-
-            SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-
-            InsertValues.put(TblDocumentoDefinition.Entry.USU_ID, USU_ID);
-            InsertValues.put(TblDocumentoDefinition.Entry.FRM_ID, FRM_ID);
-            InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE, DOC_EXT_ID_CLIENTE);
-            InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO, DOC_EXT_ID_PROYECTO);
-            InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_OBRA, DOC_EXT_OBRA);
-            InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO, DOC_EXT_EQUIPO);
-            InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_MARCA_EQUIPO, DOC_EXT_MARCA_EQUIPO);
-            InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE, DOC_EXT_NUMERO_SERIE);
-            InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE, DOC_EXT_NOMBRE_CLIENTE);
-            InsertValues.put(TblDocumentoDefinition.Entry.DOC_FECHA_CREACION, ft.format(new Date()));
-            InsertValues.put(TblDocumentoDefinition.Entry.DOC_FECHA_MODIFICACION, ft.format(new Date()));
-            InsertValues.put(TblDocumentoDefinition.Entry.SEND_STATUS, "EMPTY");
-
-            ID = Documentos.insert(InsertValues);
-        }
-        return ID;
-    }
-
-
 
     /**
      * CONTADOR DE TOTAL DE ITEMS NORMALES Y OLBIGATORIOS CONTESTADOS

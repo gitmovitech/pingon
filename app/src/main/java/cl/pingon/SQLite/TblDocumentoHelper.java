@@ -56,6 +56,12 @@ public class TblDocumentoHelper extends SQLiteOpenHelper {
         db.update(TblDocumentoDefinition.Entry.TABLE_NAME, values, where, null);
     }
 
+    public void deleteById(Integer id){
+        SQLiteDatabase db = getReadableDatabase();
+        String where = TblDocumentoDefinition.Entry.ID + " = ?";
+        db.delete(TblDocumentoDefinition.Entry.TABLE_NAME, where, new String[]{String.valueOf(id)});
+    }
+
     public Cursor getAll(){
         SQLiteDatabase db = getReadableDatabase();
         String[] projection = {

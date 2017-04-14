@@ -1,5 +1,6 @@
 package cl.pingon;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,10 +14,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import cl.pingon.Adapter.AdapterInformes;
 import cl.pingon.Model.Informes;
+import cl.pingon.SQLite.TblDocumentoDefinition;
 import cl.pingon.SQLite.TblDocumentoHelper;
 import cl.pingon.SQLite.TblFormulariosDefinition;
 import cl.pingon.SQLite.TblFormulariosHelper;
@@ -111,7 +115,7 @@ public class InformesActivity extends AppCompatActivity {
             }
         });
 
-        getDocumentsDatabase();
+        GetInforme();
     }
 
     @Override
@@ -132,6 +136,44 @@ public class InformesActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
+    }
+
+    /**
+     * INSERTA UN NUEVO INFORME EN LA BASE DE DATOS
+     * @return
+     */
+    public int GetInforme(){
+        int ID = 0;
+        TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
+
+        //ELIMINAR REGISTROS EMPTY
+        Cursor c = Documentos.getAll();
+        while(c.moveToNext()){
+            if(c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.SEND_STATUS)).contentEquals("EMPTY")){
+                Documentos.deleteById(c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.ID)));
+            }
+        }
+        c.close();
+
+        ContentValues InsertValues = new ContentValues();
+
+        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+
+        InsertValues.put(TblDocumentoDefinition.Entry.USU_ID, USU_ID);
+        InsertValues.put(TblDocumentoDefinition.Entry.FRM_ID, 0);
+        InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE, DOC_EXT_ID_CLIENTE);
+        InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO, DOC_EXT_ID_PROYECTO);
+        InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_OBRA, DOC_EXT_OBRA);
+        InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO, DOC_EXT_EQUIPO);
+        InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_MARCA_EQUIPO, DOC_EXT_MARCA_EQUIPO);
+        InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE, DOC_EXT_NUMERO_SERIE);
+        InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE, DOC_EXT_NOMBRE_CLIENTE);
+        InsertValues.put(TblDocumentoDefinition.Entry.DOC_FECHA_CREACION, ft.format(new Date()));
+        InsertValues.put(TblDocumentoDefinition.Entry.DOC_FECHA_MODIFICACION, ft.format(new Date()));
+        InsertValues.put(TblDocumentoDefinition.Entry.SEND_STATUS, "EMPTY");
+
+        ID = Documentos.insert(InsertValues);
+        return ID;
     }
 
     public void getDocumentsDatabase(){
