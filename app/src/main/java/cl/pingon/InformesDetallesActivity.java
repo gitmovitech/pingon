@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 
 import java.io.File;
@@ -86,11 +87,21 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
 
 
+    /**
+     * FUNCION DE CHECK ANTES DE GUARDAR LOS ITEMS
+     * ------------------------------------------------------------------------------------------------------------
+     * @param data
+     */
     private void guardarRegistros(ArrayList<ModelChecklistFields> data){
         View WidgetView;
         EditText EditText;
         Spinner Spinner;
+        RadioButton RadioButton;
         String MessageErrors = "";
+
+        /**
+         * @TODO: AVERIGUAR PORQUE LOS ITEMS CAMBIAN DE LUGAR Y PORQUE AL HACER SCROLL RECIEN SE REFRESCA LOS ITEMS
+         */
 
         for(int x = 0; x < data.size(); x++){
             switch (data.get(x).getCAM_TIPO()){
@@ -99,7 +110,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         WidgetView = data.get(x).getView();
                         EditText = (EditText) WidgetView.findViewById(R.id.texto_input);
                         if (data.get(x).getCAM_MANDATORIO().equals("S") && !EditText.getText().toString().contains("@")) {
-                            MessageErrors += "El campo " + data.get(x).getCAM_NOMBRE_EXTERNO() + " es requerido y debe ser válido.\n";
+                            MessageErrors += "El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es requerido y debe ser válido.\n";
                         } else {
                             data.get(x).setValue(EditText.getText().toString());
                         }
@@ -110,21 +121,24 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         WidgetView = data.get(x).getView();
                         EditText = (EditText) WidgetView.findViewById(R.id.texto_input);
                         if (data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()) {
-                            MessageErrors += "El campo " + data.get(x).getCAM_NOMBRE_EXTERNO() + " es obligatorio.\n";
+                            MessageErrors += "El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n";
                         } else {
                             data.get(x).setValue(EditText.getText().toString());
                         }
                     } catch(Exception e){}
                     break;
                 case "firma":
+                    MessageErrors += "PROGRAMAR FIRMA\n";
+                    break;
                 case "foto":
+                    MessageErrors += "PROGRAMAR FOTO\n";
                     break;
                 case "fecha":
                     try {
                         WidgetView = data.get(x).getView();
                         EditText = (EditText) WidgetView.findViewById(R.id.fecha_input);
                         if (data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()) {
-                            MessageErrors += "El campo " + data.get(x).getCAM_NOMBRE_EXTERNO() + " es obligatorio.\n";
+                            MessageErrors += "El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n";
                         } else {
                             data.get(x).setValue(EditText.getText().toString());
                         }
@@ -135,7 +149,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         WidgetView = data.get(x).getView();
                         EditText = (EditText) WidgetView.findViewById(R.id.hora_input);
                         if (data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()) {
-                            MessageErrors += "El campo " + data.get(x).getCAM_NOMBRE_EXTERNO() + " es obligatorio.\n";
+                            MessageErrors += "El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n";
                         } else {
                             data.get(x).setValue(EditText.getText().toString());
                         }
@@ -145,26 +159,58 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     try {
                         WidgetView = data.get(x).getView();
                         Spinner = (Spinner) WidgetView.findViewById(R.id.SpinnerSelect);
-                        Log.d("SELECCION", Spinner.getSelectedItem().toString());
                         if (data.get(x).getCAM_MANDATORIO().equals("S") && Spinner.getSelectedItem().toString().contentEquals("Seleccione aquí")) {
-                            MessageErrors += "El campo de selección " + data.get(x).getCAM_NOMBRE_EXTERNO() + " es obligatorio.\n";
+                            MessageErrors += "El campo de selección \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n";
                         } else {
                             data.get(x).setValue(Spinner.getSelectedItem().toString());
                         }
                     } catch(Exception e){}
                     break;
                 case "binario":
+                    try {
+                        int checked = 1;
+                        String value = "";
+                        WidgetView = data.get(x).getView();
+                        RadioButton = (RadioButton) WidgetView.findViewById(R.id.radio_si);
+                        if(!RadioButton.isChecked()){
+                            RadioButton = (RadioButton) WidgetView.findViewById(R.id.radio_no);
+                            if(!RadioButton.isChecked()){
+                                checked = 0;
+                            } else {
+                                value = RadioButton.getText().toString();
+                            }
+                        } else {
+                            value = RadioButton.getText().toString();
+                        }
+                        if (data.get(x).getCAM_MANDATORIO().equals("S") && checked == 0) {
+                            MessageErrors += "El campo de selección \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n";
+                        } else {
+                            data.get(x).setValue(value);
+                        }
+
+                    } catch(Exception e){}
                     break;
                 case "numero_entero":
+                    try {
+                        WidgetView = data.get(x).getView();
+                        EditText = (EditText) WidgetView.findViewById(R.id.numero_input);
+                        if (data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()) {
+                            MessageErrors += "El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n";
+                        } else {
+                            data.get(x).setValue(EditText.getText().toString());
+                        }
+                    } catch(Exception e){}
                     break;
                 case "moneda":
+                    MessageErrors += "PROGRAMAR MONEDA\n";
                     break;
                 case "sistema":
+                    MessageErrors += "PROGRAMAR SISTEMA\n";
                     break;
                 case "etiqueta":
                     break;
                 default:
-                    Log.d("POR OTRA PARTE", data.get(x).getCAM_TIPO());
+                    MessageErrors += "PROGRAMAR OTRO:\n"+data.get(x).getCAM_TIPO();
                     break;
             }
         }
@@ -172,7 +218,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         if(MessageErrors.isEmpty()){
             Log.d("Vacio", "s");
         } else {
-            alert.setTitle("Error");
+            alert.setTitle("Error "+data.size());
             alert.setMessage(MessageErrors);
             alert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
