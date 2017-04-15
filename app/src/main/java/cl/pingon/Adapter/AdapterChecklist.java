@@ -51,7 +51,15 @@ public abstract class AdapterChecklist extends BaseAdapter {
         IntentSign = new Intent(context, SignDrawActivity.class);
     }
 
+    @Override
+    public int getViewTypeCount() {
+        return getCount();
+    }
 
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 
     @Override
     public int getCount() {
@@ -65,7 +73,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
 
     @Override
     public long getItemId(int i) {
-        return 0;
+        return i;
     }
 
     @Override

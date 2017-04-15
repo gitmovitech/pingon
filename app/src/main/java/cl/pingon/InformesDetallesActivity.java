@@ -100,7 +100,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         String MessageErrors = "";
 
         /**
-         * @TODO: AVERIGUAR PORQUE LOS ITEMS CAMBIAN DE LUGAR Y PORQUE AL HACER SCROLL RECIEN SE REFRESCA LOS ITEMS
+         * @TODO: AVERIGUAR PORQUE AL HACER SCROLL RECIEN SE REFRESCA LOS ITEMS
          */
 
         for(int x = 0; x < data.size(); x++){
