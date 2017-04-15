@@ -85,7 +85,7 @@ public class InformesTabsActivity extends AppCompatActivity {
         DOC_EXT_MARCA_EQUIPO = getIntent().getStringExtra("DOC_EXT_MARCA_EQUIPO");
         DOC_EXT_NUMERO_SERIE = getIntent().getStringExtra("DOC_EXT_NUMERO_SERIE");
         DOC_EXT_NOMBRE_CLIENTE = getIntent().getStringExtra("DOC_EXT_NOMBRE_CLIENTE");
-        LOCAL_DOC_ID = getIntent().getIntExtra("LOCAL_DOC_ID", 0); Log.d("LOCAL_DOC_ID DE IA", String.valueOf(LOCAL_DOC_ID));
+        LOCAL_DOC_ID = getIntent().getIntExtra("LOCAL_DOC_ID", 0);
         INFORME_STATUS = getIntent().getStringExtra("INFORME_STATUS");
 
 
@@ -150,7 +150,6 @@ public class InformesTabsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
                 IntentDetalle.putExtras(getIntent().getExtras());
-                IntentDetalle.putExtra("LOCAL_DOC_ID", LOCAL_DOC_ID);
                 IntentDetalle.putExtra("CHK_ID", ArrayChecklist.get(index).getCHK_ID());
                 IntentDetalle.putExtra("CHK_NOMBRE", ArrayChecklist.get(index).getCHK_NOMBRE());
                 startActivityForResult(IntentDetalle, 1);

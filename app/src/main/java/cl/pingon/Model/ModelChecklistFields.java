@@ -47,6 +47,10 @@ public class ModelChecklistFields {
         return this.CAM_ID;
     }
 
+    public void setCAM_ID(int CAM_ID) {
+        this.CAM_ID = CAM_ID;
+    }
+
     public int getCAM_POSICION(){
         return this.CAM_POSICION;
     }
@@ -69,6 +73,10 @@ public class ModelChecklistFields {
 
     public String getCAM_VAL_DEFECTO(){
         return this.CAM_VAL_DEFECTO;
+    }
+
+    public void setCAM_VAL_DEFECTO(String CAM_VAL_DEFECTO) {
+        this.CAM_VAL_DEFECTO = CAM_VAL_DEFECTO;
     }
 
     public String getCAM_PLACE_HOLDER(){
