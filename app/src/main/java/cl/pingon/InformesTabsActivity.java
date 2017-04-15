@@ -85,7 +85,7 @@ public class InformesTabsActivity extends AppCompatActivity {
         DOC_EXT_MARCA_EQUIPO = getIntent().getStringExtra("DOC_EXT_MARCA_EQUIPO");
         DOC_EXT_NUMERO_SERIE = getIntent().getStringExtra("DOC_EXT_NUMERO_SERIE");
         DOC_EXT_NOMBRE_CLIENTE = getIntent().getStringExtra("DOC_EXT_NOMBRE_CLIENTE");
-        LOCAL_DOC_ID = session.getInt("LOCAL_DOC_ID", 0);
+        LOCAL_DOC_ID = getIntent().getIntExtra("LOCAL_DOC_ID", 0); Log.d("LOCAL_DOC_ID DE IA", String.valueOf(LOCAL_DOC_ID));
         INFORME_STATUS = getIntent().getStringExtra("INFORME_STATUS");
 
 

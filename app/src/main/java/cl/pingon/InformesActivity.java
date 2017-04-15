@@ -106,10 +106,11 @@ public class InformesActivity extends AppCompatActivity {
         ListDetalle.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                GetInforme(ArrayInformes.get(i).getId());
+                Integer LOCAL_DOC_ID = GetInforme(ArrayInformes.get(i).getId());
                 InformesTabsActivity.putExtras(getIntent().getExtras());
                 InformesTabsActivity.putExtra("INFORME_STATUS","NUEVO");
                 InformesTabsActivity.putExtra("FRM_ID",ArrayInformes.get(i).getId());
+                InformesTabsActivity.putExtra("LOCAL_DOC_ID",LOCAL_DOC_ID);
                 InformesTabsActivity.putExtra("ARN_NOMBRE",ArrayInformes.get(i).getTitle());
                 InformesTabsActivity.putExtra("FRM_NOMBRE",ArrayInformes.get(i).getSubtitle());
                 startActivityForResult(InformesTabsActivity, 1);
