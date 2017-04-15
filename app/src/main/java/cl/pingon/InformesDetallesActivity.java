@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import cl.pingon.Adapter.AdapterChecklist;
+import cl.pingon.Libraries.TimerUtils;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.SQLite.TblChecklistDefinition;
 import cl.pingon.SQLite.TblChecklistHelper;
@@ -50,7 +51,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
 
         ArrayList<ModelChecklistFields> ArrayChecklist;
-        ListView ListViewInformesDetalles = (ListView) findViewById(R.id.ListViewInformesDetalles);
+        final ListView ListViewInformesDetalles = (ListView) findViewById(R.id.ListViewInformesDetalles);
         /**
          * CARGAR LOS CHECKLIST
          */
@@ -64,6 +65,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         final AdapterChecklist AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this){};
         ListViewInformesDetalles.setAdapter(AdapterChecklist);
 
+
         /**
          * GUARDAR REGISTRO
          */
@@ -71,7 +73,12 @@ public class InformesDetallesActivity extends AppCompatActivity {
         fabsave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                guardarRegistros(AdapterChecklist.getChecklistData());
+                ListViewInformesDetalles.smoothScrollBy(100000,400);
+                TimerUtils.TaskHandle handle = TimerUtils.setTimeout(new Runnable() {
+                    public void run() {
+                        guardarRegistros(AdapterChecklist.getChecklistData());
+                    }
+                }, 500);
             }
         });
 
@@ -98,6 +105,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         Spinner Spinner;
         RadioButton RadioButton;
         String MessageErrors = "";
+        int MessageCount = 1;
 
         /**
          * @TODO: AVERIGUAR PORQUE AL HACER SCROLL RECIEN SE REFRESCA LOS ITEMS
@@ -110,7 +118,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         WidgetView = data.get(x).getView();
                         EditText = (EditText) WidgetView.findViewById(R.id.texto_input);
                         if (data.get(x).getCAM_MANDATORIO().equals("S") && !EditText.getText().toString().contains("@")) {
-                            MessageErrors += "El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es requerido y debe ser válido.\n";
+                            MessageErrors += MessageCount + " - El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es requerido y debe ser válido.\n\n";
+                            MessageCount++;
                         } else {
                             data.get(x).setValue(EditText.getText().toString());
                         }
@@ -121,7 +130,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         WidgetView = data.get(x).getView();
                         EditText = (EditText) WidgetView.findViewById(R.id.texto_input);
                         if (data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()) {
-                            MessageErrors += "El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n";
+                            MessageErrors += MessageCount + " - El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n\n";
+                            MessageCount++;
                         } else {
                             data.get(x).setValue(EditText.getText().toString());
                         }
@@ -138,7 +148,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         WidgetView = data.get(x).getView();
                         EditText = (EditText) WidgetView.findViewById(R.id.fecha_input);
                         if (data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()) {
-                            MessageErrors += "El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n";
+                            MessageErrors += MessageCount + " - El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n\n";
+                            MessageCount++;
                         } else {
                             data.get(x).setValue(EditText.getText().toString());
                         }
@@ -149,7 +160,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         WidgetView = data.get(x).getView();
                         EditText = (EditText) WidgetView.findViewById(R.id.hora_input);
                         if (data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()) {
-                            MessageErrors += "El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n";
+                            MessageErrors += MessageCount + " - El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n\n";
+                            MessageCount++;
                         } else {
                             data.get(x).setValue(EditText.getText().toString());
                         }
@@ -160,7 +172,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         WidgetView = data.get(x).getView();
                         Spinner = (Spinner) WidgetView.findViewById(R.id.SpinnerSelect);
                         if (data.get(x).getCAM_MANDATORIO().equals("S") && Spinner.getSelectedItem().toString().contentEquals("Seleccione aquí")) {
-                            MessageErrors += "El campo de selección \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n";
+                            MessageErrors += MessageCount + " - El campo de selección \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n\n";
+                            MessageCount++;
                         } else {
                             data.get(x).setValue(Spinner.getSelectedItem().toString());
                         }
@@ -183,7 +196,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
                             value = RadioButton.getText().toString();
                         }
                         if (data.get(x).getCAM_MANDATORIO().equals("S") && checked == 0) {
-                            MessageErrors += "El campo de selección \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n";
+                            MessageErrors += MessageCount + " - El campo de selección \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n\n";
+                            MessageCount++;
                         } else {
                             data.get(x).setValue(value);
                         }
@@ -195,7 +209,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         WidgetView = data.get(x).getView();
                         EditText = (EditText) WidgetView.findViewById(R.id.numero_input);
                         if (data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()) {
-                            MessageErrors += "El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n";
+                            MessageErrors += MessageCount + " - El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n\n";
+                            MessageCount++;
                         } else {
                             data.get(x).setValue(EditText.getText().toString());
                         }
@@ -218,7 +233,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         if(MessageErrors.isEmpty()){
             Log.d("Vacio", "s");
         } else {
-            alert.setTitle("Error "+data.size());
+            alert.setTitle("Error ");
             alert.setMessage(MessageErrors);
             alert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {

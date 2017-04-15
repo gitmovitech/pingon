@@ -43,6 +43,8 @@ public abstract class AdapterChecklist extends BaseAdapter {
     ArrayList<ModelImage> ImageItems;
     Intent IntentSign;
 
+    int Timer = 1000;
+
     public AdapterChecklist(Context context, ArrayList<ModelChecklistFields> ChecklistFields, InformesDetallesActivity InformesDetallesActivity){
         this.ChecklistFields = ChecklistFields;
         this.context = context;
@@ -89,6 +91,8 @@ public abstract class AdapterChecklist extends BaseAdapter {
         }
 
         if(contador < getCount()){
+
+            Log.d("SCROLEANDO", String.valueOf(contador));
 
             switch(ChecklistFields.get(contador).getCAM_TIPO()){
                 case "email":
