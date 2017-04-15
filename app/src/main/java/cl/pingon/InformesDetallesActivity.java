@@ -1,5 +1,6 @@
 package cl.pingon;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -7,9 +8,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,7 +29,7 @@ import cl.pingon.SQLite.TblRegistroHelper;
 
 public class InformesDetallesActivity extends AppCompatActivity {
 
-
+    AlertDialog.Builder alert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +42,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
+        alert = new AlertDialog.Builder(this);
 
         this.setTitle(getIntent().getStringExtra("FRM_NOMBRE"));
         getSupportActionBar().setSubtitle(getIntent().getStringExtra("CHK_NOMBRE"));
@@ -53,8 +60,20 @@ public class InformesDetallesActivity extends AppCompatActivity {
         ArrayChecklist = completeValuesOnChecklist(ArrayChecklist, getIntent().getIntExtra("LOCAL_DOC_ID",0));
 
 
-        AdapterChecklist AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this){};
+        final AdapterChecklist AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this){};
         ListViewInformesDetalles.setAdapter(AdapterChecklist);
+
+        /**
+         * GUARDAR REGISTRO
+         */
+        FloatingActionButton fabsave = (FloatingActionButton) findViewById(R.id.fabSave);
+        fabsave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                guardarRegistros(AdapterChecklist.getChecklistData());
+            }
+        });
+
 
         /**
          * @TODO FOR TESTING, REMOVER DESPUES
@@ -64,11 +83,119 @@ public class InformesDetallesActivity extends AppCompatActivity {
     }
 
 
+
+
+
+    private void guardarRegistros(ArrayList<ModelChecklistFields> data){
+        View WidgetView;
+        EditText EditText;
+        Spinner Spinner;
+        String MessageErrors = "";
+
+        for(int x = 0; x < data.size(); x++){
+            switch (data.get(x).getCAM_TIPO()){
+                case "email":
+                    try {
+                        WidgetView = data.get(x).getView();
+                        EditText = (EditText) WidgetView.findViewById(R.id.texto_input);
+                        if (data.get(x).getCAM_MANDATORIO().equals("S") && !EditText.getText().toString().contains("@")) {
+                            MessageErrors += "El campo " + data.get(x).getCAM_NOMBRE_EXTERNO() + " es requerido y debe ser válido.\n";
+                        } else {
+                            data.get(x).setValue(EditText.getText().toString());
+                        }
+                    } catch (Exception e){}
+                    break;
+                case "texto":
+                    try {
+                        WidgetView = data.get(x).getView();
+                        EditText = (EditText) WidgetView.findViewById(R.id.texto_input);
+                        if (data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()) {
+                            MessageErrors += "El campo " + data.get(x).getCAM_NOMBRE_EXTERNO() + " es obligatorio.\n";
+                        } else {
+                            data.get(x).setValue(EditText.getText().toString());
+                        }
+                    } catch(Exception e){}
+                    break;
+                case "firma":
+                case "foto":
+                    break;
+                case "fecha":
+                    try {
+                        WidgetView = data.get(x).getView();
+                        EditText = (EditText) WidgetView.findViewById(R.id.fecha_input);
+                        if (data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()) {
+                            MessageErrors += "El campo " + data.get(x).getCAM_NOMBRE_EXTERNO() + " es obligatorio.\n";
+                        } else {
+                            data.get(x).setValue(EditText.getText().toString());
+                        }
+                    } catch(Exception e){}
+                    break;
+                case "hora":
+                    try {
+                        WidgetView = data.get(x).getView();
+                        EditText = (EditText) WidgetView.findViewById(R.id.hora_input);
+                        if (data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()) {
+                            MessageErrors += "El campo " + data.get(x).getCAM_NOMBRE_EXTERNO() + " es obligatorio.\n";
+                        } else {
+                            data.get(x).setValue(EditText.getText().toString());
+                        }
+                    } catch(Exception e){}
+                    break;
+                case "lista":
+                    try {
+                        WidgetView = data.get(x).getView();
+                        Spinner = (Spinner) WidgetView.findViewById(R.id.SpinnerSelect);
+                        Log.d("SELECCION", Spinner.getSelectedItem().toString());
+                        if (data.get(x).getCAM_MANDATORIO().equals("S") && Spinner.getSelectedItem().toString().contentEquals("Seleccione aquí")) {
+                            MessageErrors += "El campo de selección " + data.get(x).getCAM_NOMBRE_EXTERNO() + " es obligatorio.\n";
+                        } else {
+                            data.get(x).setValue(Spinner.getSelectedItem().toString());
+                        }
+                    } catch(Exception e){}
+                    break;
+                case "binario":
+                    break;
+                case "numero_entero":
+                    break;
+                case "moneda":
+                    break;
+                case "sistema":
+                    break;
+                case "etiqueta":
+                    break;
+                default:
+                    Log.d("POR OTRA PARTE", data.get(x).getCAM_TIPO());
+                    break;
+            }
+        }
+
+        if(MessageErrors.isEmpty()){
+            Log.d("Vacio", "s");
+        } else {
+            alert.setTitle("Error");
+            alert.setMessage(MessageErrors);
+            alert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alert.create();
+            alert.show();
+        }
+
+    }
+
+
+
+
+
     /**
      * AUTOCOMPLETA INFORMACION POR ITEM DE LA BASE DE DATOS SI ES QUE YA EXISTE UN REGISTRO GUARDADO
+     *  ------------------------------------------------------------------------------------------------------------
      * @param ArrayChecklist
      * @param LOCAL_DOC_ID
      * @return
+     *
      */
     private ArrayList<ModelChecklistFields> completeValuesOnChecklist(ArrayList<ModelChecklistFields> ArrayChecklist, int LOCAL_DOC_ID){
         int CAM_ID = 0;
@@ -95,8 +222,10 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
 
 
+
     /**
      * OBTENER TODOS LOS ITEMS DEL CHECKLIST POR RM_ID Y CHK_ID
+     *  ------------------------------------------------------------------------------------------------------------
      */
     private int CAM_ID;
     private int CAM_POSICION;
@@ -143,6 +272,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
     /**
      * FUNCIONES DE LA CAMARA
      * @param index
+     *  ------------------------------------------------------------------------------------------------------------
      */
     int RowItemIndex = 0;
     String ImageName = Environment.getExternalStorageDirectory() + "/Pingon/fotos/imagen-";
@@ -165,7 +295,11 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
 
 
-
+    /**
+     * BOTON DE NAVEGACION HACIA ATRÁS
+     *  ------------------------------------------------------------------------------------------------------------
+     * @return
+     */
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
@@ -184,6 +318,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
     /**
      * LISTADO DE BASE DE DATOS POR CONSOLA
+     * ------------------------------------------------------------------------------------------------------------
      */
     public void getRegistrosDatabase(){
         TblRegistroHelper Registros = new TblRegistroHelper(getApplicationContext());
@@ -202,5 +337,6 @@ public class InformesDetallesActivity extends AppCompatActivity {
         }
         c.close();
     }
+
 
 }
