@@ -106,6 +106,7 @@ public class InformesActivity extends AppCompatActivity {
         ListDetalle.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                GetInforme(ArrayInformes.get(i).getId());
                 InformesTabsActivity.putExtras(getIntent().getExtras());
                 InformesTabsActivity.putExtra("INFORME_STATUS","NUEVO");
                 InformesTabsActivity.putExtra("FRM_ID",ArrayInformes.get(i).getId());
@@ -114,14 +115,13 @@ public class InformesActivity extends AppCompatActivity {
                 startActivityForResult(InformesTabsActivity, 1);
             }
         });
-
-        GetInforme();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 1) {
             //Log.i("VUELTA DE INFORM ACTI", getIntent().getExtras().toString());
+            Log.d("LOCAL_DOC_ID", ":"+getIntent().getStringExtra("LOCAL_DOC_ID"));
             getDocumentsDatabase();
         }
     }
@@ -142,7 +142,7 @@ public class InformesActivity extends AppCompatActivity {
      * INSERTA UN NUEVO INFORME EN LA BASE DE DATOS
      * @return
      */
-    public int GetInforme(){
+    public int GetInforme(int FRM_ID){
         int ID = 0;
         TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
 
@@ -160,7 +160,7 @@ public class InformesActivity extends AppCompatActivity {
         SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
         InsertValues.put(TblDocumentoDefinition.Entry.USU_ID, USU_ID);
-        InsertValues.put(TblDocumentoDefinition.Entry.FRM_ID, 0);
+        InsertValues.put(TblDocumentoDefinition.Entry.FRM_ID, FRM_ID);
         InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE, DOC_EXT_ID_CLIENTE);
         InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO, DOC_EXT_ID_PROYECTO);
         InsertValues.put(TblDocumentoDefinition.Entry.DOC_EXT_OBRA, DOC_EXT_OBRA);
