@@ -108,12 +108,6 @@ public class InformesDetallesActivity extends AppCompatActivity {
             }
         });
 
-
-        /**
-         * TODO FOR TESTING, REMOVER DESPUES
-         */
-        Log.d("EXTRAS",getIntent().getExtras().toString());
-        getRegistrosDatabase();
     }
 
 
@@ -276,7 +270,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
      * GUARDAR REGISTROS VALIDOS
      * ------------------------------------------------------------------------------------------------------------
      * @param data
-     * TODO: BUSCAR SI REGISTRO EXISTE PARA NO CREAR UNO NUEVO
+     * TODO: Revisar si los registros se eucnetran guardando correctamente y que se hace update en caso necesario
      */
     public void guardarRegistros(ArrayList<ModelChecklistFields> data){
         TblRegistroHelper Registros = new TblRegistroHelper(this);
@@ -313,7 +307,6 @@ public class InformesDetallesActivity extends AppCompatActivity {
             TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
             values = new ContentValues();
             values.put(TblDocumentoDefinition.Entry.SEND_STATUS, "DRAFT");
-            Log.d("ACTUALIZANDO DOC", String.valueOf(getIntent().getIntExtra("LOCAL_DOC_ID", 0)));
             Documentos.update(getIntent().getIntExtra("LOCAL_DOC_ID", 0), values);
         }
 
