@@ -92,8 +92,6 @@ public abstract class AdapterChecklist extends BaseAdapter {
 
         if(contador < getCount()){
 
-            Log.d("SCROLEANDO", String.valueOf(contador));
-
             switch(ChecklistFields.get(contador).getCAM_TIPO()){
                 case "email":
                     FieldsEmail FieldsEmail = new FieldsEmail(Inflater, ChecklistFields.get(contador));

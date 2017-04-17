@@ -284,6 +284,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
             LOCAL_REG_ID = 0;
             cursor = Registros.getDraftByLocalDocIdCamIdAndFrmId(getIntent().getIntExtra("LOCAL_DOC_ID", 0), data.get(x).getCAM_ID(), getIntent().getIntExtra("FRM_ID", 0));
             if(cursor.getCount() > 0){
+                cursor.moveToFirst();
                 LOCAL_REG_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.ID));
             }
 
