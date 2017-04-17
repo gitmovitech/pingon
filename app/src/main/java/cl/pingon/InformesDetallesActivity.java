@@ -13,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -55,12 +56,31 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         ArrayList<ModelChecklistFields> ArrayChecklist;
         final ListView ListViewInformesDetalles = (ListView) findViewById(R.id.ListViewInformesDetalles);
+        ListViewInformesDetalles.setOnTouchListener(new ListView.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        v.getParent().requestDisallowInterceptTouchEvent(false);
+                        break;
+                }
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                v.onTouchEvent(event);
+                return true;
+            }
+        });
+
         /**
          * CARGAR LOS CHECKLIST
          */
         ArrayChecklist = getChecklists(getIntent().getIntExtra("FRM_ID",0), getIntent().getIntExtra("CHK_ID",0));
         /**
-         * BUSCAR VALORES YA GUADADOS EN REGISTROS
+         * BUSCAR VALORES YA GUARDADOS EN REGISTROS
          */
         ArrayChecklist = completeValuesOnChecklist(ArrayChecklist, getIntent().getIntExtra("LOCAL_DOC_ID",0));
 
