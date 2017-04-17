@@ -284,6 +284,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
             LOCAL_REG_ID = 0;
             cursor = Registros.getDraftByLocalDocIdCamIdAndFrmId(getIntent().getIntExtra("LOCAL_DOC_ID", 0), data.get(x).getCAM_ID(), getIntent().getIntExtra("FRM_ID", 0));
             if(cursor.getCount() > 0){
+                cursor.moveToFirst();
                 LOCAL_REG_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.ID));
             }
 
@@ -293,6 +294,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     values.put(TblRegistroDefinition.Entry.LOCAL_DOC_ID, getIntent().getIntExtra("LOCAL_DOC_ID", 0));
                     values.put(TblRegistroDefinition.Entry.CAM_ID, data.get(x).getCAM_ID());
                     values.put(TblRegistroDefinition.Entry.FRM_ID, getIntent().getIntExtra("FRM_ID", 0));
+                    values.put(TblRegistroDefinition.Entry.CHK_ID, getIntent().getIntExtra("CHK_ID", 0));
                     values.put(TblRegistroDefinition.Entry.REG_TIPO, data.get(x).getCAM_TIPO());
                     values.put(TblRegistroDefinition.Entry.REG_VALOR, data.get(x).getValue());
                     values.put(TblRegistroDefinition.Entry.SEND_STATUS, "DRAFT");

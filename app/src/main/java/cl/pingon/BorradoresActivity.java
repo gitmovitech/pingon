@@ -1,5 +1,6 @@
 package cl.pingon;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
@@ -34,6 +35,8 @@ public class BorradoresActivity extends AppCompatActivity {
     ArrayList<ModelProyecto> Proyecto;
     ArrayList<ModelEquipo> Equipo;
 
+    static Activity activity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +48,8 @@ public class BorradoresActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
+
+        activity = this;
 
         overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
 

@@ -22,6 +22,7 @@ public class TblRegistroHelper extends SQLiteOpenHelper {
         query += TblRegistroDefinition.Entry.LOCAL_DOC_ID+" LOCAL_DOC_ID NOT NULL,";
         query += TblRegistroDefinition.Entry.CAM_ID+" INTEGER NOT NULL,";
         query += TblRegistroDefinition.Entry.FRM_ID+" INTEGER NOT NULL,";
+        query += TblRegistroDefinition.Entry.CHK_ID+" INTEGER NOT NULL,";
         query += TblRegistroDefinition.Entry.REG_ID+" INTEGER NULL,";
         query += TblRegistroDefinition.Entry.REG_TIPO+" TEXT NOT NULL,";
         query += TblRegistroDefinition.Entry.REG_VALOR+" TEXT NOT NULL,";
@@ -71,6 +72,7 @@ public class TblRegistroHelper extends SQLiteOpenHelper {
                 TblRegistroDefinition.Entry.FRM_ID,
                 TblRegistroDefinition.Entry.LOCAL_DOC_ID,
                 TblRegistroDefinition.Entry.REG_ID,
+                TblRegistroDefinition.Entry.ID,
                 TblRegistroDefinition.Entry.REG_METADATOS,
                 TblRegistroDefinition.Entry.REG_TIPO,
                 TblRegistroDefinition.Entry.REG_VALOR,
@@ -90,9 +92,11 @@ public class TblRegistroHelper extends SQLiteOpenHelper {
         String[] projection = {
                 TblRegistroDefinition.Entry.CAM_ID,
                 TblRegistroDefinition.Entry.DOC_ID,
+                TblRegistroDefinition.Entry.CHK_ID,
                 TblRegistroDefinition.Entry.FRM_ID,
                 TblRegistroDefinition.Entry.LOCAL_DOC_ID,
                 TblRegistroDefinition.Entry.REG_ID,
+                TblRegistroDefinition.Entry.ID,
                 TblRegistroDefinition.Entry.REG_METADATOS,
                 TblRegistroDefinition.Entry.REG_TIPO,
                 TblRegistroDefinition.Entry.REG_VALOR,
@@ -115,6 +119,7 @@ public class TblRegistroHelper extends SQLiteOpenHelper {
                 TblRegistroDefinition.Entry.FRM_ID,
                 TblRegistroDefinition.Entry.LOCAL_DOC_ID,
                 TblRegistroDefinition.Entry.REG_ID,
+                TblRegistroDefinition.Entry.ID,
                 TblRegistroDefinition.Entry.REG_METADATOS,
                 TblRegistroDefinition.Entry.REG_TIPO,
                 TblRegistroDefinition.Entry.REG_VALOR,
