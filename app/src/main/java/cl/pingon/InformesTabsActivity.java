@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -155,6 +156,23 @@ public class InformesTabsActivity extends AppCompatActivity {
                 startActivityForResult(IntentDetalle, 1);
             }
         });
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                try{
+                    InformesActivity.activity.finish();
+                } catch(Exception e){}
+                try {
+                    NuevoFormularioActivity.activity.finish();
+                } catch(Exception e){}
+                try {
+                    BorradoresActivity.activity.finish();
+                } catch (Exception e){}
+            }
+        });
     }
 
     /**
@@ -179,7 +197,6 @@ public class InformesTabsActivity extends AppCompatActivity {
         String CAM_MANDATORIO;
 
         while(CursorChecklist.moveToNext()){
-            //Log.d("OBTENIENDO FRM Y CHK_ID", FRM_ID+":"+CHK_ID);
             contador_total++;
             CAM_MANDATORIO = CursorChecklist.getString(CursorChecklist.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_MANDATORIO));
             if(CAM_MANDATORIO.contains("S")){
@@ -188,10 +205,12 @@ public class InformesTabsActivity extends AppCompatActivity {
             if(LOCAL_DOC_ID != 0){
                 CursorRegistros = Registros.getByLocalDocId(LOCAL_DOC_ID);
                 while(CursorRegistros.moveToNext()){
-                    if(CAM_ID == CursorRegistros.getInt(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID))){
+                    if(CHK_ID == CursorRegistros.getInt(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CHK_ID))){
                         contador_total_completados++;
-                        if(CAM_MANDATORIO.contains("S")){
-                            contador_obligatorios_completados++;
+                        while(CursorRegistros.moveToNext()){
+                            if(CAM_MANDATORIO.contains("S")){
+                                contador_obligatorios_completados++;
+                            }
                         }
                     }
                 }
@@ -220,6 +239,7 @@ public class InformesTabsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 1) {
+            //TODO: Refrescar contadores al regresar del activity detalles
             Intent intent = new Intent();
             intent.putExtras(getIntent().getExtras());
             setResult(RESULT_OK, intent);

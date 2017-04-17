@@ -293,6 +293,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     values.put(TblRegistroDefinition.Entry.LOCAL_DOC_ID, getIntent().getIntExtra("LOCAL_DOC_ID", 0));
                     values.put(TblRegistroDefinition.Entry.CAM_ID, data.get(x).getCAM_ID());
                     values.put(TblRegistroDefinition.Entry.FRM_ID, getIntent().getIntExtra("FRM_ID", 0));
+                    values.put(TblRegistroDefinition.Entry.CHK_ID, getIntent().getIntExtra("CHK_ID", 0));
                     values.put(TblRegistroDefinition.Entry.REG_TIPO, data.get(x).getCAM_TIPO());
                     values.put(TblRegistroDefinition.Entry.REG_VALOR, data.get(x).getValue());
                     values.put(TblRegistroDefinition.Entry.SEND_STATUS, "DRAFT");

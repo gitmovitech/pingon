@@ -1,5 +1,6 @@
 package cl.pingon;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
@@ -68,6 +69,8 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     Integer COMPANY_ID;
     Integer PROYECTO_ID;
 
+    static Activity activity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +83,8 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
+
+        activity = this;
 
         this.setTitle("Nuevo Informe");
 

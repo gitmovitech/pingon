@@ -1,5 +1,6 @@
 package cl.pingon;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -48,6 +49,9 @@ public class InformesActivity extends AppCompatActivity {
     String DOC_EXT_NUMERO_SERIE;
     String DOC_EXT_NOMBRE_CLIENTE;
 
+    static Activity activity;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +83,8 @@ public class InformesActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
+
+        activity = this;
 
         ARN_ID = session.getString("arn_id", "");
         USU_ID = session.getString("user_id", "");

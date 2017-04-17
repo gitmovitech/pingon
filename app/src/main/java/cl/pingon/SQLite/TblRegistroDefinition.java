@@ -12,6 +12,7 @@ public class TblRegistroDefinition {
         public static final String CAM_ID = "CAM_ID";
         public static final String FRM_ID = "FRM_ID";
         public static final String REG_ID = "REG_ID";
+        public static final String CHK_ID = "CHK_ID";
         public static final String ID = "ID";
         public static final String REG_TIPO = "REG_TIPO";
         public static final String REG_VALOR = "REG_VALOR";
