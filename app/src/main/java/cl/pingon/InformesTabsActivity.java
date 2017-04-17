@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import cl.pingon.Adapter.AdapterTabs;
 import cl.pingon.Model.ModelChecklistSimple;
@@ -198,9 +199,10 @@ public class InformesTabsActivity extends AppCompatActivity {
         Cursor CursorRegistros;
 
         String CAM_MANDATORIO;
-
+        Integer CAM_ID;
         while(CursorChecklist.moveToNext()){
             contador_total++;
+            CAM_ID = 0;
             CAM_MANDATORIO = CursorChecklist.getString(CursorChecklist.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_MANDATORIO));
             if(CAM_MANDATORIO.contains("S")){
                 contador_obligatorios++;
@@ -208,13 +210,15 @@ public class InformesTabsActivity extends AppCompatActivity {
             if(LOCAL_DOC_ID != 0){
                 CursorRegistros = Registros.getByLocalDocId(LOCAL_DOC_ID);
                 while(CursorRegistros.moveToNext()){
+                    CAM_ID = CursorRegistros.getInt(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID));
                     if(CHK_ID == CursorRegistros.getInt(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CHK_ID))){
-                        contador_total_completados++;
-                        while(CursorRegistros.moveToNext()){
+                        if(CAM_ID == CursorChecklist.getInt(CursorChecklist.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_ID))){
+                            contador_total_completados++;
                             if(CAM_MANDATORIO.contains("S")){
                                 contador_obligatorios_completados++;
                             }
                         }
+                        break;
                     }
                 }
                 CursorRegistros.close();
