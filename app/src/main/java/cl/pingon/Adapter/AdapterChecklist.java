@@ -194,7 +194,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
             public void onClick(View view) {
                 Intent IntentSign = new Intent(context, SignDrawActivity.class);
                 IntentSign.putExtra("RowItemIndex", String.valueOf(RowItemIndex));
-                InformesDetallesActivity.startActivityForResult(IntentSign, 99);
+                InformesDetallesActivity.startActivityForResult(IntentSign, 10);
             }
         });
         Fields.setView(view);

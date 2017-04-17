@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -24,6 +25,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import cl.pingon.Adapter.AdapterChecklist;
+import cl.pingon.Libraries.DrawSign;
 import cl.pingon.Libraries.TimerUtils;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.SQLite.TblChecklistDefinition;
@@ -36,6 +38,7 @@ import cl.pingon.SQLite.TblRegistroHelper;
 public class InformesDetallesActivity extends AppCompatActivity {
 
     AlertDialog.Builder alert;
+    AdapterChecklist AdapterChecklist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +91,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         ArrayChecklist = completeValuesOnChecklist(ArrayChecklist, getIntent().getIntExtra("LOCAL_DOC_ID",0),getIntent().getIntExtra("FRM_ID", 0));
 
 
-        final AdapterChecklist AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this){};
+        AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this){};
         ListViewInformesDetalles.setAdapter(AdapterChecklist);
 
 
@@ -445,6 +448,20 @@ public class InformesDetallesActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == 10){
+            if(resultCode == RESULT_OK) {
+                RowItemIndex = Integer.parseInt(data.getStringExtra("RowItemIndex"));
+                String sign = data.getStringExtra("sign");
+                ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
+                ImageView signImage = (ImageView) Fields.getView().findViewById(R.id.ImageViewSign);
+                DrawSign firma = new DrawSign(sign);
+                firma.DrawToImageView(signImage);
+                Fields.setValue(sign);
+            }
+        }
+    }
 
 
 
