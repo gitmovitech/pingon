@@ -76,7 +76,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 ListViewInformesDetalles.smoothScrollBy(100000,400);
                 TimerUtils.TaskHandle handle = TimerUtils.setTimeout(new Runnable() {
                     public void run() {
-                        guardarRegistros(AdapterChecklist.getChecklistData());
+                        validarRegistros(AdapterChecklist.getChecklistData());
                     }
                 }, 500);
             }
@@ -99,17 +99,13 @@ public class InformesDetallesActivity extends AppCompatActivity {
      * ------------------------------------------------------------------------------------------------------------
      * @param data
      */
-    private void guardarRegistros(ArrayList<ModelChecklistFields> data){
+    private void validarRegistros(ArrayList<ModelChecklistFields> data){
         View WidgetView;
         EditText EditText;
         Spinner Spinner;
         RadioButton RadioButton;
         String MessageErrors = "";
         int MessageCount = 1;
-
-        /**
-         * @TODO: AVERIGUAR PORQUE AL HACER SCROLL RECIEN SE REFRESCA LOS ITEMS
-         */
 
         for(int x = 0; x < data.size(); x++){
             switch (data.get(x).getCAM_TIPO()){

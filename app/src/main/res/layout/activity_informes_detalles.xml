@@ -7,10 +7,25 @@
     android:layout_height="match_parent"
     tools:context="cl.pingon.InformesDetallesActivity">
 
-    <ListView
-        android:id="@+id/ListViewInformesDetalles"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="512dp"/>
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ListView
+                android:id="@+id/ListViewInformesDetalles"
+                android:layout_width="match_parent"
+                android:layout_height="512dp"/>
+
+        </LinearLayout>
+        
+    </ScrollView>
+
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabSave"
