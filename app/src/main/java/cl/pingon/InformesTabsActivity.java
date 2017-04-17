@@ -95,11 +95,8 @@ public class InformesTabsActivity extends AppCompatActivity {
          * INICIALIZACION DE VARIABLES
          */
         Checklist = new TblChecklistHelper(this);
-        Cursor cursor = Checklist.getAllGroupByChkNombre(FRM_ID);
         ArrayChecklist = new ArrayList<ModelChecklistSimple>();
-        ModelChecklistSimple ChecklistItem;
-        ListItems = new ArrayList<ModelTabsItem>();
-        ModelContadorTabs ContadorTabs;
+        getItems(FRM_ID);
         AdapterTabs list = new AdapterTabs(this, ListItems);
         ListView Listado = (ListView) findViewById(R.id.list);
 
@@ -120,31 +117,6 @@ public class InformesTabsActivity extends AppCompatActivity {
 
         this.setTitle(ARN_NOMBRE);
         getSupportActionBar().setSubtitle(FRM_NOMBRE);
-
-
-        /**
-         * CURSOR CHECKLIST
-         */
-        while (cursor.moveToNext()) {
-            CHK_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_ID));
-            CHK_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_NOMBRE));
-            CAM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_ID));
-            ChecklistItem = new ModelChecklistSimple(CHK_ID, CHK_NOMBRE);
-            ArrayChecklist.add(ChecklistItem);
-
-            /**
-             * @TODO: REVISAR LOS CONTADORES SE SUMAN CON LAS OTRAS SECCIONES
-             */
-            ContadorTabs = getContadoresTabsRegistros(this, FRM_ID, CHK_ID);
-            ListItems.add(new ModelTabsItem(
-                    CHK_NOMBRE,
-                    "Total "+ContadorTabs.getContador_total_completados()+" de "+ContadorTabs.getContador_total(),
-                    "Obligatorios "+ContadorTabs.getContador_mandatorios_completados()+" de "+ContadorTabs.getContador_mandatorios(),
-                    ContadorTabs.getCheck()));
-        }
-        cursor.close();
-
-
 
         Listado.setAdapter(list);
 
@@ -178,6 +150,35 @@ public class InformesTabsActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    private void getItems(int FRM_ID){
+        ModelContadorTabs ContadorTabs;
+        ModelChecklistSimple ChecklistItem;
+        Cursor cursor = Checklist.getAllGroupByChkNombre(FRM_ID);
+        ListItems = new ArrayList<ModelTabsItem>();
+        while (cursor.moveToNext()) {
+            CHK_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_ID));
+            CHK_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_NOMBRE));
+            CAM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_ID));
+            ChecklistItem = new ModelChecklistSimple(CHK_ID, CHK_NOMBRE);
+            ArrayChecklist.add(ChecklistItem);
+
+            /**
+             * @TODO: PROBAR CONTADORES
+             */
+            ContadorTabs = getContadoresTabsRegistros(this, FRM_ID, CHK_ID);
+            ListItems.add(new ModelTabsItem(
+                    CHK_NOMBRE,
+                    "Total "+ContadorTabs.getContador_total_completados()+" de "+ContadorTabs.getContador_total(),
+                    "Obligatorios "+ContadorTabs.getContador_mandatorios_completados()+" de "+ContadorTabs.getContador_mandatorios(),
+                    ContadorTabs.getCheck()));
+        }
+        cursor.close();
+    }
+
+
+
 
     /**
      * CONTADOR DE TOTAL DE ITEMS NORMALES Y OLBIGATORIOS CONTESTADOS
@@ -246,11 +247,11 @@ public class InformesTabsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 1) {
-            //TODO: Refrescar contadores al regresar del activity detalles
+            getItems(FRM_ID);
+
             Intent intent = new Intent();
             intent.putExtras(getIntent().getExtras());
             setResult(RESULT_OK, intent);
-            Log.d("VUELTA DE ACTIVITIES", getIntent().getExtras().toString());
         }
     }
 
