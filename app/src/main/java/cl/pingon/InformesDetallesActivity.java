@@ -1,5 +1,6 @@
 package cl.pingon;
 
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -26,6 +27,8 @@ import cl.pingon.Libraries.TimerUtils;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.SQLite.TblChecklistDefinition;
 import cl.pingon.SQLite.TblChecklistHelper;
+import cl.pingon.SQLite.TblDocumentoDefinition;
+import cl.pingon.SQLite.TblDocumentoHelper;
 import cl.pingon.SQLite.TblRegistroDefinition;
 import cl.pingon.SQLite.TblRegistroHelper;
 
@@ -95,7 +98,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
 
     /**
-     * FUNCION DE CHECK ANTES DE GUARDAR LOS ITEMS
+     * VALIDAR DATOS ANTES DE GUARDAR LOS ITEMS
      * ------------------------------------------------------------------------------------------------------------
      * @param data
      */
@@ -134,7 +137,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     } catch(Exception e){}
                     break;
                 case "firma":
-                    MessageErrors += "PROGRAMAR FIRMA\n";
+                    //MessageErrors += "PROGRAMAR FIRMA\n";
                     break;
                 case "foto":
                     MessageErrors += "PROGRAMAR FOTO\n";
@@ -227,7 +230,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         }
 
         if(MessageErrors.isEmpty()){
-            Log.d("Vacio", "s");
+            guardarRegistros(data);
         } else {
             alert.setTitle("Error ");
             alert.setMessage(MessageErrors);
@@ -239,6 +242,49 @@ public class InformesDetallesActivity extends AppCompatActivity {
             alert.create();
             alert.show();
         }
+
+    }
+
+
+
+
+    /**
+     * GUARDAR REGISTROS VALIDOS
+     * ------------------------------------------------------------------------------------------------------------
+     * @param data
+     */
+    public void guardarRegistros(ArrayList<ModelChecklistFields> data){
+        TblRegistroHelper Registros = new TblRegistroHelper(this);
+        ContentValues values;
+        int changeDocumentStatus = 0;
+        for(int x = 0; x < data.size(); x++){
+
+            if(data.get(x).getValue() != null) {
+                if(!data.get(x).getValue().isEmpty()) {
+                    values = new ContentValues();
+                    values.put(TblRegistroDefinition.Entry.LOCAL_DOC_ID, getIntent().getIntExtra("LOCAL_DOC_ID", 0));
+                    values.put(TblRegistroDefinition.Entry.CAM_ID, data.get(x).getCAM_ID());
+                    values.put(TblRegistroDefinition.Entry.FRM_ID, getIntent().getIntExtra("FRM_ID", 0));
+                    values.put(TblRegistroDefinition.Entry.REG_TIPO, data.get(x).getCAM_TIPO());
+                    values.put(TblRegistroDefinition.Entry.REG_VALOR, data.get(x).getValue());
+                    values.put(TblRegistroDefinition.Entry.SEND_STATUS, "DRAFT");
+                    Registros.insert(values);
+                    changeDocumentStatus = 1;
+                }
+            }
+
+        }
+
+        if(changeDocumentStatus == 1){
+            TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
+            values = new ContentValues();
+            values.put(TblDocumentoDefinition.Entry.SEND_STATUS, "DRAFT");
+            Documentos.update(getIntent().getIntExtra("LOCAL_DOC_ID", 0), values);
+        }
+
+        Intent intent = new Intent();
+        setResult(RESULT_OK, intent);
+        finish();
 
     }
 
