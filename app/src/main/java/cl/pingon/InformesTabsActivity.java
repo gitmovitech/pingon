@@ -171,6 +171,9 @@ public class InformesTabsActivity extends AppCompatActivity {
                 try {
                     BorradoresActivity.activity.finish();
                 } catch (Exception e){}
+                overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
+                Intent intent = new Intent(getApplicationContext(), BuzonActivity.class);
+                startActivity(intent);
             }
         });
     }
