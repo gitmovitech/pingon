@@ -93,7 +93,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
 
         /**
-         * GUARDAR REGISTRO
+         * VALIDAR Y GUARDAR REGISTRO
          */
         FloatingActionButton fabsave = (FloatingActionButton) findViewById(R.id.fabSave);
         fabsave.setOnClickListener(new View.OnClickListener() {
@@ -110,7 +110,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
 
         /**
-         * @TODO FOR TESTING, REMOVER DESPUES
+         * TODO FOR TESTING, REMOVER DESPUES
          */
         Log.d("EXTRAS",getIntent().getExtras().toString());
         getRegistrosDatabase();
@@ -160,10 +160,10 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     } catch(Exception e){}
                     break;
                 case "firma":
-                    //MessageErrors += "PROGRAMAR FIRMA\n";
+                    //TODO: PROGRAMAR FIRMA;
                     break;
                 case "foto":
-                    MessageErrors += "PROGRAMAR FOTO\n";
+                    //TODO: PROGRAMAR FOTO;
                     break;
                 case "fecha":
                     try {
@@ -239,14 +239,15 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     } catch(Exception e){}
                     break;
                 case "moneda":
-                    MessageErrors += "PROGRAMAR MONEDA\n";
+                    //TODO: PROGRAMAR MONEDA;
                     break;
                 case "sistema":
-                    MessageErrors += "PROGRAMAR SISTEMA\n";
+                    //TODO: PROGRAMAR SISTEMA;
                     break;
                 case "etiqueta":
                     break;
                 default:
+                    //TODO: OTRO TIPO DE CAMPO??;
                     MessageErrors += "PROGRAMAR OTRO:\n"+data.get(x).getCAM_TIPO();
                     break;
             }
@@ -275,6 +276,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
      * GUARDAR REGISTROS VALIDOS
      * ------------------------------------------------------------------------------------------------------------
      * @param data
+     * TODO: BUSCAR SI REGISTRO EXISTE PARA NO CREAR UNO NUEVO
      */
     public void guardarRegistros(ArrayList<ModelChecklistFields> data){
         TblRegistroHelper Registros = new TblRegistroHelper(this);
