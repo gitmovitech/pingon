@@ -313,6 +313,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
             TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
             values = new ContentValues();
             values.put(TblDocumentoDefinition.Entry.SEND_STATUS, "DRAFT");
+            Log.d("ACTUALIZANDO DOC", String.valueOf(getIntent().getIntExtra("LOCAL_DOC_ID", 0)));
             Documentos.update(getIntent().getIntExtra("LOCAL_DOC_ID", 0), values);
         }
 

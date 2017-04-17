@@ -52,7 +52,7 @@ public class TblDocumentoHelper extends SQLiteOpenHelper {
 
     public void update(Integer id, ContentValues values){
         SQLiteDatabase db = getReadableDatabase();
-        String where = TblDocumentoDefinition.Entry.DOC_ID + " = "+ id;
+        String where = TblDocumentoDefinition.Entry.ID + " = "+ id;
         db.update(TblDocumentoDefinition.Entry.TABLE_NAME, values, where, null);
     }
 
