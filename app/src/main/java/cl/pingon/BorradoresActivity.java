@@ -60,6 +60,8 @@ public class BorradoresActivity extends AppCompatActivity {
         Cursor cursor;
         ListDetalle = (ListView) findViewById(R.id.ListDetalle);
 
+        Log.d("BORRADORES", "AQUI"+SECCION);
+
         switch(SECCION){
             case "CLIENTE":
                 getSupportActionBar().setSubtitle("Seleccione cliente");
@@ -67,6 +69,7 @@ public class BorradoresActivity extends AppCompatActivity {
                 cursor = Documentos.getDraftsGroupByCliente();
                 String cliente;
                 String cliente_id;
+
                 if(cursor.getCount() > 0) {
                     while (cursor.moveToNext()) {
                         cliente_id = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE));

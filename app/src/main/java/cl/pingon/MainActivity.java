@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
         /**
          * UNIT TEST
-         */
+         *
         Intent IntentInformes = new Intent(this, InformesActivity.class);
         IntentInformes.putExtra("DOC_EXT_ID_CLIENTE", 308);
         IntentInformes.putExtra("DOC_EXT_NOMBRE_CLIENTE", "Renta Equipos Simunovic SPA");
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         IntentInformes.putExtra("DOC_EXT_EQUIPO", "J 50.10");
         IntentInformes.putExtra("DOC_EXT_MARCA_EQUIPO", "Jaso");
         IntentInformes.putExtra("DOC_EXT_NUMERO_SERIE", "1017");
-        startActivity(IntentInformes); finish();
+        startActivity(IntentInformes); finish();*/
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
         REST = new RESTService(this);
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
     public void SyncReady(){
         Syncronized++;
         if(Syncronized >= 7){
-            //startActivity(IntentBuzon);
+            startActivity(IntentBuzon);
             finish();
         }
     }
