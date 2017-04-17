@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 
 import cl.pingon.Adapter.AdapterChecklist;
 import cl.pingon.Libraries.DrawSign;
+import cl.pingon.Libraries.ImageUtils;
 import cl.pingon.Libraries.TimerUtils;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.SQLite.TblChecklistDefinition;
@@ -450,6 +453,13 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //FOTO
+        if(requestCode == 1){
+            ImageUtils img = new ImageUtils();
+            Bitmap ImageBitmapDecoded = img.ImageThumb(BitmapFactory.decodeFile(ImageName+RowItemIndex+".jpg"));
+            AdapterChecklist.setImageButton(ImageBitmapDecoded, RowItemIndex);
+        }
+        //FIRMA
         if(requestCode == 10){
             if(resultCode == RESULT_OK) {
                 RowItemIndex = Integer.parseInt(data.getStringExtra("RowItemIndex"));
