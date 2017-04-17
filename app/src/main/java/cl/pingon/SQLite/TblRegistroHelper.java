@@ -17,11 +17,12 @@ public class TblRegistroHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String query = "CREATE TABLE "+ TblRegistroDefinition.Entry.TABLE_NAME;
-        query += " ("+ TblRegistroDefinition.Entry.DOC_ID+" INTEGER NULL,";
+        query += " ("+ TblRegistroDefinition.Entry.ID+" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,";
+        query += TblRegistroDefinition.Entry.DOC_ID+" INTEGER NULL,";
         query += TblRegistroDefinition.Entry.LOCAL_DOC_ID+" LOCAL_DOC_ID NOT NULL,";
         query += TblRegistroDefinition.Entry.CAM_ID+" INTEGER NOT NULL,";
         query += TblRegistroDefinition.Entry.FRM_ID+" INTEGER NOT NULL,";
-        query += TblRegistroDefinition.Entry.REG_ID+" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,";
+        query += TblRegistroDefinition.Entry.REG_ID+" INTEGER NULL,";
         query += TblRegistroDefinition.Entry.REG_TIPO+" TEXT NOT NULL,";
         query += TblRegistroDefinition.Entry.REG_VALOR+" TEXT NOT NULL,";
         query += TblRegistroDefinition.Entry.SEND_STATUS+" TEXT NOT NULL,";
@@ -106,7 +107,7 @@ public class TblRegistroHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public Cursor getByLocalDocIdAndCamId(Integer LOCAL_DOC_ID, Integer CAM_ID){
+    public Cursor getDraftByLocalDocIdCamIdAndFrmId(Integer LOCAL_DOC_ID, Integer CAM_ID, Integer FRM_ID){
         SQLiteDatabase db = getReadableDatabase();
         String[] select = {
                 TblRegistroDefinition.Entry.CAM_ID,
@@ -122,8 +123,11 @@ public class TblRegistroHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(
                 TblRegistroDefinition.Entry.TABLE_NAME,
                 select,
-                TblRegistroDefinition.Entry.SEND_STATUS+" = ? AND "+TblRegistroDefinition.Entry.LOCAL_DOC_ID+" = ? AND "+TblRegistroDefinition.Entry.CAM_ID+" = ?",
-                new String[]{"DRAFT", String.valueOf(LOCAL_DOC_ID), String.valueOf(CAM_ID)},
+                TblRegistroDefinition.Entry.SEND_STATUS+" = ? AND "+
+                        TblRegistroDefinition.Entry.LOCAL_DOC_ID+" = ? AND "+
+                        TblRegistroDefinition.Entry.CAM_ID+" = ? AND "+
+                        TblRegistroDefinition.Entry.FRM_ID+" = ?",
+                new String[]{"DRAFT", String.valueOf(LOCAL_DOC_ID), String.valueOf(CAM_ID), String.valueOf(FRM_ID)},
                 null, null, null);
         return cursor;
     }

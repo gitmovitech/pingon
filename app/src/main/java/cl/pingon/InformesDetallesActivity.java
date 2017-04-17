@@ -85,7 +85,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         /**
          * BUSCAR VALORES YA GUARDADOS EN REGISTROS
          */
-        ArrayChecklist = completeValuesOnChecklist(ArrayChecklist, getIntent().getIntExtra("LOCAL_DOC_ID",0));
+        ArrayChecklist = completeValuesOnChecklist(ArrayChecklist, getIntent().getIntExtra("LOCAL_DOC_ID",0),getIntent().getIntExtra("FRM_ID", 0));
 
 
         final AdapterChecklist AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this){};
@@ -282,7 +282,16 @@ public class InformesDetallesActivity extends AppCompatActivity {
         TblRegistroHelper Registros = new TblRegistroHelper(this);
         ContentValues values;
         int changeDocumentStatus = 0;
+
+        Cursor cursor;
+        int LOCAL_REG_ID;
+
         for(int x = 0; x < data.size(); x++){
+            LOCAL_REG_ID = 0;
+            cursor = Registros.getDraftByLocalDocIdCamIdAndFrmId(getIntent().getIntExtra("LOCAL_DOC_ID", 0), data.get(x).getCAM_ID(), getIntent().getIntExtra("FRM_ID", 0));
+            if(cursor.getCount() > 0){
+                LOCAL_REG_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.ID));
+            }
 
             if(data.get(x).getValue() != null) {
                 if(!data.get(x).getValue().isEmpty()) {
@@ -325,7 +334,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
      * @return
      *
      */
-    private ArrayList<ModelChecklistFields> completeValuesOnChecklist(ArrayList<ModelChecklistFields> ArrayChecklist, int LOCAL_DOC_ID){
+    private ArrayList<ModelChecklistFields> completeValuesOnChecklist(ArrayList<ModelChecklistFields> ArrayChecklist, int LOCAL_DOC_ID, int FRM_ID){
         int CAM_ID = 0;
         String CAM_VAL_DEFECTO = "";
         TblRegistroHelper Registros = new TblRegistroHelper(this);
@@ -333,7 +342,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         for(int i = 0; i < ArrayChecklist.size(); i++){
             CAM_ID = ArrayChecklist.get(i).getCAM_ID();
-            c = Registros.getByLocalDocIdAndCamId(LOCAL_DOC_ID, CAM_ID);
+            c = Registros.getDraftByLocalDocIdCamIdAndFrmId(LOCAL_DOC_ID, CAM_ID, FRM_ID);
             if(c.getCount() > 0) {
                 c.moveToFirst();
                 CAM_VAL_DEFECTO = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
