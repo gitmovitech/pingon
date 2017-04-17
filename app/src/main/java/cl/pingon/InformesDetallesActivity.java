@@ -157,7 +157,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     } catch(Exception e){}
                     break;
                 case "firma":
-                    //TODO: PROGRAMAR FIRMA;
+                    //TODO: PROGRAMAR FIRMA OBLIGATORIA, PROBAR GUARDADO, SE GUARDA EN EL ACTIVITY RESULT 10;
                     break;
                 case "foto":
                     //TODO: PROGRAMAR FOTO;
