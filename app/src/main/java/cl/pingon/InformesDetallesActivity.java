@@ -295,22 +295,31 @@ public class InformesDetallesActivity extends AppCompatActivity {
             }
             cursor.close();
 
+            int guardar = 0;
             if(data.get(x).getValue() != null) {
                 if(!data.get(x).getValue().isEmpty()) {
-                    values = new ContentValues();
-                    values.put(TblRegistroDefinition.Entry.LOCAL_DOC_ID, getIntent().getIntExtra("LOCAL_DOC_ID", 0));
-                    values.put(TblRegistroDefinition.Entry.CAM_ID, data.get(x).getCAM_ID());
-                    values.put(TblRegistroDefinition.Entry.FRM_ID, getIntent().getIntExtra("FRM_ID", 0));
-                    values.put(TblRegistroDefinition.Entry.CHK_ID, getIntent().getIntExtra("CHK_ID", 0));
-                    values.put(TblRegistroDefinition.Entry.REG_TIPO, data.get(x).getCAM_TIPO());
-                    values.put(TblRegistroDefinition.Entry.REG_VALOR, data.get(x).getValue());
-                    values.put(TblRegistroDefinition.Entry.SEND_STATUS, "DRAFT");
-                    if(LOCAL_REG_ID > 0){
-                        Registros.update(LOCAL_REG_ID, values);
-                    } else {
-                        Registros.insert(values);
+                    guardar = 1;
+                    if(data.get(x).getCAM_TIPO().contains("lista")){
+                        if(data.get(x).getValue().contains("Seleccione aquí")){
+                            guardar = 0;
+                        }
                     }
-                    changeDocumentStatus = 1;
+                    if(guardar == 1) {
+                        values = new ContentValues();
+                        values.put(TblRegistroDefinition.Entry.LOCAL_DOC_ID, getIntent().getIntExtra("LOCAL_DOC_ID", 0));
+                        values.put(TblRegistroDefinition.Entry.CAM_ID, data.get(x).getCAM_ID());
+                        values.put(TblRegistroDefinition.Entry.FRM_ID, getIntent().getIntExtra("FRM_ID", 0));
+                        values.put(TblRegistroDefinition.Entry.CHK_ID, getIntent().getIntExtra("CHK_ID", 0));
+                        values.put(TblRegistroDefinition.Entry.REG_TIPO, data.get(x).getCAM_TIPO());
+                        values.put(TblRegistroDefinition.Entry.REG_VALOR, data.get(x).getValue());
+                        values.put(TblRegistroDefinition.Entry.SEND_STATUS, "DRAFT");
+                        if (LOCAL_REG_ID > 0) {
+                            Registros.update(LOCAL_REG_ID, values);
+                        } else {
+                            Registros.insert(values);
+                        }
+                        changeDocumentStatus = 1;
+                    }
                 }
             }
 
