@@ -5,6 +5,7 @@ import android.support.design.widget.TextInputLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import cl.pingon.Model.ModelChecklistFields;
@@ -27,6 +28,15 @@ public class FieldsNumeroEntero {
         } catch (Exception e){
             Log.e("ERROR CAMPO VACIO", e.toString());
         }
+
+        /**
+         * Autocompletar numero
+         */
+        if(!Fields.getCAM_VAL_DEFECTO().isEmpty()){
+            EditText text = (EditText) this.view.findViewById(R.id.numero_input);
+            text.setText(Fields.getCAM_VAL_DEFECTO());
+        }
+
         try {
             Fields.setView(view);
         } catch (Exception e){
