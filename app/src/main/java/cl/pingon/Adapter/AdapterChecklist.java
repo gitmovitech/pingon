@@ -121,11 +121,11 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     ViewReturn = Foto(Inflater, ChecklistFields.get(contador), contador);
                     break;
                 case "numero_entero":
-                    FieldsNumeroEntero FieldsNumeroEntero = new FieldsNumeroEntero(Inflater, ChecklistFields.get(contador));
+                    FieldsNumeroEntero FieldsNumeroEntero = new FieldsNumeroEntero(Inflater, ChecklistFields.get(contador), ChecklistFields);
                     ViewReturn = FieldsNumeroEntero.getView();
                     break;
                 case "sistema":
-                    FieldsSistema FieldsSistema = new FieldsSistema(Inflater, ChecklistFields.get(contador));
+                    FieldsSistema FieldsSistema = new FieldsSistema(Inflater, ChecklistFields.get(contador), ChecklistFields);
                     ViewReturn = FieldsSistema.getView();
                     break;
                 case "moneda":

@@ -241,7 +241,11 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     } catch(Exception e){}
                     break;
                 case "sistema":
-                    //TODO: PROGRAMAR SISTEMA;
+                    int suma = 0;
+                    for(int s = 0; s < data.size(); s++){
+
+                    }
+                    data.get(x).setValue(String.valueOf(suma));
                     break;
                 case "etiqueta":
                     break;

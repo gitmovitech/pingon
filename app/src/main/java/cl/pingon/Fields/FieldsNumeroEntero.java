@@ -3,10 +3,13 @@ package cl.pingon.Fields;
 
 import android.support.design.widget.TextInputLayout;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.R;
@@ -15,10 +18,11 @@ public class FieldsNumeroEntero {
 
     View view;
 
-    public FieldsNumeroEntero(LayoutInflater Inflater, ModelChecklistFields Fields){
+    public FieldsNumeroEntero(LayoutInflater Inflater, ModelChecklistFields Fields, final ArrayList<ModelChecklistFields> ArrayFields){
 
         this.view = Inflater.inflate(R.layout.item_numero, null);
         TextInputLayout TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
+        EditText text = (EditText) this.view.findViewById(R.id.numero_input);
         try {
             if(Fields.getCAM_MANDATORIO().contains("S")){
                 TextView label = (TextView) view.findViewById(R.id.label_obligatorio);
@@ -29,11 +33,24 @@ public class FieldsNumeroEntero {
             Log.e("ERROR CAMPO VACIO", e.toString());
         }
 
+        text.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                for(int a = 0; a < ArrayFields.size(); a++){
+                    if(ArrayFields.get(a).getCAM_TIPO().contains("sistema")){
+                        //TODO: al cambiar valor de un numero y moneda debe realizar el calculo de sistema
+                        
+                        Log.d("--------------", ArrayFields.get(a).getCAM_VAL_DEFECTO());
+                    }
+                }
+                return false;
+            }
+        });
+
         /**
          * Autocompletar numero
          */
         if(!Fields.getCAM_VAL_DEFECTO().isEmpty()){
-            EditText text = (EditText) this.view.findViewById(R.id.numero_input);
             text.setText(Fields.getCAM_VAL_DEFECTO());
         }
 

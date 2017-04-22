@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.R;
 
@@ -15,7 +17,7 @@ public class FieldsSistema {
 
     View view;
 
-    public FieldsSistema(LayoutInflater Inflater, ModelChecklistFields Fields){
+    public FieldsSistema(LayoutInflater Inflater, ModelChecklistFields Fields, ArrayList<ModelChecklistFields> ArrayFields){
 
         this.view = Inflater.inflate(R.layout.item_numero, null);
         TextInputLayout TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
@@ -30,6 +32,27 @@ public class FieldsSistema {
         }
         EditText NumeroInput = (EditText) view.findViewById(R.id.numero_input);
         NumeroInput.setEnabled(false);
+
+        /**
+         * Autocompletar sistema
+         */
+        /*if(!Fields.getCAM_VAL_DEFECTO().isEmpty()){
+            String[] text = Fields.getCAM_VAL_DEFECTO().split(" ");
+            int resultado = 1;
+            for(int t = 0; t < text.length; t++){
+                String[] number = text[t].split("-");
+                for(int a = 0; a < ArrayFields.size(); a++){
+                    if(ArrayFields.get(a).getCAM_ID() == Integer.parseInt(number[1])){
+                        resultado = resultado * Integer.parseInt(ArrayFields.get(a).getCAM_VAL_DEFECTO());
+                        break;
+                    }
+                }
+            }
+            if(resultado == 1){
+                resultado = 0;
+            }
+            NumeroInput.setText(String.valueOf(resultado));
+        }*/
 
         try {
             Fields.setView(view);
