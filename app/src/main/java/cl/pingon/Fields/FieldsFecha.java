@@ -3,6 +3,7 @@ package cl.pingon.Fields;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.database.Cursor;
 import android.support.design.widget.TextInputLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,8 @@ import java.util.Calendar;
 
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.R;
+import cl.pingon.SQLite.TblListOptionsDefinition;
+import cl.pingon.SQLite.TblListOptionsHelper;
 
 public class FieldsFecha {
 
@@ -52,6 +55,18 @@ public class FieldsFecha {
                 DatePickerDialog.show();
             }
         });
+
+        /**
+         * AGREGAR EL DATO POR DEFECTO GUARDADO
+         */
+        if(!Fields.getCAM_VAL_DEFECTO().isEmpty()){
+            try {
+                EditTextFecha.setText(Fields.getCAM_VAL_DEFECTO());
+            } catch (Exception e){
+                Log.e("ERROR CAMPO VACIO", e.toString());
+            }
+        }
+
         try {
             Fields.setView(view);
         } catch (Exception e){

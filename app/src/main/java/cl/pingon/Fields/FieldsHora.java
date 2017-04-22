@@ -49,6 +49,18 @@ public class FieldsHora {
                 TimePickerDialog.show();
             }
         });
+
+        /**
+         * AGREGAR EL DATO POR DEFECTO GUARDADO
+         */
+        if(!Fields.getCAM_VAL_DEFECTO().isEmpty()){
+            try {
+                EditTextHora.setText(Fields.getCAM_VAL_DEFECTO());
+            } catch (Exception e){
+                Log.e("ERROR CAMPO VACIO", e.toString());
+            }
+        }
+
         try {
             Fields.setView(view);
         } catch (Exception e){
