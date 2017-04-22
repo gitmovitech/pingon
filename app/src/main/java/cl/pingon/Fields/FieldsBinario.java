@@ -3,6 +3,7 @@ package cl.pingon.Fields;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import cl.pingon.Model.ModelChecklistFields;
@@ -25,6 +26,23 @@ public class FieldsBinario {
         } catch (Exception e){
             Log.e("ERROR CAMPO VACIO", e.toString());
         }
+
+        /**
+         * Autocompletar valor por defecto
+         */
+        if(!Fields.getCAM_VAL_DEFECTO().isEmpty()){
+            RadioButton rb1 = (RadioButton) this.view.findViewById(R.id.radio_si);
+            RadioButton rb2 = (RadioButton) this.view.findViewById(R.id.radio_no);
+            if(Fields.getCAM_VAL_DEFECTO().contains("Si")){
+                rb1.setChecked(true);
+                rb2.setChecked(false);
+            }
+            if(Fields.getCAM_VAL_DEFECTO().contains("No")){
+                rb1.setChecked(false);
+                rb2.setChecked(true);
+            }
+        }
+
         try {
             Fields.setView(view);
         } catch (Exception e){
