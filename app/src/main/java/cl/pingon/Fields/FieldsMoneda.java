@@ -4,6 +4,7 @@ import android.support.design.widget.TextInputLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import cl.pingon.Model.ModelChecklistFields;
@@ -25,6 +26,14 @@ public class FieldsMoneda {
             TextoInputLayout.setHint(Fields.getCAM_NOMBRE_INTERNO());
         } catch (Exception e){
             Log.e("ERROR CAMPO VACIO", e.toString());
+        }
+
+        /**
+         * Autocompletar moneda
+         */
+        if(!Fields.getCAM_VAL_DEFECTO().isEmpty()){
+            EditText text = (EditText) this.view.findViewById(R.id.numero_input);
+            text.setText(Fields.getCAM_VAL_DEFECTO());
         }
 
         try {

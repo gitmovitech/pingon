@@ -228,6 +228,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     } catch(Exception e){}
                     break;
                 case "numero_entero":
+                case "moneda":
                     try {
                         WidgetView = data.get(x).getView();
                         EditText = (EditText) WidgetView.findViewById(R.id.numero_input);
@@ -238,9 +239,6 @@ public class InformesDetallesActivity extends AppCompatActivity {
                             data.get(x).setValue(EditText.getText().toString());
                         }
                     } catch(Exception e){}
-                    break;
-                case "moneda":
-                    //TODO: PROGRAMAR MONEDA;
                     break;
                 case "sistema":
                     //TODO: PROGRAMAR SISTEMA;
