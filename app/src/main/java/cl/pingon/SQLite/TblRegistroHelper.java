@@ -43,7 +43,7 @@ public class TblRegistroHelper extends SQLiteOpenHelper {
 
     public void update(Integer id, ContentValues values){
         SQLiteDatabase db = getReadableDatabase();
-        String where = TblRegistroDefinition.Entry.REG_ID + " = "+ id;
+        String where = TblRegistroDefinition.Entry.ID + " = "+ id;
         db.update(TblRegistroDefinition.Entry.TABLE_NAME, values, where, null);
     }
 

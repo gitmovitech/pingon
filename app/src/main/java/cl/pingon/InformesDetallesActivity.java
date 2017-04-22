@@ -305,7 +305,11 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     values.put(TblRegistroDefinition.Entry.REG_TIPO, data.get(x).getCAM_TIPO());
                     values.put(TblRegistroDefinition.Entry.REG_VALOR, data.get(x).getValue());
                     values.put(TblRegistroDefinition.Entry.SEND_STATUS, "DRAFT");
-                    Registros.insert(values);
+                    if(LOCAL_REG_ID > 0){
+                        Registros.update(LOCAL_REG_ID, values);
+                    } else {
+                        Registros.insert(values);
+                    }
                     changeDocumentStatus = 1;
                 }
             }
