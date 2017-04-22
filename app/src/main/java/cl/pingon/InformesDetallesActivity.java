@@ -93,6 +93,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
          */
         ArrayChecklist = completeValuesOnChecklist(ArrayChecklist, getIntent().getIntExtra("LOCAL_DOC_ID",0),getIntent().getIntExtra("FRM_ID", 0));
 
+        //TODO: buscar en el adaptador la forma de autocompletar datos guardados de las listas, fechas y hora
 
         AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this){};
         ListViewInformesDetalles.setAdapter(AdapterChecklist);

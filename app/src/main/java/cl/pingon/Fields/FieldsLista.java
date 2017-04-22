@@ -55,6 +55,28 @@ public class FieldsLista {
         ArrayAdapter ListadoAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, Listado);
         SpinnerSelect.setAdapter(ListadoAdapter);
 
+
+        /**
+         * SELECCIONAR CON EL DATO POR DEFECTO GUARDADO
+         */
+        if(!Fields.getCAM_VAL_DEFECTO().isEmpty()){
+            try {
+                TblListOptionsHelper DBHelper = new TblListOptionsHelper(context);
+                Cursor cursor = DBHelper.getAllByCamId(Fields.getCAM_ID());
+                int index = 0;
+                while(cursor.moveToNext()){
+                    index++;
+                    if(Fields.getCAM_VAL_DEFECTO().contains(cursor.getString(cursor.getColumnIndexOrThrow(TblListOptionsDefinition.Entry.OPC_VALOR)))){
+                        SpinnerSelect.setSelection(index);
+                        break;
+                    }
+                }
+                cursor.close();
+            } catch (Exception e){
+                Log.e("ERROR CAMPO VACIO", e.toString());
+            }
+        }
+
         try {
             Fields.setView(view);
         } catch (Exception e){
