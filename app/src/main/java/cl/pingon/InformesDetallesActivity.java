@@ -293,6 +293,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 cursor.moveToFirst();
                 LOCAL_REG_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblRegistroDefinition.Entry.ID));
             }
+            cursor.close();
 
             if(data.get(x).getValue() != null) {
                 if(!data.get(x).getValue().isEmpty()) {
@@ -345,12 +346,12 @@ public class InformesDetallesActivity extends AppCompatActivity {
         for(int i = 0; i < ArrayChecklist.size(); i++){
             CAM_ID = ArrayChecklist.get(i).getCAM_ID();
             c = Registros.getDraftByLocalDocIdCamIdAndFrmId(LOCAL_DOC_ID, CAM_ID, FRM_ID);
+            Log.d("REGISTROS", String.valueOf(c.getCount()));
             if(c.getCount() > 0) {
                 c.moveToFirst();
                 CAM_VAL_DEFECTO = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
                 ArrayChecklist.get(i).setCAM_VAL_DEFECTO(CAM_VAL_DEFECTO);
                 CAM_VAL_DEFECTO = "";
-                break;
             }
             c.close();
         }
