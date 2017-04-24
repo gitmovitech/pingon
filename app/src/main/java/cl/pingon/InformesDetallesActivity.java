@@ -93,8 +93,6 @@ public class InformesDetallesActivity extends AppCompatActivity {
          */
         ArrayChecklist = completeValuesOnChecklist(ArrayChecklist, getIntent().getIntExtra("LOCAL_DOC_ID",0),getIntent().getIntExtra("FRM_ID", 0));
 
-        //TODO: buscar en el adaptador la forma de autocompletar datos guardados de las listas, fechas y hora
-
         AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this){};
         ListViewInformesDetalles.setAdapter(AdapterChecklist);
 
@@ -229,6 +227,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     break;
                 case "numero_entero":
                 case "moneda":
+                case "sistema":
                     try {
                         WidgetView = data.get(x).getView();
                         EditText = (EditText) WidgetView.findViewById(R.id.numero_input);
@@ -239,13 +238,6 @@ public class InformesDetallesActivity extends AppCompatActivity {
                             data.get(x).setValue(EditText.getText().toString());
                         }
                     } catch(Exception e){}
-                    break;
-                case "sistema":
-                    int suma = 0;
-                    for(int s = 0; s < data.size(); s++){
-
-                    }
-                    data.get(x).setValue(String.valueOf(suma));
                     break;
                 case "etiqueta":
                     break;

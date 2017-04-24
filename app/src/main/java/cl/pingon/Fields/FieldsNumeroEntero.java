@@ -33,16 +33,49 @@ public class FieldsNumeroEntero {
             Log.e("ERROR CAMPO VACIO", e.toString());
         }
 
+        /**
+         * Autocompletar campo de sistema
+         * TODO: al cambiar valor de un numero y moneda debe realizar el calculo de sistema
+         */
         text.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
+                String[] array;
+                int index = 0;
+                ArrayList<String> results = new ArrayList<String>();
                 for(int a = 0; a < ArrayFields.size(); a++){
                     if(ArrayFields.get(a).getCAM_TIPO().contains("sistema")){
-                        //TODO: al cambiar valor de un numero y moneda debe realizar el calculo de sistema
-
-                        Log.d("--------------", ArrayFields.get(a).getCAM_VAL_DEFECTO());
+                        index = a;
+                        array = ArrayFields.get(a).getCAM_VAL_DEFECTO().split(" ");
+                        for(int b = 0; b < array.length; b++) {
+                            String[] items = array[b].split("-");
+                            results.add(items[1]);
+                        }
+                        break;
                     }
                 }
+                int valor = 1;
+                int entro = 0;
+                for(int a = 0; a < ArrayFields.size(); a++){
+                    for(int b = 0; b < results.size(); b++){
+                        if(results.get(b).contains(String.valueOf(ArrayFields.get(a).getCAM_ID()))){
+                            View view = ArrayFields.get(a).getView();
+                            EditText campo = (EditText) view.findViewById(R.id.numero_input);
+                            try {
+                                valor = valor * Integer.parseInt(campo.getText().toString());
+                                entro = 1;
+                            } catch (Exception e){}
+                        }
+                    }
+                }
+
+                if(entro == 0) {
+                    valor = 0;
+                }
+                View view = ArrayFields.get(index).getView();
+                EditText campo = (EditText) view.findViewById(R.id.numero_input);
+                campo.setText(String.valueOf(valor));
+
                 return false;
             }
         });

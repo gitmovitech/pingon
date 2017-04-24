@@ -129,7 +129,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     ViewReturn = FieldsSistema.getView();
                     break;
                 case "moneda":
-                    FieldsMoneda FieldsMoneda = new FieldsMoneda(Inflater, ChecklistFields.get(contador));
+                    FieldsMoneda FieldsMoneda = new FieldsMoneda(Inflater, ChecklistFields.get(contador), ChecklistFields);
                     ViewReturn = FieldsMoneda.getView();
                     break;
                 case "binario":
