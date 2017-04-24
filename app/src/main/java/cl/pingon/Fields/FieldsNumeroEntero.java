@@ -39,7 +39,7 @@ public class FieldsNumeroEntero {
                 for(int a = 0; a < ArrayFields.size(); a++){
                     if(ArrayFields.get(a).getCAM_TIPO().contains("sistema")){
                         //TODO: al cambiar valor de un numero y moneda debe realizar el calculo de sistema
-                        
+
                         Log.d("--------------", ArrayFields.get(a).getCAM_VAL_DEFECTO());
                     }
                 }
