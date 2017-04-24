@@ -85,6 +85,7 @@ public class BorradoresActivity extends AppCompatActivity {
                 } else {
                     ImageView NotFound = (ImageView) findViewById(R.id.NotFound);
                     NotFound.setVisibility(View.VISIBLE);
+                    ListDetalle.setVisibility(View.GONE);
                     Snackbar.make(findViewById(R.id.ListDetalle), "No hay borradores guardados", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
                 cursor.close();
