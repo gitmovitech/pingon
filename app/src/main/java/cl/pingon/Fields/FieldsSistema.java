@@ -21,6 +21,7 @@ public class FieldsSistema {
 
         this.view = Inflater.inflate(R.layout.item_numero, null);
         TextInputLayout TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
+        EditText NumeroInput = (EditText) view.findViewById(R.id.numero_input);
         try {
             if(Fields.getCAM_MANDATORIO().contains("S")){
                 TextView label = (TextView) view.findViewById(R.id.label_obligatorio);
@@ -30,29 +31,14 @@ public class FieldsSistema {
         } catch (Exception e){
             Log.e("ERROR CAMPO VACIO", e.toString());
         }
-        EditText NumeroInput = (EditText) view.findViewById(R.id.numero_input);
         NumeroInput.setEnabled(false);
 
         /**
          * Autocompletar sistema
          */
-        /*if(!Fields.getCAM_VAL_DEFECTO().isEmpty()){
-            String[] text = Fields.getCAM_VAL_DEFECTO().split(" ");
-            int resultado = 1;
-            for(int t = 0; t < text.length; t++){
-                String[] number = text[t].split("-");
-                for(int a = 0; a < ArrayFields.size(); a++){
-                    if(ArrayFields.get(a).getCAM_ID() == Integer.parseInt(number[1])){
-                        resultado = resultado * Integer.parseInt(ArrayFields.get(a).getCAM_VAL_DEFECTO());
-                        break;
-                    }
-                }
-            }
-            if(resultado == 1){
-                resultado = 0;
-            }
-            NumeroInput.setText(String.valueOf(resultado));
-        }*/
+        if(!Fields.getCAM_VAL_DEFECTO().isEmpty()){
+            NumeroInput.setText(Fields.getCAM_VAL_DEFECTO());
+        }
 
         try {
             Fields.setView(view);

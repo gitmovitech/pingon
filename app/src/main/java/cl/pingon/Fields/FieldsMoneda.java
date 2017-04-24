@@ -42,7 +42,7 @@ public class FieldsMoneda {
                 for(int a = 0; a < ArrayFields.size(); a++){
                     if(ArrayFields.get(a).getCAM_TIPO().contains("sistema")){
                         index = a;
-                        array = ArrayFields.get(a).getCAM_VAL_DEFECTO().split(" ");
+                        array = ArrayFields.get(a).getSISTEMA().split(" ");
                         for(int b = 0; b < array.length; b++) {
                             String[] items = array[b].split("-");
                             results.add(items[1]);

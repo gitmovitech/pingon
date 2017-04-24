@@ -13,6 +13,7 @@ public class ModelChecklistFields {
     private String CAM_VAL_DEFECTO;
     private String CAM_PLACE_HOLDER;
     private String VALUE;
+    private String SISTEMA;
 
     private View view;
 
@@ -25,6 +26,15 @@ public class ModelChecklistFields {
         this.CAM_MANDATORIO = CAM_MANDATORIO;
         this.CAM_VAL_DEFECTO = CAM_VAL_DEFECTO;
         this.CAM_PLACE_HOLDER = CAM_PLACE_HOLDER;
+        if(CAM_TIPO.contains("sistema")){
+            this.SISTEMA = CAM_VAL_DEFECTO;
+        } else{
+            this.SISTEMA = "";
+        }
+    }
+
+    public String getSISTEMA(){
+        return this.SISTEMA;
     }
 
     public void setView(View view){
