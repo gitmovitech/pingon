@@ -35,7 +35,6 @@ public class FieldsNumeroEntero {
 
         /**
          * Autocompletar campo de sistema
-         * TODO: al cambiar valor de un numero y moneda debe realizar el calculo de sistema
          */
         text.setOnKeyListener(new View.OnKeyListener() {
             @Override
