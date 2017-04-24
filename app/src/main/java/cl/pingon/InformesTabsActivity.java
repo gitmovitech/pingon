@@ -14,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 import cl.pingon.Adapter.AdapterTabs;
 import cl.pingon.Model.ModelChecklistSimple;
@@ -55,6 +54,9 @@ public class InformesTabsActivity extends AppCompatActivity {
     TblChecklistHelper Checklist;
     ArrayList<ModelTabsItem> ListItems;
     ArrayList<ModelChecklistSimple> ArrayChecklist;
+
+    AdapterTabs list;
+    ListView Listado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +99,8 @@ public class InformesTabsActivity extends AppCompatActivity {
         Checklist = new TblChecklistHelper(this);
         ArrayChecklist = new ArrayList<ModelChecklistSimple>();
         getItems(FRM_ID);
-        AdapterTabs list = new AdapterTabs(this, ListItems);
-        ListView Listado = (ListView) findViewById(R.id.list);
+        list = new AdapterTabs(this, ListItems);
+        Listado = (ListView) findViewById(R.id.list);
 
 
         /**
@@ -248,10 +250,10 @@ public class InformesTabsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 1) {
             getItems(FRM_ID);
-
-            Intent intent = new Intent();
+            Intent intent = new Intent(this, InformesTabsActivity.class);
             intent.putExtras(getIntent().getExtras());
-            setResult(RESULT_OK, intent);
+            finish();
+            startActivity(intent);
         }
     }
 

@@ -38,10 +38,12 @@ public class FieldsMoneda {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 String[] array;
                 int index = 0;
+                int sistema = 0;
                 ArrayList<String> results = new ArrayList<String>();
                 for(int a = 0; a < ArrayFields.size(); a++){
                     if(ArrayFields.get(a).getCAM_TIPO().contains("sistema")){
                         index = a;
+                        sistema = 1;
                         array = ArrayFields.get(a).getSISTEMA().split(" ");
                         for(int b = 0; b < array.length; b++) {
                             String[] items = array[b].split("-");
@@ -68,9 +70,11 @@ public class FieldsMoneda {
                 if(entro == 0) {
                     valor = 0;
                 }
-                View view = ArrayFields.get(index).getView();
-                EditText campo = (EditText) view.findViewById(R.id.numero_input);
-                campo.setText(String.valueOf(valor));
+                if(sistema == 1) {
+                    View view = ArrayFields.get(index).getView();
+                    EditText campo = (EditText) view.findViewById(R.id.numero_input);
+                    campo.setText(String.valueOf(valor));
+                }
 
                 return false;
             }

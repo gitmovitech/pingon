@@ -327,6 +327,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
             Documentos.update(getIntent().getIntExtra("LOCAL_DOC_ID", 0), values);
         }
 
+
+        overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
         Intent intent = new Intent();
         setResult(RESULT_OK, intent);
         finish();
