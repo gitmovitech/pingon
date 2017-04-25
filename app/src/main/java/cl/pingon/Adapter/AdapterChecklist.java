@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -231,8 +230,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
         ButtonVideoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("DISPATCH", "OK");
-                InformesDetallesActivity.dispatchTakeVideoIntent();
+                InformesDetallesActivity.dispatchTakeVideoIntent(RowItemIndex);
             }
         });
         Button ButtonVideoPlay = (Button) ItemVideoView.findViewById(R.id.ButtonVideoPlay);
@@ -256,6 +254,16 @@ public abstract class AdapterChecklist extends BaseAdapter {
                 VideoViewItem.seekTo(0);
             }
         });
+
+        if(Fields.getCAM_VAL_DEFECTO() != null){
+            if(!Fields.getCAM_VAL_DEFECTO().isEmpty()) {
+                try {
+                    setVideoURI(Uri.parse(Fields.getCAM_VAL_DEFECTO()));
+                    setLinearLayoutVideoVisibility();
+                    setVideoViewItemVisibility();
+                } catch(Exception e){}
+            }
+        }
 
         Fields.setView(ItemVideoView);
         return ItemVideoView;
@@ -314,9 +322,11 @@ public abstract class AdapterChecklist extends BaseAdapter {
 
         if(Fields.getCAM_VAL_DEFECTO() != null){
             if(!Fields.getCAM_VAL_DEFECTO().isEmpty()) {
-                ImageUtils img = new ImageUtils();
-                Bitmap ImageBitmapDecoded = img.ImageThumb(BitmapFactory.decodeFile(Fields.getCAM_VAL_DEFECTO()));
-                setImageButton(ImageBitmapDecoded, RowItemIndex);
+                try {
+                    ImageUtils img = new ImageUtils();
+                    Bitmap ImageBitmapDecoded = img.ImageThumb(BitmapFactory.decodeFile(Fields.getCAM_VAL_DEFECTO()));
+                    setImageButton(ImageBitmapDecoded, RowItemIndex);
+                } catch(Exception e){}
             }
         }
 

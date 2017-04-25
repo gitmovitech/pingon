@@ -122,6 +122,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         });
 
         RequestWriteExternalPerms();
+        getRegistrosDatabase();
 
     }
 
@@ -462,7 +463,10 @@ public class InformesDetallesActivity extends AppCompatActivity {
      */
     int RowItemIndex = 0;
     String ImageName = Environment.getExternalStorageDirectory() + "/Pingon/fotos/imagen-";
+    String VideoName = Environment.getExternalStorageDirectory() + "/Pingon/videos/video-";
+    String AudioName = Environment.getExternalStorageDirectory() + "/Pingon/audios/audio-";
     Intent CameraIntent;
+    Intent takeVideoIntent;
 
     public void setCameraIntentAction(int index){
         RowItemIndex = index;
@@ -478,8 +482,10 @@ public class InformesDetallesActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void dispatchTakeVideoIntent() {
-        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+    public void dispatchTakeVideoIntent(int index) {
+        RowItemIndex = index;
+        takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(VideoName+RowItemIndex+".mp4")));
         if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
         }
@@ -574,10 +580,11 @@ public class InformesDetallesActivity extends AppCompatActivity {
         }
         //VIDEO
         if (requestCode == REQUEST_VIDEO_CAPTURE){
-            Uri videoUri = data.getData();
-            AdapterChecklist.setVideoURI(videoUri);
+            AdapterChecklist.setVideoURI(Uri.parse(VideoName+RowItemIndex+".mp4"));
             AdapterChecklist.setLinearLayoutVideoVisibility();
             AdapterChecklist.setVideoViewItemVisibility();
+            ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
+            Fields.setValue(VideoName+RowItemIndex+".mp4");
         }
         //FIRMA
         if(requestCode == 10){
