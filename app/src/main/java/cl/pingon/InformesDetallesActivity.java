@@ -1,8 +1,10 @@
 package cl.pingon;
 
+import android.Manifest;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,6 +14,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -42,6 +46,9 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
     AlertDialog.Builder alert;
     AdapterChecklist AdapterChecklist;
+
+    private static final int PERMS_REQUEST_CAMERA = 0;
+    private static final int PERMS_WRITE_EXTERNAL_STORAGE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +120,35 @@ public class InformesDetallesActivity extends AppCompatActivity {
             }
         });
 
+        RequestWriteExternalPerms();
+
+    }
+
+
+
+
+
+    private void createFolderImagesStructure(){
+        File file = new File(Environment.getExternalStorageDirectory() + "/Pingon");
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        file = new File(Environment.getExternalStorageDirectory() + "/Pingon/fotos");
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        file = new File(Environment.getExternalStorageDirectory() + "/Pingon/firmas");
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        file = new File(Environment.getExternalStorageDirectory() + "/Pingon/videos");
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        file = new File(Environment.getExternalStorageDirectory() + "/Pingon/audios");
+        if(!file.exists()){
+            file.mkdirs();
+        }
     }
 
 
@@ -426,12 +462,13 @@ public class InformesDetallesActivity extends AppCompatActivity {
      */
     int RowItemIndex = 0;
     String ImageName = Environment.getExternalStorageDirectory() + "/Pingon/fotos/imagen-";
+    Intent CameraIntent;
 
     public void setCameraIntentAction(int index){
         RowItemIndex = index;
-        Intent CameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        CameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(ImageName+index+".jpg")));
-        startActivityForResult(CameraIntent, 1);
+        CameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        CameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(ImageName+RowItemIndex+".jpg")));
+        RequestCameraPerms();
     }
 
     public void showPhoto(int index){
@@ -441,7 +478,63 @@ public class InformesDetallesActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void RequestWriteExternalPerms(){
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMS_WRITE_EXTERNAL_STORAGE);
+        } else {
+            createFolderImagesStructure();
+        }
+    }
 
+    public void RequestCameraPerms(){
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMS_REQUEST_CAMERA);
+        } else {
+            startActivityForResult(CameraIntent, 1);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMS_REQUEST_CAMERA: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startActivityForResult(CameraIntent, 1);
+                } else {
+                    AlertDialog.Builder dialogo = new AlertDialog.Builder(this);
+                    dialogo.setTitle("Error de permisos");
+                    dialogo.setMessage("Esta aplicación requiere poder usar la camara para funcionar correctamente.");
+                    dialogo.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            RequestCameraPerms();
+                        }
+                    });
+                    dialogo.create();
+                    dialogo.show();
+                }
+                return;
+            }
+            case PERMS_WRITE_EXTERNAL_STORAGE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    createFolderImagesStructure();
+                } else {
+                    AlertDialog.Builder dialogo = new AlertDialog.Builder(this);
+                    dialogo.setTitle("Error de permisos");
+                    dialogo.setMessage("Esta aplicación requiere poder escribir datos en la memoria para guardar las fotografías.");
+                    dialogo.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            RequestWriteExternalPerms();
+                        }
+                    });
+                    dialogo.create();
+                    dialogo.show();
+                }
+                return;
+            }
+        }
+    }
 
 
 
@@ -483,6 +576,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
             }
         }
     }
+
 
 
 
