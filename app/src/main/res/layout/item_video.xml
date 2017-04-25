@@ -8,6 +8,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="16dp"
         android:id="@+id/TextViewLabel"/>
 
     <Button
@@ -19,12 +20,14 @@
         android:text="Grabar video"/>
 
     <VideoView
+        android:layout_gravity="center"
         android:visibility="gone"
         android:id="@+id/VideoViewItem"
         android:layout_width="match_parent"
-        android:layout_height="250dp" />
+        android:layout_height="400dp" />
 
     <LinearLayout
+        android:layout_gravity="center"
         android:id="@+id/LinearLayoutVideo"
         android:visibility="gone"
         android:orientation="horizontal"
