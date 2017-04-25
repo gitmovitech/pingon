@@ -183,9 +183,11 @@ public abstract class AdapterChecklist extends BaseAdapter {
         }
 
         if(Fields.getCAM_VAL_DEFECTO() != null){
-            ImageView ImageView = (ImageView) view.findViewById(R.id.ImageViewSign);
-            DrawSign DrawSign = new DrawSign(Fields.getCAM_VAL_DEFECTO());
-            DrawSign.DrawToImageView(ImageView);
+            if(!Fields.getCAM_VAL_DEFECTO().isEmpty()) {
+                ImageView ImageView = (ImageView) view.findViewById(R.id.ImageViewSign);
+                DrawSign DrawSign = new DrawSign(Fields.getCAM_VAL_DEFECTO());
+                DrawSign.DrawToImageView(ImageView);
+            }
         }
         Button ButtonFirma = (Button) view.findViewById(R.id.item_firma);
         ButtonFirma.setOnClickListener(new View.OnClickListener() {
