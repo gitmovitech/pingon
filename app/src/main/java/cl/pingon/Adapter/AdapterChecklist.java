@@ -4,6 +4,7 @@ package cl.pingon.Adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import cl.pingon.Fields.FieldsText;
 import cl.pingon.Fields.FieldsTitle;
 import cl.pingon.InformesDetallesActivity;
 import cl.pingon.Libraries.DrawSign;
+import cl.pingon.Libraries.ImageUtils;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.Model.ModelImage;
 import cl.pingon.R;
@@ -220,9 +222,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
                 TextView label = (TextView) view.findViewById(R.id.label_obligatorio);
                 label.setVisibility(view.VISIBLE);
             }
-        } catch(Exception e){
-
-        }
+        } catch(Exception e){}
 
         Button ButtonFoto = (Button) view.findViewById(R.id.item_foto);
         ButtonFoto.setText(Fields.getCAM_NOMBRE_INTERNO());
@@ -242,6 +242,16 @@ public abstract class AdapterChecklist extends BaseAdapter {
 
         ArrayList<ModelImage> ModelImageItems = new ArrayList<ModelImage>();
         ImageItems.add(new ModelImage(RowItemIndex, ButtonFoto, ImageButtonFoto));
+
+
+        if(Fields.getCAM_VAL_DEFECTO() != null){
+            if(!Fields.getCAM_VAL_DEFECTO().isEmpty()) {
+                ImageUtils img = new ImageUtils();
+                Bitmap ImageBitmapDecoded = img.ImageThumb(BitmapFactory.decodeFile(Fields.getCAM_VAL_DEFECTO()));
+                setImageButton(ImageBitmapDecoded, RowItemIndex);
+            }
+        }
+
         Fields.setView(view);
         return view;
     }

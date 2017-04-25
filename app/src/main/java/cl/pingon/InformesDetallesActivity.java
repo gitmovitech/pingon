@@ -562,6 +562,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
             ImageUtils img = new ImageUtils();
             Bitmap ImageBitmapDecoded = img.ImageThumb(BitmapFactory.decodeFile(ImageName+RowItemIndex+".jpg"));
             AdapterChecklist.setImageButton(ImageBitmapDecoded, RowItemIndex);
+            ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
+            Fields.setValue(ImageName+RowItemIndex+".jpg");
         }
         //FIRMA
         if(requestCode == 10){
