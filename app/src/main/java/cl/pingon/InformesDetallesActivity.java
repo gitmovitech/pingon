@@ -49,6 +49,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
     private static final int PERMS_REQUEST_CAMERA = 0;
     private static final int PERMS_WRITE_EXTERNAL_STORAGE = 1;
+    private static final int REQUEST_VIDEO_CAPTURE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,19 +126,15 @@ public class InformesDetallesActivity extends AppCompatActivity {
     }
 
 
-
-
-
+    /**
+     * Crear estructura de carpetas par archivos
+     */
     private void createFolderImagesStructure(){
         File file = new File(Environment.getExternalStorageDirectory() + "/Pingon");
         if(!file.exists()){
             file.mkdirs();
         }
         file = new File(Environment.getExternalStorageDirectory() + "/Pingon/fotos");
-        if(!file.exists()){
-            file.mkdirs();
-        }
-        file = new File(Environment.getExternalStorageDirectory() + "/Pingon/firmas");
         if(!file.exists()){
             file.mkdirs();
         }
@@ -195,10 +192,13 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     } catch(Exception e){}
                     break;
                 case "firma":
-                    //TODO: PROGRAMAR FIRMA OBLIGATORIA, PROBAR GUARDADO, SE GUARDA EN EL ACTIVITY RESULT 10;
+                    //NO REQUERIDO, SE GUARDA EN EL ADAPTADOR
                     break;
                 case "foto":
-                    //TODO: PROGRAMAR FOTO;
+                    //NO REQUERIDO, SE GUARDA EN EL ADAPTADOR
+                    break;
+                case "video":
+                    //NO REQUERIDO, SE GUARDA EN EL ADAPTADOR
                     break;
                 case "fecha":
                     try {
@@ -478,6 +478,13 @@ public class InformesDetallesActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void dispatchTakeVideoIntent() {
+        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
+        }
+    }
+
     public void RequestWriteExternalPerms(){
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMS_WRITE_EXTERNAL_STORAGE);
@@ -564,6 +571,13 @@ public class InformesDetallesActivity extends AppCompatActivity {
             AdapterChecklist.setImageButton(ImageBitmapDecoded, RowItemIndex);
             ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
             Fields.setValue(ImageName+RowItemIndex+".jpg");
+        }
+        //VIDEO
+        if (requestCode == REQUEST_VIDEO_CAPTURE){
+            Uri videoUri = data.getData();
+            AdapterChecklist.setVideoURI(videoUri);
+            AdapterChecklist.setLinearLayoutVideoVisibility();
+            AdapterChecklist.setVideoViewItemVisibility();
         }
         //FIRMA
         if(requestCode == 10){

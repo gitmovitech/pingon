@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +14,9 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import java.util.ArrayList;
 
@@ -143,9 +147,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     ViewReturn = FieldsLista.getView();
                     break;
                 case "video":
-                    ViewReturn = Inflater.inflate(R.layout.item_video, null);
-                    TextViewTitle = (TextView) ViewReturn.findViewById(R.id.TextViewLabel);
-                    TextViewTitle.setHint(ChecklistFields.get(contador).getCAM_NOMBRE_INTERNO());
+                    ViewReturn = Video(Inflater, ChecklistFields.get(contador), contador);
                     break;
                 /*default:
                     ViewReturn = Inflater.inflate(R.layout.item_empty, null);
@@ -203,6 +205,72 @@ public abstract class AdapterChecklist extends BaseAdapter {
         Fields.setView(view);
         return view;
     }
+
+
+
+
+
+    /**
+     * CONSTRUCTOR DE VIDEO
+     * @param Inflater
+     * @param Fields
+     * @param RowItemIndex
+     * @return
+     */
+    VideoView VideoViewItem;
+    LinearLayout LinearLayoutVideo;
+    private View Video(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
+        View ItemVideoView = Inflater.inflate(R.layout.item_video, null);
+
+        TextViewTitle = (TextView) ItemVideoView.findViewById(R.id.TextViewLabel);
+        TextViewTitle.setHint(Fields.getCAM_NOMBRE_INTERNO());
+
+        VideoViewItem = (VideoView) ItemVideoView.findViewById(R.id.VideoViewItem);
+        LinearLayoutVideo = (LinearLayout) ItemVideoView.findViewById(R.id.LinearLayoutVideo);
+        Button ButtonVideoView = (Button) ItemVideoView.findViewById(R.id.ButtonVideoView);
+        ButtonVideoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("DISPATCH", "OK");
+                InformesDetallesActivity.dispatchTakeVideoIntent();
+            }
+        });
+        Button ButtonVideoPlay = (Button) ItemVideoView.findViewById(R.id.ButtonVideoPlay);
+        ButtonVideoPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                VideoViewItem.start();
+            }
+        });
+        Button ButtonVideoStop = (Button) ItemVideoView.findViewById(R.id.ButtonVideoStop);
+        ButtonVideoStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                VideoViewItem.pause();
+            }
+        });
+        Button ButtonVideoRewind = (Button) ItemVideoView.findViewById(R.id.ButtonVideoRewind);
+        ButtonVideoRewind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                VideoViewItem.seekTo(0);
+            }
+        });
+
+        Fields.setView(ItemVideoView);
+        return ItemVideoView;
+    }
+    public void setVideoURI(Uri videoUri){
+        VideoViewItem.setVideoURI(videoUri);
+    }
+    public void setLinearLayoutVideoVisibility(){
+        LinearLayoutVideo.setVisibility(View.VISIBLE);
+    }
+    public void setVideoViewItemVisibility(){
+        VideoViewItem.setVisibility(View.VISIBLE);
+    }
+
+
 
 
 
