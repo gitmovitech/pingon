@@ -4,13 +4,13 @@ package cl.pingon.Adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -26,6 +26,7 @@ import cl.pingon.Fields.FieldsSistema;
 import cl.pingon.Fields.FieldsText;
 import cl.pingon.Fields.FieldsTitle;
 import cl.pingon.InformesDetallesActivity;
+import cl.pingon.Libraries.DrawSign;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.Model.ModelImage;
 import cl.pingon.R;
@@ -106,7 +107,6 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     ViewReturn = FieldsTitle.getView();
                     break;
                 case "firma":
-                    Log.d("AQUI LA FIRMA", ChecklistFields.get(contador).getCAM_VAL_DEFECTO());
                     ViewReturn = Firma(Inflater, ChecklistFields.get(contador), contador);
                     break;
                 case "fecha":
@@ -182,12 +182,11 @@ public abstract class AdapterChecklist extends BaseAdapter {
 
         }
 
-        /*if(Fields.getCAM_VAL_DEFECTO() != null){
+        if(Fields.getCAM_VAL_DEFECTO() != null){
             ImageView ImageView = (ImageView) view.findViewById(R.id.ImageViewSign);
-            String[] StringSign = Fields.getCAM_VAL_DEFECTO().split("<>");
-            DrawSign DrawSign = new DrawSign(StringSign[0]);
+            DrawSign DrawSign = new DrawSign(Fields.getCAM_VAL_DEFECTO());
             DrawSign.DrawToImageView(ImageView);
-        }*/
+        }
         Button ButtonFirma = (Button) view.findViewById(R.id.item_firma);
         ButtonFirma.setOnClickListener(new View.OnClickListener() {
             @Override
