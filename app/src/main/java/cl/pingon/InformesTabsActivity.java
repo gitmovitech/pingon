@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -131,11 +134,20 @@ public class InformesTabsActivity extends AppCompatActivity {
                 startActivityForResult(IntentDetalle, 1);
             }
         });
+    }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_informes_tabs, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.ButtonGoHome:
                 finish();
                 try{
                     InformesActivity.activity.finish();
@@ -149,8 +161,10 @@ public class InformesTabsActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
                 Intent intent = new Intent(getApplicationContext(), BuzonActivity.class);
                 startActivity(intent);
-            }
-        });
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 
