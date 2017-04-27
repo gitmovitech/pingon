@@ -324,7 +324,6 @@ public class InformesDetallesActivity extends AppCompatActivity {
      * GUARDAR REGISTROS VALIDOS
      * ------------------------------------------------------------------------------------------------------------
      * @param data
-     * TODO: Revisar si los registros se eucnetran guardando correctamente y que se hace update en caso necesario
      */
     public void guardarRegistros(ArrayList<ModelChecklistFields> data){
         TblRegistroHelper Registros = new TblRegistroHelper(this);

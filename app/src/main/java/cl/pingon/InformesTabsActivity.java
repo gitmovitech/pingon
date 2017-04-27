@@ -180,9 +180,6 @@ public class InformesTabsActivity extends AppCompatActivity {
             ChecklistItem = new ModelChecklistSimple(CHK_ID, CHK_NOMBRE);
             ArrayChecklist.add(ChecklistItem);
 
-            /**
-             * @TODO: PROBAR CONTADORES
-             */
             ContadorTabs = getContadoresTabsRegistros(this, FRM_ID, CHK_ID);
             ListItems.add(new ModelTabsItem(
                     CHK_NOMBRE,
@@ -225,17 +222,12 @@ public class InformesTabsActivity extends AppCompatActivity {
                 contador_obligatorios++;
             }
             if(LOCAL_DOC_ID != 0){
-                CursorRegistros = Registros.getByLocalDocId(LOCAL_DOC_ID);
+                CAM_ID = CursorChecklist.getInt(CursorChecklist.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_ID));
+                CursorRegistros = Registros.getDraftByLocalDocIdChkIdFrmId(LOCAL_DOC_ID, CHK_ID, FRM_ID, CAM_ID);
                 while(CursorRegistros.moveToNext()){
-                    CAM_ID = CursorRegistros.getInt(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID));
-                    if(CHK_ID == CursorRegistros.getInt(CursorRegistros.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CHK_ID))){
-                        if(CAM_ID == CursorChecklist.getInt(CursorChecklist.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_ID))){
-                            contador_total_completados++;
-                            if(CAM_MANDATORIO.contains("S")){
-                                contador_obligatorios_completados++;
-                            }
-                        }
-                        break;
+                    contador_total_completados++;
+                    if(CAM_MANDATORIO.contains("S")){
+                        contador_obligatorios_completados++;
                     }
                 }
                 CursorRegistros.close();
