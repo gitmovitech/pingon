@@ -5,5 +5,10 @@
         android:icon="@drawable/home_variant"
         app:showAsAction="always"
         android:title="Home" />
+    <item android:id="@+id/ButtonSend"
+        android:visible="false"
+        android:icon="@drawable/send"
+        app:showAsAction="always"
+        android:title="Home" />
 </menu>
 

@@ -7,14 +7,17 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -60,6 +63,8 @@ public class InformesTabsActivity extends AppCompatActivity {
 
     AdapterTabs list;
     ListView Listado;
+
+    Menu MenuButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +146,18 @@ public class InformesTabsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_informes_tabs, menu);
+        MenuButton = menu;
+        if(ActivateSendButton == 1){
+            for(int m = 0; m < MenuButton.size(); m++){
+                if(MenuButton.getItem(m).getItemId() == R.id.ButtonSend){
+                    MenuButton.getItem(m).setVisible(true);
+                    Toast toast = Toast.makeText(getApplicationContext(), "Campos obligatorios completos.\n Ya puede enviar este informe.", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.TOP, 0, 0);
+                    toast.show();
+                    break;
+                }
+            }
+        }
         return true;
     }
 
@@ -168,11 +185,14 @@ public class InformesTabsActivity extends AppCompatActivity {
     }
 
 
+
+    int ActivateSendButton = 1;
     private void getItems(int FRM_ID){
         ModelContadorTabs ContadorTabs;
         ModelChecklistSimple ChecklistItem;
         Cursor cursor = Checklist.getAllGroupByChkNombre(FRM_ID);
         ListItems = new ArrayList<ModelTabsItem>();
+
         while (cursor.moveToNext()) {
             CHK_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_ID));
             CHK_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_NOMBRE));
@@ -243,10 +263,10 @@ public class InformesTabsActivity extends AppCompatActivity {
         if(contador_obligatorios == contador_obligatorios_completados){
             ContadorTabs.setCheck(1);
         } else {
+            ActivateSendButton = 0;
             ContadorTabs.setCheck(0);
         }
 
-        //Log.d("EXTRAS TOTAL STRING", getIntent().getExtras().toString());
         return ContadorTabs;
     }
 
