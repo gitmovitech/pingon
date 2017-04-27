@@ -164,6 +164,11 @@ public class InformesTabsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.ButtonSend:
+                Intent createPdfIntent = new Intent(getApplicationContext(), PdfPreviewActivity.class);
+                createPdfIntent.putExtra("LOCAL_DOC_ID", LOCAL_DOC_ID);
+                startActivity(createPdfIntent);
+                return true;
             case R.id.ButtonGoHome:
                 finish();
                 try{
