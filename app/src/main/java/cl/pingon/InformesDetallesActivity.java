@@ -14,11 +14,15 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -26,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,6 +51,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
     AlertDialog.Builder alert;
     AdapterChecklist AdapterChecklist;
+    ListView ListViewInformesDetalles;
 
     private static final int PERMS_REQUEST_CAMERA = 0;
     private static final int PERMS_WRITE_EXTERNAL_STORAGE = 1;
@@ -69,7 +75,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
 
         ArrayList<ModelChecklistFields> ArrayChecklist;
-        final ListView ListViewInformesDetalles = (ListView) findViewById(R.id.ListViewInformesDetalles);
+        ListViewInformesDetalles = (ListView) findViewById(R.id.ListViewInformesDetalles);
         /**
          * SOLUCION PROBLEMA SCROLL EN EL LISTVIEW
          */
@@ -104,27 +110,37 @@ public class InformesDetallesActivity extends AppCompatActivity {
         AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this){};
         ListViewInformesDetalles.setAdapter(AdapterChecklist);
 
+        RequestWriteExternalPerms();
+        getRegistrosDatabase();
 
-        /**
-         * VALIDAR Y GUARDAR REGISTRO
-         */
-        FloatingActionButton fabsave = (FloatingActionButton) findViewById(R.id.fabSave);
-        fabsave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    }
+
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_informe_detalles, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.ButtonSave:
                 ListViewInformesDetalles.smoothScrollBy(100000,400);
                 TimerUtils.TaskHandle handle = TimerUtils.setTimeout(new Runnable() {
                     public void run() {
                         validarRegistros(AdapterChecklist.getChecklistData());
                     }
                 }, 500);
-            }
-        });
-
-        RequestWriteExternalPerms();
-        getRegistrosDatabase();
-
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
+
 
 
     /**
@@ -368,7 +384,9 @@ public class InformesDetallesActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
         Intent intent = new Intent();
         setResult(RESULT_OK, intent);
-        finish();
+
+        Snackbar.make(findViewById(R.id.activity_informes_detalles), "Registro guardado", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+
 
     }
 
