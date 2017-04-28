@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Build;
+import android.provider.DocumentsContract;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,7 +16,22 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.lowagie.text.Cell;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.PdfCell;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfTable;
+import com.lowagie.text.pdf.draw.LineSeparator;
+
+import java.io.IOException;
+
+import cl.pingon.Libraries.PDF;
 import cl.pingon.SQLite.TblDocumentoHelper;
+import harmony.java.awt.Color;
 
 public class PdfPreviewActivity extends AppCompatActivity {
 
@@ -44,6 +60,8 @@ public class PdfPreviewActivity extends AppCompatActivity {
         LOCAL_DOC_ID = getIntent().getIntExtra("LOCAL_DOC_ID", 0);
 
         getDocumentData(LOCAL_DOC_ID);
+
+        genPDF();
     }
 
     @Override
@@ -85,4 +103,45 @@ public class PdfPreviewActivity extends AppCompatActivity {
 
         cursor.close();
     }
+
+    private void genPDF(){
+        try {
+            PDF pdf = new PDF(this, "informe.pdf");
+            pdf.open();
+            pdf.addImage(R.drawable.pingon_pdf, 100, 80);
+
+            Paragraph p = new Paragraph("Información del formulario");
+            LineSeparator line = new LineSeparator();
+            line.setOffset(-2);
+            p.add(line);
+            pdf.add(p);
+
+            PdfPTable tabla = pdf.createTable(2);
+            tabla.setWidthPercentage(98);
+
+            tabla.addCell(pdf.addCell(""));
+            tabla.addCell(pdf.addCell(""));
+            tabla.addCell(pdf.addCell("Nombre del formulario"));
+            tabla.addCell(pdf.addCell("Orden de Trabajo de Grúa"));
+            tabla.addCell(pdf.addCell("Remitente"));
+            tabla.addCell(pdf.addCell("Jorge Ramirez"));
+            tabla.addCell(pdf.addCell("Número de referencia"));
+            tabla.addCell(pdf.addCell("OTAOTE"));
+            tabla.addCell(pdf.addCell("Ubicación"));
+            tabla.addCell(pdf.addCell("Desconocida"));
+            tabla.addCell(pdf.addCell(""));
+            tabla.addCell(pdf.addCell(""));
+
+
+            pdf.add(tabla);
+
+            pdf.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
