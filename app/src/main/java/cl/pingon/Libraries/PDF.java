@@ -83,7 +83,7 @@ public class PDF {
 
     public PdfPCell addCell(String text){
         PdfPCell cell = new PdfPCell(new Phrase(text));
-        cell.setBorderColor(harmony.java.awt.Color.);
+        cell.setBorderColor(harmony.java.awt.Color.LIGHT_GRAY);
         cell.setBackgroundColor(harmony.java.awt.Color.LIGHT_GRAY);
         cell.setPaddingLeft(10);
         return cell;
