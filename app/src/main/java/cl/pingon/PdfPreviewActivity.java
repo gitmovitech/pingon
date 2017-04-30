@@ -28,9 +28,16 @@ import com.lowagie.text.pdf.PdfTable;
 import com.lowagie.text.pdf.draw.LineSeparator;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import cl.pingon.Libraries.PDF;
+import cl.pingon.Model.ModelKeyPairs;
+import cl.pingon.SQLite.TblChecklistDefinition;
+import cl.pingon.SQLite.TblChecklistHelper;
+import cl.pingon.SQLite.TblDocumentoDefinition;
 import cl.pingon.SQLite.TblDocumentoHelper;
+import cl.pingon.SQLite.TblRegistroDefinition;
+import cl.pingon.SQLite.TblRegistroHelper;
 import harmony.java.awt.Color;
 
 public class PdfPreviewActivity extends AppCompatActivity {
@@ -58,10 +65,9 @@ public class PdfPreviewActivity extends AppCompatActivity {
         ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
         USU_ID = Integer.parseInt(session.getString("user_id", ""));
         LOCAL_DOC_ID = getIntent().getIntExtra("LOCAL_DOC_ID", 0);
-
-        getDocumentData(LOCAL_DOC_ID);
-
-        genPDF();
+        LOCAL_DOC_ID = 1;
+        ArrayList<ModelKeyPairs> registros = getDocumentData(LOCAL_DOC_ID);
+        genPDF(registros);
     }
 
     @Override
@@ -96,15 +102,48 @@ public class PdfPreviewActivity extends AppCompatActivity {
         }
     }
 
-    private void getDocumentData(int ID){
+    private ArrayList<ModelKeyPairs> getDocumentData(int ID){
         TblDocumentoHelper Documento = new TblDocumentoHelper(this);
-        Cursor cursor = Documento.getById(ID);
-        cursor.moveToFirst();
+        TblRegistroHelper Registro = new TblRegistroHelper(this);
+        TblChecklistHelper Checklist = new TblChecklistHelper(this);
 
-        cursor.close();
+        ArrayList<ModelKeyPairs> registro = new ArrayList<>();
+
+        Cursor cr;
+        Cursor cursor = Documento.getById(ID);
+
+        if(cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            Integer FRM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.FRM_ID));
+            cursor.close();
+
+            Integer CAM_ID;
+            String CAM_NAME;
+            cursor = Checklist.getByFrmId(FRM_ID);
+            //TODO: Programar cursor checklist y luego combinar con los registros
+            while(cursor.moveToNext()){
+                CAM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_ID));
+                CAM_NAME = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_NOMBRE_EXTERNO));
+
+                cr = Registro.getDraftsByFrmId(FRM_ID);
+                if(cr.getCount() > 0){
+                    while(cr.moveToNext()){
+                        if(CAM_ID == cr.getInt(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID))){
+                            registro.add(new ModelKeyPairs(CAM_NAME, cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR))));
+                            break;
+                        }
+                    }
+                }
+                cr.close();
+            }
+            cursor.close();
+        }
+
+        return registro;
+
     }
 
-    private void genPDF(){
+    private void genPDF(ArrayList<ModelKeyPairs> registros){
         try {
             PDF pdf = new PDF(this, "informe.pdf");
             pdf.open();
@@ -117,22 +156,34 @@ public class PdfPreviewActivity extends AppCompatActivity {
             pdf.add(p);
 
             PdfPTable tabla = pdf.createTable(2);
+
+            tabla = pdf.createTable(2);
             tabla.setWidthPercentage(98);
+            tabla.getDefaultCell().setPadding(10);
+            tabla.addCell(pdf.addCellColor(""));
+            tabla.addCell(pdf.addCellColor(""));
+            tabla.addCell(pdf.addCellColor("Nombre del formulario"));
+            tabla.addCell(pdf.addCellColor("Orden de Trabajo de Grúa"));
+            tabla.addCell(pdf.addCellColor("Remitente"));
+            tabla.addCell(pdf.addCellColor("Jorge Ramirez"));
+            tabla.addCell(pdf.addCellColor("Número de referencia"));
+            tabla.addCell(pdf.addCellColor("OTAOTE"));
+            tabla.addCell(pdf.addCellColor("Ubicación"));
+            tabla.addCell(pdf.addCellColor("Desconocida"));
+            tabla.addCell(pdf.addCellColor(""));
+            tabla.addCell(pdf.addCellColor(""));
+            pdf.add(tabla);
 
+            tabla = pdf.createTable(2);
+            tabla.setWidthPercentage(98);
             tabla.addCell(pdf.addCell(""));
             tabla.addCell(pdf.addCell(""));
-            tabla.addCell(pdf.addCell("Nombre del formulario"));
-            tabla.addCell(pdf.addCell("Orden de Trabajo de Grúa"));
-            tabla.addCell(pdf.addCell("Remitente"));
-            tabla.addCell(pdf.addCell("Jorge Ramirez"));
-            tabla.addCell(pdf.addCell("Número de referencia"));
-            tabla.addCell(pdf.addCell("OTAOTE"));
-            tabla.addCell(pdf.addCell("Ubicación"));
-            tabla.addCell(pdf.addCell("Desconocida"));
+            for(int i = 0; i < registros.size(); i++){
+                tabla.addCell(pdf.addCell(registros.get(i).getKey()));
+                tabla.addCell(pdf.addCell(registros.get(i).getValue()));
+            }
             tabla.addCell(pdf.addCell(""));
             tabla.addCell(pdf.addCell(""));
-
-
             pdf.add(tabla);
 
             pdf.close();

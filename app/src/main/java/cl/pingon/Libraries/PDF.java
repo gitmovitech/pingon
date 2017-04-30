@@ -81,10 +81,18 @@ public class PDF {
         documento.add(imagen);
     }
 
-    public PdfPCell addCell(String text){
+    public PdfPCell addCellColor(String text){
         PdfPCell cell = new PdfPCell(new Phrase(text));
         cell.setBorderColor(harmony.java.awt.Color.LIGHT_GRAY);
         cell.setBackgroundColor(harmony.java.awt.Color.LIGHT_GRAY);
+        cell.setPaddingLeft(10);
+        return cell;
+    }
+
+    public PdfPCell addCell(String text){
+        PdfPCell cell = new PdfPCell(new Phrase(text));
+        cell.setBorderColor(harmony.java.awt.Color.WHITE);
+        cell.setBackgroundColor(harmony.java.awt.Color.WHITE);
         cell.setPaddingLeft(10);
         return cell;
     }

@@ -136,6 +136,29 @@ public class TblRegistroHelper extends SQLiteOpenHelper {
     }
 
 
+    public Cursor getDraftByLocalDocIdFrmId(Integer LOCAL_DOC_ID, Integer FRM_ID){
+        SQLiteDatabase db = getReadableDatabase();
+        String[] select = {
+                TblRegistroDefinition.Entry.DOC_ID,
+                TblRegistroDefinition.Entry.REG_ID,
+                TblRegistroDefinition.Entry.ID,
+                TblRegistroDefinition.Entry.REG_METADATOS,
+                TblRegistroDefinition.Entry.REG_TIPO,
+                TblRegistroDefinition.Entry.REG_VALOR,
+                TblRegistroDefinition.Entry.SEND_STATUS
+        };
+        Cursor cursor = db.query(
+                TblRegistroDefinition.Entry.TABLE_NAME,
+                select,
+                TblRegistroDefinition.Entry.SEND_STATUS+" = ? AND "+
+                        TblRegistroDefinition.Entry.LOCAL_DOC_ID+" = ? AND "+
+                        TblRegistroDefinition.Entry.FRM_ID+" = ?",
+                new String[]{"DRAFT", String.valueOf(LOCAL_DOC_ID), String.valueOf(FRM_ID)},
+                null, null, null);
+        return cursor;
+    }
+
+
     public Cursor getDraftByLocalDocIdCamIdAndFrmId(Integer LOCAL_DOC_ID, Integer CAM_ID, Integer FRM_ID){
         SQLiteDatabase db = getReadableDatabase();
         String[] select = {
