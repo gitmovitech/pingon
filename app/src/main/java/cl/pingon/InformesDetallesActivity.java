@@ -155,6 +155,10 @@ public class InformesDetallesActivity extends AppCompatActivity {
         if(!file.exists()){
             file.mkdirs();
         }
+        file = new File(Environment.getExternalStorageDirectory() + "/Pingon/firmas");
+        if(!file.exists()){
+            file.mkdirs();
+        }
         file = new File(Environment.getExternalStorageDirectory() + "/Pingon/videos");
         if(!file.exists()){
             file.mkdirs();

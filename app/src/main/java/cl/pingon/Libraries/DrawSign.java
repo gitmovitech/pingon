@@ -48,6 +48,7 @@ public class DrawSign {
         try {
             image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(image);
+            canvas.drawColor(Color.WHITE);
             canvas.drawPath(path, paint);
         } catch (Exception e){ }
 

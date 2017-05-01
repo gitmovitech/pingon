@@ -90,7 +90,7 @@ public class PDF {
         documento.add(imagen);
     }
 
-    public void addSignToCell(ImageView ImageView, String points, int width, int height) throws DocumentException, IOException {
+    public Image addSignToCell(ImageView ImageView, String points, int width, int height) throws DocumentException, IOException {
         DrawSign DrawSign = new DrawSign(points);
         DrawSign.DrawToImageView(ImageView);
 
@@ -108,8 +108,13 @@ public class PDF {
             Log.e("ERROR IMAGE", e.toString());
         }
 
-        documento.add(imagen);
-        //return imagen;
+        File filename = new File(getRuta(), "firma.jpg");
+        FileOutputStream fos = new FileOutputStream(filename);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+        fos.flush();
+        fos.close();
+
+        return imagen;
     }
 
     public PdfPCell addCellColor(String text){
@@ -125,6 +130,14 @@ public class PDF {
         cell.setBorderColor(harmony.java.awt.Color.WHITE);
         cell.setBackgroundColor(harmony.java.awt.Color.WHITE);
         cell.setPaddingLeft(10);
+        return cell;
+    }
+
+    public PdfPCell addCell(Image image){
+        PdfPCell cell = new PdfPCell();
+        cell.setBorderColor(harmony.java.awt.Color.WHITE);
+        cell.setBackgroundColor(harmony.java.awt.Color.WHITE);
+        cell.addElement(image);
         return cell;
     }
 

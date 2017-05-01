@@ -213,7 +213,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
                 } else {
                     if(registros.get(i).getType().contains("firma")){
                         tabla.addCell(pdf.addCell(registros.get(i).getKey()));
-                        pdf.addSignToCell((ImageView) findViewById(R.id.ImageViewFirma), registros.get(i).getValue(), 150, 150);
+                        tabla.addCell(pdf.addSignToCell((ImageView) findViewById(R.id.ImageViewFirma), registros.get(i).getValue(), 150, 150));
                     } else{
                         tabla.addCell(pdf.addCell(registros.get(i).getKey()));
                         tabla.addCell(pdf.addCell(registros.get(i).getValue()));
