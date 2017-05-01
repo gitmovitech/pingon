@@ -115,7 +115,6 @@ public class PDF {
         fos.close();
 
         imagen.setAlignment(Image.RIGHT);
-        imagen.
         documento.add(imagen);
     }
 
