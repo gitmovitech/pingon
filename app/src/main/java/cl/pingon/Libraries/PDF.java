@@ -90,7 +90,7 @@ public class PDF {
         documento.add(imagen);
     }
 
-    public Image addSignToCell(ImageView ImageView, String points, int width, int height) throws DocumentException, IOException {
+    public void addSign(ImageView ImageView, String points, int width, int height) throws DocumentException, IOException {
         DrawSign DrawSign = new DrawSign(points);
         DrawSign.DrawToImageView(ImageView);
 
@@ -114,7 +114,9 @@ public class PDF {
         fos.flush();
         fos.close();
 
-        return imagen;
+        imagen.setAlignment(Image.RIGHT);
+        imagen.
+        documento.add(imagen);
     }
 
     public PdfPCell addCellColor(String text){

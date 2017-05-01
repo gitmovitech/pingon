@@ -212,8 +212,16 @@ public class PdfPreviewActivity extends AppCompatActivity {
                     tabla.setWidthPercentage(100);
                 } else {
                     if(registros.get(i).getType().contains("firma")){
-                        tabla.addCell(pdf.addCell(registros.get(i).getKey()));
-                        tabla.addCell(pdf.addSignToCell((ImageView) findViewById(R.id.ImageViewFirma), registros.get(i).getValue(), 150, 150));
+                        pdf.add(tabla);
+                        pdf.add(Chunk.NEWLINE);
+
+                        p = new Paragraph(registros.get(i).getKey());
+                        pdf.add(p);
+                        pdf.addSign((ImageView) findViewById(R.id.ImageViewFirma), registros.get(i).getValue(), 150, 150);
+                        pdf.add(Chunk.NEWLINE);
+
+                        tabla = pdf.createTable(2);
+                        tabla.setWidthPercentage(100);
                     } else{
                         tabla.addCell(pdf.addCell(registros.get(i).getKey()));
                         tabla.addCell(pdf.addCell(registros.get(i).getValue()));
