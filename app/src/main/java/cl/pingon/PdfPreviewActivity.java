@@ -65,7 +65,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
         ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
         USU_ID = Integer.parseInt(session.getString("user_id", ""));
         LOCAL_DOC_ID = getIntent().getIntExtra("LOCAL_DOC_ID", 0);
-        LOCAL_DOC_ID = 1;
+        LOCAL_DOC_ID = 4;
         ArrayList<ModelKeyPairs> registros = getDocumentData(LOCAL_DOC_ID);
         genPDF(registros);
     }

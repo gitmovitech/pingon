@@ -16,11 +16,7 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".BuzonActivity" />
@@ -35,7 +31,13 @@
         <activity android:name=".InformesDetallesActivity" />
         <activity android:name=".InformesTabsActivity" />
         <activity android:name=".SignDrawActivity"/>
-        <activity android:name=".PdfPreviewActivity"/>
+        <activity android:name=".PdfPreviewActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
