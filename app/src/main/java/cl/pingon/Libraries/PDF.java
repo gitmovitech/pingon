@@ -111,6 +111,10 @@ public class PDF {
         documento.add(tabla);
     }
 
+    public void add(Chunk el) throws DocumentException {
+        documento.add(el);
+    }
+
 
     private static File crearFichero(String nombreFichero) throws IOException {
         File ruta = getRuta();

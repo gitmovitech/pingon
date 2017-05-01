@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.lowagie.text.Cell;
+import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Paragraph;
@@ -119,22 +120,32 @@ public class PdfPreviewActivity extends AppCompatActivity {
 
             Integer CAM_ID;
             String CAM_NAME;
+            String CAM_TIPO;
             cursor = Checklist.getByFrmId(FRM_ID);
             //TODO: Programar cursor checklist y luego combinar con los registros
             while(cursor.moveToNext()){
                 CAM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_ID));
                 CAM_NAME = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_NOMBRE_EXTERNO));
+                CAM_TIPO = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_TIPO));
 
-                cr = Registro.getDraftsByFrmId(FRM_ID);
-                if(cr.getCount() > 0){
-                    while(cr.moveToNext()){
-                        if(CAM_ID == cr.getInt(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID))){
-                            registro.add(new ModelKeyPairs(CAM_NAME, cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR))));
-                            break;
+                if(CAM_TIPO.contains("etiqueta")){
+                    registro.add(new ModelKeyPairs(CAM_NAME, "", CAM_TIPO));
+                } else {
+                    cr = Registro.getDraftsByFrmId(FRM_ID);
+                    if (cr.getCount() > 0) {
+                        while (cr.moveToNext()) {
+                            if (CAM_ID == cr.getInt(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID))) {
+                                registro.add(new ModelKeyPairs(
+                                        CAM_NAME,
+                                        cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)),
+                                        cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO))
+                                ));
+                                break;
+                            }
                         }
                     }
+                    cr.close();
                 }
-                cr.close();
             }
             cursor.close();
         }
@@ -157,6 +168,8 @@ public class PdfPreviewActivity extends AppCompatActivity {
 
             PdfPTable tabla = pdf.createTable(2);
 
+            pdf.add(Chunk.NEWLINE);
+
             tabla = pdf.createTable(2);
             tabla.setWidthPercentage(98);
             tabla.getDefaultCell().setPadding(10);
@@ -174,16 +187,29 @@ public class PdfPreviewActivity extends AppCompatActivity {
             tabla.addCell(pdf.addCellColor(""));
             pdf.add(tabla);
 
+            pdf.add(Chunk.NEWLINE);
+
             tabla = pdf.createTable(2);
-            tabla.setWidthPercentage(98);
-            tabla.addCell(pdf.addCell(""));
-            tabla.addCell(pdf.addCell(""));
+            tabla.setWidthPercentage(100);
             for(int i = 0; i < registros.size(); i++){
-                tabla.addCell(pdf.addCell(registros.get(i).getKey()));
-                tabla.addCell(pdf.addCell(registros.get(i).getValue()));
+                if(registros.get(i).getType().contains("etiqueta")){
+                    pdf.add(tabla);
+                    pdf.add(Chunk.NEWLINE);
+
+                    p = new Paragraph(registros.get(i).getKey());
+                    line = new LineSeparator();
+                    line.setOffset(-2);
+                    p.add(line);
+                    pdf.add(p);
+                    pdf.add(Chunk.NEWLINE);
+
+                    tabla = pdf.createTable(2);
+                    tabla.setWidthPercentage(100);
+                } else {
+                    tabla.addCell(pdf.addCell(registros.get(i).getKey()));
+                    tabla.addCell(pdf.addCell(registros.get(i).getValue()));
+                }
             }
-            tabla.addCell(pdf.addCell(""));
-            tabla.addCell(pdf.addCell(""));
             pdf.add(tabla);
 
             pdf.close();
