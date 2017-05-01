@@ -1,11 +1,16 @@
 package cl.pingon.Libraries;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -15,6 +20,7 @@ import java.io.IOException;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
 import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
@@ -25,6 +31,9 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.Cell;
 import com.lowagie.text.pdf.draw.DottedLineSeparator;
 import com.lowagie.text.pdf.draw.LineSeparator;
+
+import cl.pingon.R;
+import repack.org.bouncycastle.jce.exception.ExtIOException;
 
 public class PDF {
 
@@ -79,6 +88,28 @@ public class PDF {
         imagen.scaleAbsoluteWidth(width);
         imagen.scaleAbsoluteHeight(height);
         documento.add(imagen);
+    }
+
+    public void addSignToCell(ImageView ImageView, String points, int width, int height) throws DocumentException, IOException {
+        DrawSign DrawSign = new DrawSign(points);
+        DrawSign.DrawToImageView(ImageView);
+
+        BitmapDrawable drawable = (BitmapDrawable) ImageView.getDrawable();
+        Bitmap bitmap = drawable.getBitmap();
+        
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        Image imagen = null;
+        try{
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            imagen = Image.getInstance(stream.toByteArray());
+            imagen.scaleAbsoluteWidth(width);
+            imagen.scaleAbsoluteHeight(height);
+        } catch(Exception e){
+            Log.e("ERROR IMAGE", e.toString());
+        }
+
+        documento.add(imagen);
+        //return imagen;
     }
 
     public PdfPCell addCellColor(String text){

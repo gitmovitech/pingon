@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.provider.DocumentsContract;
 import android.support.design.widget.Snackbar;
@@ -14,6 +16,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.lowagie.text.Cell;
@@ -31,7 +34,9 @@ import com.lowagie.text.pdf.draw.LineSeparator;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import cl.pingon.Libraries.DrawSign;
 import cl.pingon.Libraries.PDF;
+import cl.pingon.Libraries.TimerUtils;
 import cl.pingon.Model.ModelKeyPairs;
 import cl.pingon.SQLite.TblChecklistDefinition;
 import cl.pingon.SQLite.TblChecklistHelper;
@@ -156,7 +161,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
 
     private void genPDF(ArrayList<ModelKeyPairs> registros){
         try {
-            PDF pdf = new PDF(this, "informe.pdf");
+            final PDF pdf = new PDF(this, "informe.pdf");
             pdf.open();
             pdf.addImage(R.drawable.pingon_pdf, 100, 80);
 
@@ -206,8 +211,13 @@ public class PdfPreviewActivity extends AppCompatActivity {
                     tabla = pdf.createTable(2);
                     tabla.setWidthPercentage(100);
                 } else {
-                    tabla.addCell(pdf.addCell(registros.get(i).getKey()));
-                    tabla.addCell(pdf.addCell(registros.get(i).getValue()));
+                    if(registros.get(i).getType().contains("firma")){
+                        tabla.addCell(pdf.addCell(registros.get(i).getKey()));
+                        pdf.addSignToCell((ImageView) findViewById(R.id.ImageViewFirma), registros.get(i).getValue(), 150, 150);
+                    } else{
+                        tabla.addCell(pdf.addCell(registros.get(i).getKey()));
+                        tabla.addCell(pdf.addCell(registros.get(i).getValue()));
+                    }
                 }
             }
             pdf.add(tabla);

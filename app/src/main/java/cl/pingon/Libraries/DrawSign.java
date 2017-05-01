@@ -25,7 +25,15 @@ public class DrawSign {
         this.sign = cleanString(sign);
     }
 
+    public Bitmap toBitmap(){
+        return createSign();
+    }
+
     public void DrawToImageView(ImageView imageview){
+        imageview.setImageBitmap(createSign());
+    }
+
+    private Bitmap createSign(){
         Path path = convertToPath(sign);
 
         Paint paint = new Paint();
@@ -41,11 +49,9 @@ public class DrawSign {
             image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(image);
             canvas.drawPath(path, paint);
+        } catch (Exception e){ }
 
-            imageview.setImageBitmap(image);
-        } catch (Exception e){
-
-        }
+        return image;
     }
 
     public String convertToBase64(){
