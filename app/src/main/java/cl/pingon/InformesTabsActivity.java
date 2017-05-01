@@ -240,22 +240,24 @@ public class InformesTabsActivity extends AppCompatActivity {
         String CAM_MANDATORIO;
         Integer CAM_ID;
         while(CursorChecklist.moveToNext()){
-            contador_total++;
-            CAM_ID = 0;
-            CAM_MANDATORIO = CursorChecklist.getString(CursorChecklist.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_MANDATORIO));
-            if(CAM_MANDATORIO.contains("S")){
-                contador_obligatorios++;
-            }
-            if(LOCAL_DOC_ID != 0){
-                CAM_ID = CursorChecklist.getInt(CursorChecklist.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_ID));
-                CursorRegistros = Registros.getDraftByLocalDocIdChkIdFrmId(LOCAL_DOC_ID, CHK_ID, FRM_ID, CAM_ID);
-                while(CursorRegistros.moveToNext()){
-                    contador_total_completados++;
-                    if(CAM_MANDATORIO.contains("S")){
-                        contador_obligatorios_completados++;
-                    }
+            if(!CursorChecklist.getString(CursorChecklist.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_TIPO)).contains("etiqueta")){
+                contador_total++;
+                CAM_ID = 0;
+                CAM_MANDATORIO = CursorChecklist.getString(CursorChecklist.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_MANDATORIO));
+                if(CAM_MANDATORIO.contains("S")){
+                    contador_obligatorios++;
                 }
-                CursorRegistros.close();
+                if(LOCAL_DOC_ID != 0){
+                    CAM_ID = CursorChecklist.getInt(CursorChecklist.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_ID));
+                    CursorRegistros = Registros.getDraftByLocalDocIdChkIdFrmId(LOCAL_DOC_ID, CHK_ID, FRM_ID, CAM_ID);
+                    while(CursorRegistros.moveToNext()){
+                        contador_total_completados++;
+                        if(CAM_MANDATORIO.contains("S")){
+                            contador_obligatorios_completados++;
+                        }
+                    }
+                    CursorRegistros.close();
+                }
             }
         }
         CursorChecklist.close();
