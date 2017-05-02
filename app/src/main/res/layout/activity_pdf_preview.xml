@@ -30,6 +30,7 @@
             android:text="Ver PDF"/>
 
         <Button
+            android:id="@+id/EnviarInforme"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/Widget.AppCompat.Button.Colored"

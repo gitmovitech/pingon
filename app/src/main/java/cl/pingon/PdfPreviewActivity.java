@@ -1,6 +1,7 @@
 package cl.pingon;
 
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -96,6 +98,18 @@ public class PdfPreviewActivity extends AppCompatActivity {
                 genPDF(registros);
             }
         }, 500);
+
+        Button EnviarInforme = (Button) findViewById(R.id.EnviarInforme);
+        EnviarInforme.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TblDocumentoHelper Documento = new TblDocumentoHelper(getApplicationContext());
+                ContentValues cv = null;
+                cv.put(TblDocumentoDefinition.Entry.SEND_STATUS, "SYNC");
+                //Documento.update(LOCAL_DOC_ID, cv);
+                //TODO: COntinuar con el cambio de status a bandeja de salida, listo para subir y sincronizar
+            }
+        });
 
     }
 
