@@ -2,6 +2,7 @@ package cl.pingon.Libraries;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -51,7 +52,7 @@ public class PDF {
      */
     public PDF(Context context, String docname) throws IOException, DocumentException {
         NOMBRE_DOCUMENTO = docname;
-        this. documento = new Document();
+        this.documento = new Document();
         this.context = context;
         File f = crearFichero(docname);
         FileOutputStream ficheroPdf = new FileOutputStream(f.getAbsolutePath());
@@ -158,6 +159,10 @@ public class PDF {
 
     public void add(Chunk el) throws DocumentException {
         documento.add(el);
+    }
+
+    public String getPath(){
+        return getRuta()+"/"+NOMBRE_DOCUMENTO;
     }
 
 

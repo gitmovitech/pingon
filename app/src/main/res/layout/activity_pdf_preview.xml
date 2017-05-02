@@ -7,7 +7,32 @@
     android:id="@+id/preview_pdf"
     tools:context="cl.pingon.PdfPreviewActivity">
 
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/LinearLayoutOK"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton
+            android:background="@null"
+            android:id="@+id/ImageButtonVerPdf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/pdf_icon"/>
+
+        <TextView
+            android:gravity="center"
+            android:textSize="20sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ver PDF"/>
+
+    </LinearLayout>
+
     <RelativeLayout
+        android:id="@+id/RelativeLayoutLoading"
         android:orientation="vertical"
         android:gravity="center"
         android:layout_width="match_parent"

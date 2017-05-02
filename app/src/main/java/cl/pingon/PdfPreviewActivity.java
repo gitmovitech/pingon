@@ -1,14 +1,18 @@
 package cl.pingon;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +20,11 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.lowagie.text.Cell;
@@ -31,6 +39,7 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfTable;
 import com.lowagie.text.pdf.draw.LineSeparator;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -158,10 +167,10 @@ public class PdfPreviewActivity extends AppCompatActivity {
         return registro;
 
     }
-
+    PDF pdf;
     private void genPDF(ArrayList<ModelKeyPairs> registros){
         try {
-            final PDF pdf = new PDF(this, "informe.pdf");
+            pdf = new PDF(this, "informe.pdf");
             pdf.open();
             pdf.addImage(R.drawable.pingon_pdf, 100, 80);
 
@@ -229,8 +238,9 @@ public class PdfPreviewActivity extends AppCompatActivity {
                 }
             }
             pdf.add(tabla);
-
             pdf.close();
+
+            openPDF();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (DocumentException e) {
@@ -238,5 +248,45 @@ public class PdfPreviewActivity extends AppCompatActivity {
         }
     }
 
+    public void openPDF(){
+        File file = new File(pdf.getPath());
+        Intent target = new Intent(Intent.ACTION_VIEW);
+        target.setDataAndType(Uri.fromFile(file),"application/pdf");
+        target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        Intent intent = Intent.createChooser(target, "Open File");
+
+        RelativeLayout rll = (RelativeLayout) findViewById(R.id.RelativeLayoutLoading);
+        rll.setVisibility(View.GONE);
+        LinearLayout llo = (LinearLayout) findViewById(R.id.LinearLayoutOK);
+        llo.setVisibility(View.VISIBLE);
+        
+        try {
+            startActivityForResult(target, 1);
+        } catch (ActivityNotFoundException e) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle("Error");
+            alert.setMessage("No se ha podido abrir el documento. \nDescargue e instale un lector de documentos PDF.");
+            alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alert.create();
+            alert.show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == 1) {
+            ImageButton ImageButtonVerPdf = (ImageButton) findViewById(R.id.ImageButtonVerPdf);
+            ImageButtonVerPdf.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openPDF();
+                }
+            });
+        }
+    }
 
 }
