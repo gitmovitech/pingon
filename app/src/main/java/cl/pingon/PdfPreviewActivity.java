@@ -97,26 +97,6 @@ public class PdfPreviewActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_preview_pdf, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.ButtonSend:
-                //TODO: Cambiar status de documentos y registros para proceder a enviar
-                Snackbar.make(findViewById(R.id.preview_pdf), "Este botón enviara el informe a la seccion de la bandeja de salida, detectara si hay conexión y comenzara el proceso de sincronizacion para subir toda la información", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
     private ArrayList<ModelKeyPairs> getDocumentData(int ID){
         TblDocumentoHelper Documento = new TblDocumentoHelper(this);
         TblRegistroHelper Registro = new TblRegistroHelper(this);
@@ -259,7 +239,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
         rll.setVisibility(View.GONE);
         LinearLayout llo = (LinearLayout) findViewById(R.id.LinearLayoutOK);
         llo.setVisibility(View.VISIBLE);
-        
+
         try {
             startActivityForResult(target, 1);
         } catch (ActivityNotFoundException e) {
