@@ -217,6 +217,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
     PDF pdf;
     private void genPDF(final ArrayList<ModelKeyPairs> registros){
         try {
+            //TODO cambiar el nombre de este PDF como unico para leer despues
             pdf = new PDF(this, "informe.pdf");
             pdf.open();
             pdf.addImage(R.drawable.pingon_pdf, 100, 80);

@@ -20,6 +20,8 @@ public class EnviadosActivity extends AppCompatActivity {
     Informes Informes;
     ArrayList<Informes> ArrayInformes;
 
+    //TODO Crear proceso de sincronizacion con el servidor, puede ser un proceso en background o averiguar notificacion de android activa para lograrlo
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +31,10 @@ public class EnviadosActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
+
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
+
+        //TODO Programar lectura de PDFS en status SYNC, listado con apertura de PDF
 
         IntentDetalle = new Intent(this, InformesTabsActivity.class);
 
