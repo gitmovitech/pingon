@@ -51,6 +51,10 @@ import cl.pingon.SQLite.TblChecklistDefinition;
 import cl.pingon.SQLite.TblChecklistHelper;
 import cl.pingon.SQLite.TblDocumentoDefinition;
 import cl.pingon.SQLite.TblDocumentoHelper;
+import cl.pingon.SQLite.TblEmpProjectsDefinition;
+import cl.pingon.SQLite.TblEmpProjectsHelper;
+import cl.pingon.SQLite.TblFormulariosDefinition;
+import cl.pingon.SQLite.TblFormulariosHelper;
 import cl.pingon.SQLite.TblRegistroDefinition;
 import cl.pingon.SQLite.TblRegistroHelper;
 import harmony.java.awt.Color;
@@ -60,7 +64,9 @@ public class PdfPreviewActivity extends AppCompatActivity {
     SharedPreferences session;
     private int ARN_ID;
     private int USU_ID;
+    private String USU_NAME;
     private int LOCAL_DOC_ID;
+    ArrayList<ModelKeyPairs> header = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +85,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
         ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
         USU_ID = Integer.parseInt(session.getString("user_id", ""));
+        USU_NAME = session.getString("first_name", "")+" "+session.getString("last_name", "");
         LOCAL_DOC_ID = getIntent().getIntExtra("LOCAL_DOC_ID", 0);
         Log.d("LOCALDOCID",":"+ LOCAL_DOC_ID);
         LOCAL_DOC_ID = 1;
@@ -109,6 +116,8 @@ public class PdfPreviewActivity extends AppCompatActivity {
         TblDocumentoHelper Documento = new TblDocumentoHelper(this);
         TblRegistroHelper Registro = new TblRegistroHelper(this);
         TblChecklistHelper Checklist = new TblChecklistHelper(this);
+        TblFormulariosHelper Formularios = new TblFormulariosHelper(this);
+        TblEmpProjectsHelper Projectos = new TblEmpProjectsHelper(this);
 
         ArrayList<ModelKeyPairs> registro = new ArrayList<>();
 
@@ -118,13 +127,42 @@ public class PdfPreviewActivity extends AppCompatActivity {
         if(cursor.getCount() > 0) {
             cursor.moveToFirst();
             Integer FRM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.FRM_ID));
+            String DOC_FECHA_CREACION = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_FECHA_CREACION));
+            Integer DOC_EXT_ID_CLIENTE = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE));
             cursor.close();
+
+
+            cursor = Formularios.getByArnIdFrmId(ARN_ID, FRM_ID);
+            cursor.moveToFirst();
+            header.add(new ModelKeyPairs(
+                    "Nombre del formulario",
+                    cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE)),
+                    "texto"
+                    ));
+            cursor.close();
+            header.add(new ModelKeyPairs("Remitente",USU_NAME,"texto"));
+            //TODO Fecha de creacion, numero de referencia, como es el formato?
+            header.add(new ModelKeyPairs("Número de referencia",DOC_FECHA_CREACION,"texto"));
+            cursor = Projectos.getByCompanyId(DOC_EXT_ID_CLIENTE);
+            cursor.moveToFirst();
+            String coords = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COORDINATES));
+            if(coords != null){
+                if(!coords.isEmpty()){
+                    coords = "http://maps.google.com/maps?q="+coords;
+                } else {
+                    coords = "Desconocida";
+                }
+            } else {
+                coords = "Desconocida";
+            }
+            header.add(new ModelKeyPairs("Ubicación",coords,"texto"));
+            cursor.close();
+
 
             Integer CAM_ID;
             String CAM_NAME;
             String CAM_TIPO;
             cursor = Checklist.getByFrmId(FRM_ID);
-            //TODO: Programar cursor checklist y luego combinar con los registros
             while(cursor.moveToNext()){
                 CAM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_ID));
                 CAM_NAME = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_NOMBRE_EXTERNO));
@@ -177,14 +215,10 @@ public class PdfPreviewActivity extends AppCompatActivity {
             tabla.getDefaultCell().setPadding(10);
             tabla.addCell(pdf.addCellColor(""));
             tabla.addCell(pdf.addCellColor(""));
-            tabla.addCell(pdf.addCellColor("Nombre del formulario"));
-            tabla.addCell(pdf.addCellColor("Orden de Trabajo de Grúa"));
-            tabla.addCell(pdf.addCellColor("Remitente"));
-            tabla.addCell(pdf.addCellColor("Jorge Ramirez"));
-            tabla.addCell(pdf.addCellColor("Número de referencia"));
-            tabla.addCell(pdf.addCellColor("OTAOTE"));
-            tabla.addCell(pdf.addCellColor("Ubicación"));
-            tabla.addCell(pdf.addCellColor("Desconocida"));
+            for(int c = 0; c < header.size(); c++){
+                tabla.addCell(pdf.addCellColor(header.get(c).getKey()));
+                tabla.addCell(pdf.addCellColor(header.get(c).getValue()));
+            }
             tabla.addCell(pdf.addCellColor(""));
             tabla.addCell(pdf.addCellColor(""));
             pdf.add(tabla);

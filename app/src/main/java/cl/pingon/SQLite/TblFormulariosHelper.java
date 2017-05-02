@@ -54,4 +54,14 @@ public class TblFormulariosHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TblFormulariosDefinition.Entry.TABLE_NAME, projection, "ARN_ID = ?", new String[]{String.valueOf(ARN_ID)}, null, null, null, null);
         return cursor;
     }
+
+    public Cursor getByArnIdFrmId(int ARN_ID, int FRM_ID){
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {"ARN_ID", "ARN_NOMBRE", "FRM_ID", "FRM_NOMBRE"};
+        Cursor cursor = db.query(TblFormulariosDefinition.Entry.TABLE_NAME,
+                projection,
+                "ARN_ID = ? AND FRM_ID = ?",
+                new String[]{String.valueOf(ARN_ID), String.valueOf(FRM_ID)}, null, null, null, null);
+        return cursor;
+    }
 }
