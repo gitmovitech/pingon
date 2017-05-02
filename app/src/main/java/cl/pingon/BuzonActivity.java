@@ -56,5 +56,10 @@ public class BuzonActivity extends AppCompatActivity {
                 startActivity(IntentEnviados);
             }
         });
+
+        if(getIntent().getStringExtra("GOTO").contains("EnviadosActivity")){
+            //TODO Probar redireccion a enviados.
+            startActivity(IntentEnviados);
+        }
     }
 }

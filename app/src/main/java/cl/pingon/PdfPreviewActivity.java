@@ -104,10 +104,18 @@ public class PdfPreviewActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 TblDocumentoHelper Documento = new TblDocumentoHelper(getApplicationContext());
+                TblRegistroHelper Registro = new TblRegistroHelper(getApplicationContext());
                 ContentValues cv = null;
                 cv.put(TblDocumentoDefinition.Entry.SEND_STATUS, "SYNC");
-                //Documento.update(LOCAL_DOC_ID, cv);
-                //TODO: COntinuar con el cambio de status a bandeja de salida, listo para subir y sincronizar
+                Documento.update(LOCAL_DOC_ID, cv);
+                cv = null;
+                cv.put(TblRegistroDefinition.Entry.SEND_STATUS, "SYNC");
+                Registro.updateLocalDocId(LOCAL_DOC_ID, cv);
+                Intent intent = new Intent(getApplicationContext(), BuzonActivity.class);
+                intent.putExtra("GOTO", "EnviadosActivity");
+                startActivity(intent);
+                finish();
+                //TODO Probar cambio de status en documento y registros
             }
         });
 

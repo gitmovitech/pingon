@@ -41,6 +41,12 @@ public class TblRegistroHelper extends SQLiteOpenHelper {
         db.insert(TblRegistroDefinition.Entry.TABLE_NAME, null, values);
     }
 
+    public void updateLocalDocId(Integer LOCAL_DOC_ID, ContentValues values){
+        SQLiteDatabase db = getReadableDatabase();
+        String where = TblRegistroDefinition.Entry.LOCAL_DOC_ID + " = "+ LOCAL_DOC_ID;
+        db.update(TblRegistroDefinition.Entry.TABLE_NAME, values, where, null);
+    }
+
     public void update(Integer id, ContentValues values){
         SQLiteDatabase db = getReadableDatabase();
         String where = TblRegistroDefinition.Entry.ID + " = "+ id;
