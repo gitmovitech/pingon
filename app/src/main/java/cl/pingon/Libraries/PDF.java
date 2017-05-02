@@ -91,6 +91,29 @@ public class PDF {
         documento.add(imagen);
     }
 
+    public void addPhoto(String path, int width, int height) throws DocumentException, IOException {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        Image imagen = null;
+        try{
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            imagen = Image.getInstance(stream.toByteArray());
+            if(bitmap.getWidth() > bitmap.getHeight()){
+                height = (int) ((width*imagen.getHeight())/ imagen.getWidth());
+            } else {
+                width = (int) ((height*imagen.getWidth())/imagen.getHeight());
+            }
+            imagen.scaleAbsoluteWidth(width);
+            imagen.scaleAbsoluteHeight(height);
+        } catch(Exception e){
+            Log.e("ERROR IMAGE", e.toString());
+        }
+        documento.add(imagen);
+    }
+
     public void addSign(ImageView ImageView, String points, int width, int height) throws DocumentException, IOException {
         DrawSign DrawSign = new DrawSign(points);
         DrawSign.DrawToImageView(ImageView);

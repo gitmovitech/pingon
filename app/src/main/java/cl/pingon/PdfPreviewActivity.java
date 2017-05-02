@@ -80,9 +80,17 @@ public class PdfPreviewActivity extends AppCompatActivity {
         ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
         USU_ID = Integer.parseInt(session.getString("user_id", ""));
         LOCAL_DOC_ID = getIntent().getIntExtra("LOCAL_DOC_ID", 0);
-        LOCAL_DOC_ID = 4;
-        ArrayList<ModelKeyPairs> registros = getDocumentData(LOCAL_DOC_ID);
-        genPDF(registros);
+        Log.d("LOCALDOCID",":"+ LOCAL_DOC_ID);
+        LOCAL_DOC_ID = 1;
+        final ArrayList<ModelKeyPairs> registros = getDocumentData(LOCAL_DOC_ID);
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                genPDF(registros);
+            }
+        });
+        thread.run();
     }
 
     @Override
@@ -211,7 +219,17 @@ public class PdfPreviewActivity extends AppCompatActivity {
 
                         tabla = pdf.createTable(2);
                         tabla.setWidthPercentage(100);
-                    } else{
+                    } else if(registros.get(i).getType().contains("foto")){
+                        pdf.add(tabla);
+                        pdf.add(Chunk.NEWLINE);
+
+                        pdf.add(new Paragraph(registros.get(i).getKey()));
+                        pdf.addPhoto(registros.get(i).getValue(), 300, 300);
+                        pdf.add(Chunk.NEWLINE);
+
+                        tabla = pdf.createTable(2);
+                        tabla.setWidthPercentage(100);
+                    } else {
                         tabla.addCell(pdf.addCell(registros.get(i).getKey()));
                         tabla.addCell(pdf.addCell(registros.get(i).getValue()));
                     }
