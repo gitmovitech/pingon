@@ -88,16 +88,15 @@ public class PdfPreviewActivity extends AppCompatActivity {
         USU_NAME = session.getString("first_name", "")+" "+session.getString("last_name", "");
         LOCAL_DOC_ID = getIntent().getIntExtra("LOCAL_DOC_ID", 0);
         Log.d("LOCALDOCID",":"+ LOCAL_DOC_ID);
-        LOCAL_DOC_ID = 1;
+        //LOCAL_DOC_ID = 1;
         final ArrayList<ModelKeyPairs> registros = getDocumentData(LOCAL_DOC_ID);
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
+        TimerUtils.TaskHandle handle = TimerUtils.setTimeout(new Runnable() {
             public void run() {
                 genPDF(registros);
             }
-        });
-        thread.run();
+        }, 500);
+
     }
 
     @Override
@@ -194,7 +193,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
 
     }
     PDF pdf;
-    private void genPDF(ArrayList<ModelKeyPairs> registros){
+    private void genPDF(final ArrayList<ModelKeyPairs> registros){
         try {
             pdf = new PDF(this, "informe.pdf");
             pdf.open();
@@ -258,7 +257,19 @@ public class PdfPreviewActivity extends AppCompatActivity {
                         pdf.add(Chunk.NEWLINE);
 
                         pdf.add(new Paragraph(registros.get(i).getKey()));
-                        pdf.addPhoto(registros.get(i).getValue(), 300, 300);
+                        final int index = i;
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    pdf.addPhoto(registros.get(index).getValue(), 300, 300);
+                                } catch (DocumentException e) {
+                                    e.printStackTrace();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).run();
                         pdf.add(Chunk.NEWLINE);
 
                         tabla = pdf.createTable(2);
