@@ -1,24 +1,32 @@
 package cl.pingon;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Build;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
 import cl.pingon.Adapter.AdapterInformes;
+import cl.pingon.Adapter.AdapterListadoPendientes;
 import cl.pingon.Model.Informes;
+import cl.pingon.Model.ListadoPendientes;
+import cl.pingon.SQLite.TblDocumentoDefinition;
+import cl.pingon.SQLite.TblDocumentoHelper;
+import cl.pingon.SQLite.TblFormulariosDefinition;
+import cl.pingon.SQLite.TblFormulariosHelper;
 
 public class EnviadosActivity extends AppCompatActivity {
 
-    ListView ListDetalle;
-    Intent IntentDetalle;
-    Informes Informes;
-    ArrayList<Informes> ArrayInformes;
+    SharedPreferences session;
 
     //TODO Crear proceso de sincronizacion con el servidor, puede ser un proceso en background o averiguar notificacion de android activa para lograrlo
 
@@ -36,31 +44,43 @@ public class EnviadosActivity extends AppCompatActivity {
 
         overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
 
-        //TODO Programar lectura de PDFS en status SYNC, listado con apertura de PDF
+        session = getSharedPreferences("session", Context.MODE_PRIVATE);
 
-        IntentDetalle = new Intent(this, InformesTabsActivity.class);
+        ArrayList<ListadoPendientes> ArrayListadoPendientes = new ArrayList<>();
+        TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
+        TblFormulariosHelper Formularios = new TblFormulariosHelper(this);
+        Cursor cursor = Documentos.getAllSent();
+        Integer FRM_ID;
+        Integer ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
+        Integer cantidad_registros = cursor.getCount();
+        while(cursor.moveToNext()){
+            FRM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.FRM_ID));
+            Cursor c = Formularios.getByArnIdFrmId(ARN_ID,FRM_ID);
+            c.moveToFirst();
+            ArrayListadoPendientes.add(new ListadoPendientes(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_OBRA)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_MARCA_EQUIPO)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE)),
+                    c.getString(c.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE)),
+                    c.getString(c.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE))
+            ));
+            c.close();
+        }
+        cursor.close();
 
-        ArrayInformes = new ArrayList<Informes>();
-        /*Informes = new Informes("Producción", "Asistencia Técnica Grúas", "1");
-        ArrayInformes.add(Informes);
-        Informes = new Informes("Producción", "Orden de Trabajo Elevadores", "2");
-        ArrayInformes.add(Informes);
-        Informes = new Informes("Producción", "Informe Grúa Auxiliar", "3");
-        ArrayInformes.add(Informes);*/
+        AdapterListadoPendientes adapter = new AdapterListadoPendientes(this, ArrayListadoPendientes);
+        ListView ListViewEnviados = (ListView) findViewById(R.id.ListDetalle);
+        ListViewEnviados.setAdapter(adapter);
 
-
-        ListDetalle = (ListView) findViewById(R.id.ListDetalle);
-        ListDetalle.setAdapter(new AdapterInformes(this, ArrayInformes) {});
-
-        ListDetalle.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                IntentDetalle.putExtra("InformeId",ArrayInformes.get(i).getId());
-                IntentDetalle.putExtra("InformeTitle",ArrayInformes.get(i).getTitle());
-                IntentDetalle.putExtra("InformeSubtitle",ArrayInformes.get(i).getSubtitle());
-                startActivity(IntentDetalle);
-            }
-        });
+        if(cantidad_registros == 0){
+            ListViewEnviados.setVisibility(View.GONE);
+            ImageView iv = (ImageView) findViewById(R.id.NotFound);
+            iv.setVisibility(View.VISIBLE);
+            Snackbar.make(findViewById(R.id.ListDetalle), "No hay informes enviados", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+        }
     }
 
     @Override
