@@ -87,6 +87,33 @@ public class TblDocumentoHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public Cursor getAllSync(){
+        SQLiteDatabase db = getReadableDatabase();
+        String[] select = {
+                "ID",
+                "DOC_ID",
+                "USU_ID",
+                "FRM_ID",
+                "DOC_NOMBRE",
+                "DOC_FECHA_CREACION",
+                "DOC_FECHA_MODIFICACION",
+                "DOC_PDF",
+                "DOC_DECLARACION",
+                "DOC_EXT_EQUIPO",
+                "DOC_EXT_MARCA_EQUIPO",
+                "DOC_EXT_NUMERO_SERIE",
+                "DOC_EXT_NOMBRE_CLIENTE",
+                "DOC_EXT_OBRA",
+                "DOC_EXT_ID_CLIENTE",
+                "DOC_EXT_ID_PROYECTO"
+        };
+        Cursor cursor = db.query(TblDocumentoDefinition.Entry.TABLE_NAME,
+                select,
+                TblDocumentoDefinition.Entry.SEND_STATUS+" = ?",
+                new String[]{"SYNC"}, null, null, null);
+        return cursor;
+    }
+
     public Cursor getDraftsGroupByCliente(){
         SQLiteDatabase db = getReadableDatabase();
         String[] select = {
