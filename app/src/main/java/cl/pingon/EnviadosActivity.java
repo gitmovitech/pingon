@@ -81,6 +81,10 @@ public class EnviadosActivity extends AppCompatActivity {
             iv.setVisibility(View.VISIBLE);
             Snackbar.make(findViewById(R.id.ListDetalle), "No hay informes enviados", Snackbar.LENGTH_LONG).setAction("Action", null).show();
         }
+
+        Intent IntentSyncListenerService = new Intent(this, SyncListenerService.class);
+        IntentSyncListenerService.putExtra("param1", "test");
+        startService(IntentSyncListenerService);
     }
 
     @Override

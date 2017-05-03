@@ -57,6 +57,9 @@ public class BuzonActivity extends AppCompatActivity {
             }
         });
 
+        Intent IntentSyncListenerService = new Intent(this, SyncListenerService.class);
+        startService(IntentSyncListenerService);
+
         try {
             if (getIntent().getStringExtra("GOTO").contains("PendientesEnvioActivity")) {
                 startActivity(IntentPendientes);

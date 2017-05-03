@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -34,10 +35,16 @@
         <activity android:name=".EnviadosActivity" />
         <activity android:name=".InformesDetallesActivity" />
         <activity android:name=".InformesTabsActivity" />
-        <activity android:name=".SignDrawActivity"/>
-        <activity android:name=".PdfPreviewActivity">
+        <activity android:name=".SignDrawActivity" />
+        <activity android:name=".PdfPreviewActivity" />
 
-        </activity>
+        <service
+            android:name=".SyncService"
+            android:exported="false" />
+        <service
+            android:name=".SyncListenerService"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>
