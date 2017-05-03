@@ -112,7 +112,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
                 cv.put(TblRegistroDefinition.Entry.SEND_STATUS, "SYNC");
                 Registro.updateLocalDocId(LOCAL_DOC_ID, cv);
                 Intent intent = new Intent(getApplicationContext(), BuzonActivity.class);
-                intent.putExtra("GOTO", "EnviadosActivity");
+                intent.putExtra("GOTO", "PendientesEnvioActivity");
                 startActivity(intent);
                 finish();
                 //TODO Probar cambio de status en documento y registros

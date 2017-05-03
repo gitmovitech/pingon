@@ -24,11 +24,15 @@ public class PendientesEnvioActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pendientes_envio);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         this.setTitle("Pendientes de envío");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
+
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
 
         IntentDetalle = new Intent(this, InformesTabsActivity.class);
 
@@ -53,5 +57,17 @@ public class PendientesEnvioActivity extends AppCompatActivity {
                 startActivity(IntentDetalle);
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
     }
 }

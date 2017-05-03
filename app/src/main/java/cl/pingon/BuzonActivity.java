@@ -58,9 +58,9 @@ public class BuzonActivity extends AppCompatActivity {
         });
 
         try {
-            if (getIntent().getStringExtra("GOTO").contains("EnviadosActivity")) {
+            if (getIntent().getStringExtra("GOTO").contains("PendientesEnvioActivity")) {
                 //TODO Probar redireccion a enviados.
-                startActivity(IntentEnviados);
+                startActivity(IntentPendientes);
             }
         } catch (Exception e){}
     }
