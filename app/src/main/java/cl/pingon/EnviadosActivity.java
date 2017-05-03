@@ -28,8 +28,6 @@ public class EnviadosActivity extends AppCompatActivity {
 
     SharedPreferences session;
 
-    //TODO Crear proceso de sincronizacion con el servidor, puede ser un proceso en background o averiguar notificacion de android activa para lograrlo
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
