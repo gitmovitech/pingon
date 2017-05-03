@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import cl.pingon.Adapter.AdapterInformes;
@@ -45,12 +48,13 @@ public class PendientesEnvioActivity extends AppCompatActivity {
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
 
-        ArrayList<ListadoPendientes> ArrayListadoPendientes = new ArrayList<>();
+        final ArrayList<ListadoPendientes> ArrayListadoPendientes = new ArrayList<>();
         TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
         TblFormulariosHelper Formularios = new TblFormulariosHelper(this);
         Cursor cursor = Documentos.getAllSync();
         Integer FRM_ID;
-        Integer ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
+        final Integer ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
+        final Integer USU_ID = Integer.parseInt(session.getString("user_id", ""));
         Integer cantidad_registros = cursor.getCount();
         while(cursor.moveToNext()){
             FRM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.FRM_ID));
@@ -73,6 +77,20 @@ public class PendientesEnvioActivity extends AppCompatActivity {
         AdapterListadoPendientes adapter = new AdapterListadoPendientes(this, ArrayListadoPendientes);
         ListView ListViewEnviados = (ListView) findViewById(R.id.ListDetalle);
         ListViewEnviados.setAdapter(adapter);
+
+        ListViewEnviados.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int p, long id) {
+                String pdfPath = Environment.getExternalStorageDirectory() + "/Pingon/pdfs/";
+                String pdfFile = pdfPath+ "informe-"+ARN_ID+"-"+USU_ID+"-"+ArrayListadoPendientes.get(p).getLocal_doc_id()+".pdf";
+
+                File file = new File(pdfFile);
+                Intent target = new Intent(Intent.ACTION_VIEW);
+                target.setDataAndType(Uri.fromFile(file),"application/pdf");
+                target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(target);
+            }
+        });
 
         if(cantidad_registros == 0){
             ListViewEnviados.setVisibility(View.GONE);

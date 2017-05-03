@@ -202,7 +202,7 @@ public class PDF {
         File ruta = null;
         if (Environment.MEDIA_MOUNTED.equals(Environment
                 .getExternalStorageState())) {
-            ruta = new File(Environment.getExternalStorageDirectory() + "/Pingon/firmas/");
+            ruta = new File(Environment.getExternalStorageDirectory() + "/Pingon/pdfs");
 
             if (ruta != null) {
                 if (!ruta.mkdirs()) {
