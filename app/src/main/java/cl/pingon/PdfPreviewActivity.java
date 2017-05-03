@@ -105,10 +105,10 @@ public class PdfPreviewActivity extends AppCompatActivity {
             public void onClick(View v) {
                 TblDocumentoHelper Documento = new TblDocumentoHelper(getApplicationContext());
                 TblRegistroHelper Registro = new TblRegistroHelper(getApplicationContext());
-                ContentValues cv = null;
+                ContentValues cv = new ContentValues();
                 cv.put(TblDocumentoDefinition.Entry.SEND_STATUS, "SYNC");
                 Documento.update(LOCAL_DOC_ID, cv);
-                cv = null;
+                cv = new ContentValues();
                 cv.put(TblRegistroDefinition.Entry.SEND_STATUS, "SYNC");
                 Registro.updateLocalDocId(LOCAL_DOC_ID, cv);
                 Intent intent = new Intent(getApplicationContext(), BuzonActivity.class);

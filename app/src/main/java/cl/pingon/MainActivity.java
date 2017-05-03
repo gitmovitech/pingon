@@ -1,6 +1,7 @@
 package cl.pingon;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -21,6 +23,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import cl.pingon.Libraries.NetworkUtils;
 import cl.pingon.Libraries.RESTService;
 import cl.pingon.SQLite.TblEmpBrandsDefinition;
 import cl.pingon.SQLite.TblEmpBrandsHelper;
@@ -34,6 +37,7 @@ import cl.pingon.SQLite.TblFormulariosHelper;
 import cl.pingon.Sync.SyncChecklist;
 import cl.pingon.Sync.SyncFormularios;
 import cl.pingon.Sync.SyncListOptions;
+
 
 public class MainActivity extends AppCompatActivity {
 
