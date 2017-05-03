@@ -115,7 +115,6 @@ public class PdfPreviewActivity extends AppCompatActivity {
                 intent.putExtra("GOTO", "PendientesEnvioActivity");
                 startActivity(intent);
                 finish();
-                //TODO Probar cambio de status en documento y registros
             }
         });
 
@@ -218,7 +217,8 @@ public class PdfPreviewActivity extends AppCompatActivity {
     private void genPDF(final ArrayList<ModelKeyPairs> registros){
         try {
             //TODO cambiar el nombre de este PDF como unico para leer despues
-            pdf = new PDF(this, "informe.pdf");
+
+            pdf = new PDF(this, "informe-"+ARN_ID+"-"+USU_ID+"-"+LOCAL_DOC_ID+".pdf");
             pdf.open();
             pdf.addImage(R.drawable.pingon_pdf, 100, 80);
 
