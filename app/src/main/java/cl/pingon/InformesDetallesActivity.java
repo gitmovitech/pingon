@@ -82,18 +82,20 @@ public class InformesDetallesActivity extends AppCompatActivity {
         ListViewInformesDetalles.setOnTouchListener(new ListView.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                        v.getParent().requestDisallowInterceptTouchEvent(true);
-                        break;
+                try {
+                    int action = event.getAction();
+                    switch (action) {
+                        case MotionEvent.ACTION_DOWN:
+                            v.getParent().requestDisallowInterceptTouchEvent(true);
+                            break;
 
-                    case MotionEvent.ACTION_UP:
-                        v.getParent().requestDisallowInterceptTouchEvent(false);
-                        break;
-                }
-                v.getParent().requestDisallowInterceptTouchEvent(true);
-                v.onTouchEvent(event);
+                        case MotionEvent.ACTION_UP:
+                            v.getParent().requestDisallowInterceptTouchEvent(false);
+                            break;
+                    }
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    v.onTouchEvent(event);
+                } catch (Exception e){}
                 return true;
             }
         });
