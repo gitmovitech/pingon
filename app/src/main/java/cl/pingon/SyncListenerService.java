@@ -44,12 +44,12 @@ public class SyncListenerService extends Service {
         Cursor c = Documentos.getAllSync();
         if(c.getCount() > 0){
             if(detectInternet()){
-                Processing = 0;
-            } else {
                 while(c.moveToNext()){
                     startService(new Intent(this, SyncService.class));
                     SyncService.startActionSync(this, c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.ID)));
                 }
+                Processing = 0;
+            } else {
                 Processing = 0;
             }
         } else {

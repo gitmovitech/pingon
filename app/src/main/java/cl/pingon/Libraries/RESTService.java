@@ -7,6 +7,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -45,6 +46,23 @@ public class RESTService {
 
         // Añadir petición a la pila
         VolleySingleton.getInstance(contexto).addToRequestQueue(peticion);
+    }
+
+    //TODO Probar metodo post para envio de formulario al servidor, ver como subir archivos
+    public void post(Context context, String uri, final Map<String,String> params, Response.Listener<String> jsonListener, Response.ErrorListener errorListener){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, uri, jsonListener, errorListener){
+            @Override
+            protected Map<String,String> getParams(){
+                /*Map<String,String> params = new HashMap<String, String>();
+                params.put(KEY_USERNAME,username);
+                params.put(KEY_PASSWORD,password);
+                params.put(KEY_EMAIL, email);*/
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(stringRequest);
     }
 
     public void login(String uri, String username, String password, Response.Listener<String> jsonListener,

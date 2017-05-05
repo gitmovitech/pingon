@@ -117,6 +117,30 @@ public class TblRegistroHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public Cursor getSyncByLocalDocId(Integer LOCAL_DOC_ID){
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {
+                TblRegistroDefinition.Entry.CAM_ID,
+                TblRegistroDefinition.Entry.DOC_ID,
+                TblRegistroDefinition.Entry.CHK_ID,
+                TblRegistroDefinition.Entry.FRM_ID,
+                TblRegistroDefinition.Entry.LOCAL_DOC_ID,
+                TblRegistroDefinition.Entry.REG_ID,
+                TblRegistroDefinition.Entry.ID,
+                TblRegistroDefinition.Entry.REG_METADATOS,
+                TblRegistroDefinition.Entry.REG_TIPO,
+                TblRegistroDefinition.Entry.REG_VALOR,
+                TblRegistroDefinition.Entry.SEND_STATUS
+        };
+        Cursor cursor = db.query(
+                TblRegistroDefinition.Entry.TABLE_NAME,
+                projection,
+                TblRegistroDefinition.Entry.SEND_STATUS+" = ? AND "+TblRegistroDefinition.Entry.LOCAL_DOC_ID+" = ?",
+                new String[]{"SYNC", String.valueOf(LOCAL_DOC_ID)},
+                null, null, null);
+        return cursor;
+    }
+
     public Cursor getDraftByLocalDocIdChkIdFrmId(Integer LOCAL_DOC_ID, Integer CHK_ID, Integer FRM_ID, Integer CAM_ID){
         SQLiteDatabase db = getReadableDatabase();
         String[] select = {

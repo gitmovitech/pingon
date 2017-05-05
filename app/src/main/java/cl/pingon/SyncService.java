@@ -12,10 +12,12 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import cl.pingon.Libraries.RESTService;
 import cl.pingon.SQLite.TblDocumentoDefinition;
 import cl.pingon.SQLite.TblDocumentoHelper;
 import cl.pingon.SQLite.TblFormulariosDefinition;
 import cl.pingon.SQLite.TblFormulariosHelper;
+import cl.pingon.SQLite.TblRegistroDefinition;
 import cl.pingon.SQLite.TblRegistroHelper;
 
 import static android.content.ContentValues.TAG;
@@ -27,6 +29,7 @@ public class SyncService extends IntentService {
     SharedPreferences session;
     Integer ARN_ID;
     Integer FMR_ID;
+    RESTService REST;
 
     public SyncService() {
         super("SyncService");
@@ -52,11 +55,14 @@ public class SyncService extends IntentService {
 
     private void handleActionSync(Integer local_doc_id) {
 
+        REST = new RESTService(getApplicationContext());
+
         session = getSharedPreferences("session", this.MODE_PRIVATE);
         ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
 
         TblDocumentoHelper Documento = new TblDocumentoHelper(this);
         TblFormulariosHelper Formularios = new TblFormulariosHelper(this);
+        TblRegistroHelper Registros = new TblRegistroHelper(this);
 
         Cursor cd = Documento.getById(local_doc_id);
         cd.moveToFirst();
@@ -83,20 +89,31 @@ public class SyncService extends IntentService {
                 .setContentText(subtitulo);
 
         //TODO Subir al servidor los informes y cambiar el estado a SENT
-        for (int i = 1; i <= 10; i++) {
 
-            // Poner en primer plano
-            builder.setProgress(10, i, false);
+        Cursor cr = Registros.getSyncByLocalDocId(local_doc_id);
+        if(cr.getCount() > 0){
+
+            Integer contador = 0;
+            builder.setProgress(cr.getCount(), contador, false);
             startForeground(1, builder.build());
 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            while(cr.moveToNext()){
+                contador++;
+                builder.setProgress(cr.getCount(), contador, false);
+                startForeground(1, builder.build());
+
+                
+
+                Log.d("SYNCING", ":"+cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.ID)));
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+            stopForeground(true);
         }
-        // Quitar de primer plano
-        stopForeground(true);
+        cr.close();
 
     }
 
