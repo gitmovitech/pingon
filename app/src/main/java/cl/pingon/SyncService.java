@@ -5,11 +5,8 @@ import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.provider.SyncStateContract;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import cl.pingon.Libraries.RESTService;
@@ -19,8 +16,7 @@ import cl.pingon.SQLite.TblFormulariosDefinition;
 import cl.pingon.SQLite.TblFormulariosHelper;
 import cl.pingon.SQLite.TblRegistroDefinition;
 import cl.pingon.SQLite.TblRegistroHelper;
-
-import static android.content.ContentValues.TAG;
+import cl.pingon.Sync.SyncRegistros;
 
 public class SyncService extends IntentService {
 
@@ -62,7 +58,7 @@ public class SyncService extends IntentService {
 
         TblDocumentoHelper Documento = new TblDocumentoHelper(this);
         TblFormulariosHelper Formularios = new TblFormulariosHelper(this);
-        TblRegistroHelper Registros = new TblRegistroHelper(this);
+
 
         Cursor cd = Documento.getById(local_doc_id);
         cd.moveToFirst();
@@ -88,21 +84,21 @@ public class SyncService extends IntentService {
                 .setContentTitle(titulo)
                 .setContentText(subtitulo);
 
-        //TODO Subir al servidor los informes y cambiar el estado a SENT
+        String url = "";//TODO pendiente de poner la url aqui
+        SyncRegistros sync_informes = new SyncRegistros(this, url, local_doc_id);
 
+        //TODO Programar primero la subida del documento y rescatar el DOC_ID del server
+
+        TblRegistroHelper Registros = new TblRegistroHelper(this);
         Cursor cr = Registros.getSyncByLocalDocId(local_doc_id);
+        Integer contador = 0;
         if(cr.getCount() > 0){
-
-            Integer contador = 0;
-            builder.setProgress(cr.getCount(), contador, false);
-            startForeground(1, builder.build());
-
             while(cr.moveToNext()){
-                contador++;
                 builder.setProgress(cr.getCount(), contador, false);
                 startForeground(1, builder.build());
+                contador++;
 
-                //TODO subir aqui por medio de REST
+                sync_informes.SyncData(cr);
 
                 Log.d("SYNCING", ":"+cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.ID)));
                 try {
