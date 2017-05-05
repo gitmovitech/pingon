@@ -8,6 +8,10 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -39,11 +43,30 @@ public class SignDrawActivity extends AppCompatActivity {
 
         activity_sign_draw = (CoordinatorLayout) findViewById(R.id.activity_sign_draw);
 
-        FloatingActionButton fabSave = (FloatingActionButton) findViewById(R.id.fabSave);
-        fabSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        drawView = new DrawView(activity);
+        drawView.setBackgroundColor(Color.WHITE);
+        activity_sign_draw.addView(drawView);
 
+        //bitmap = Bitmap.createBitmap(drawView.getWidth(), drawView.getHeight(), Bitmap.Config.ARGB_8888);
+        //Canvas canvas = new Canvas(bitmap);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_firma, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.Borrar:
+                drawView = new DrawView(activity);
+                drawView.setBackgroundColor(Color.WHITE);
+                activity_sign_draw.addView(drawView);
+                return true;
+            case R.id.Guardar:
                 ArrayList<SignPoints> points = drawView.getPoints();
                 JSONObject JsonPoints;
                 JSONArray JsonArrayPoints = new JSONArray();
@@ -69,24 +92,10 @@ public class SignDrawActivity extends AppCompatActivity {
                 intent.putExtra("sign", JsonArrayPoints.toString());
                 setResult(RESULT_OK, intent);
                 finish();
-            }
-        });
-        FloatingActionButton fabErase = (FloatingActionButton) findViewById(R.id.fabErase);
-        fabErase.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                drawView = new DrawView(activity);
-                drawView.setBackgroundColor(Color.WHITE);
-                activity_sign_draw.addView(drawView);
-            }
-        });
-
-        drawView = new DrawView(activity);
-        drawView.setBackgroundColor(Color.WHITE);
-        activity_sign_draw.addView(drawView);
-
-        //bitmap = Bitmap.createBitmap(drawView.getWidth(), drawView.getHeight(), Bitmap.Config.ARGB_8888);
-        //Canvas canvas = new Canvas(bitmap);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
