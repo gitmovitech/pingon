@@ -125,6 +125,15 @@ public class LoginActivity extends AppCompatActivity {
                                     @Override
                                     public void onErrorResponse(VolleyError error) {
                                         progress.hide();
+                                        alert.setTitle("Error de conexión");
+                                        alert.setMessage("Ha habido un error de conexión al servidor.\n\nCompruebe que posee una conexión a Internet activa.\n\nSi el problema persiste, puede que los servicios se encuentren desactivados. En este caso contáctenos para notificarnos sobre este problema.");
+                                        alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.cancel();
+                                            }
+                                        });
+                                        alert.create();
+                                        alert.show();
                                     }
                                 }, cabeceras);
 
