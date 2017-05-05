@@ -102,7 +102,7 @@ public class SyncService extends IntentService {
                 builder.setProgress(cr.getCount(), contador, false);
                 startForeground(1, builder.build());
 
-                
+                //TODO subir aqui por medio de REST
 
                 Log.d("SYNCING", ":"+cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.ID)));
                 try {
