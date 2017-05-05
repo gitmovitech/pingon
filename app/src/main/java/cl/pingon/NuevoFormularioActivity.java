@@ -9,15 +9,21 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import cl.pingon.Libraries.TimerUtils;
 import cl.pingon.Model.ModelEmpBrands;
 import cl.pingon.Model.ModelEmpCompany;
 import cl.pingon.Model.ModelEmpProducts;
@@ -70,6 +76,9 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     Integer PROYECTO_ID;
 
     static Activity activity;
+
+    Menu MenuButton;
+    int ActivateSendButton = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,9 +216,19 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if(i > 0){
-                    fab.setVisibility(View.VISIBLE);
+                    for(int m = 0; m < MenuButton.size(); m++){
+                        if(MenuButton.getItem(m).getItemId() == R.id.Next){
+                            MenuButton.getItem(m).setVisible(true);
+                            break;
+                        }
+                    }
                 } else {
-                    fab.setVisibility(View.GONE);
+                    for(int m = 0; m < MenuButton.size(); m++){
+                        if(MenuButton.getItem(m).getItemId() == R.id.Next){
+                            MenuButton.getItem(m).setVisible(false);
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -219,10 +238,21 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             }
         });
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_nuevo_informe, menu);
+        MenuButton = menu;
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.Next:
                 IntentInformes.putExtra("DOC_EXT_ID_CLIENTE", COMPANY_ID);
                 IntentInformes.putExtra("DOC_EXT_NOMBRE_CLIENTE", AutocompleteClientes.getText().toString());
                 IntentInformes.putExtra("DOC_EXT_ID_PROYECTO", PROYECTO_ID);
@@ -232,10 +262,10 @@ public class NuevoFormularioActivity extends AppCompatActivity {
                 IntentInformes.putExtra("DOC_EXT_NUMERO_SERIE", SpinnerSerie.getSelectedItem().toString());
 
                 startActivity(IntentInformes);
-            }
-        });
-
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private int getIndexFromClients(String clientname){
