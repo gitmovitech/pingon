@@ -44,6 +44,7 @@ import com.lowagie.text.pdf.draw.LineSeparator;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import cl.pingon.Libraries.DrawSign;
 import cl.pingon.Libraries.PDF;
@@ -154,15 +155,19 @@ public class PdfPreviewActivity extends AppCompatActivity {
 
             cursor = Formularios.getByArnIdFrmId(ARN_ID, FRM_ID);
             cursor.moveToFirst();
-            header.add(new ModelKeyPairs(
-                    "Nombre del formulario",
-                    cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE)),
-                    "texto"
-                    ));
+            String FRM_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
+            header.add(new ModelKeyPairs("Nombre del formulario",FRM_NOMBRE,"texto"));
             cursor.close();
             header.add(new ModelKeyPairs("Remitente",USU_NAME,"texto"));
-            //TODO Fecha de creacion, numero de referencia, como es el formato?
-            header.add(new ModelKeyPairs("Número de referencia",DOC_FECHA_CREACION,"texto"));
+
+            String[] nombre_array = FRM_NOMBRE.split(" ");
+            String numero_referencia = "";
+            for(int f = 0; f < nombre_array.length; f++){
+                numero_referencia += nombre_array[f].charAt(0);
+            }
+            Date time = new Date();
+            header.add(new ModelKeyPairs("Número de referencia",numero_referencia+"-"+DOC_FECHA_CREACION.replace("-","")+"-"+String.valueOf(time.getTime()),"texto"));
+
             cursor = Projectos.getByCompanyId(DOC_EXT_ID_CLIENTE);
             cursor.moveToFirst();
             String coords = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COORDINATES));
