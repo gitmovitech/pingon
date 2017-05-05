@@ -91,7 +91,7 @@ public class PDF {
         documento.add(imagen);
     }
 
-    public void addPhoto(String path, int width, int height) throws DocumentException, IOException {
+    public Image addPhoto(String path, int width, int height) throws DocumentException, IOException {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         Bitmap bitmap = BitmapFactory.decodeFile(path, options);
@@ -111,10 +111,11 @@ public class PDF {
         } catch(Exception e){
             Log.e("ERROR IMAGE", e.toString());
         }
-        documento.add(imagen);
+        //documento.add(imagen);
+        return imagen;
     }
 
-    public void addSign(ImageView ImageView, String points, int width, int height) throws DocumentException, IOException {
+    public Image addSign(ImageView ImageView, String points, int width, int height) throws DocumentException, IOException {
         DrawSign DrawSign = new DrawSign(points);
         DrawSign.DrawToImageView(ImageView);
 
@@ -139,7 +140,8 @@ public class PDF {
         fos.close();
 
         imagen.setAlignment(Image.RIGHT);
-        documento.add(imagen);
+        return imagen;
+        //documento.add(imagen);
     }
 
     public PdfPCell addCellColor(String text){

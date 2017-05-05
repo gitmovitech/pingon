@@ -269,38 +269,15 @@ public class PdfPreviewActivity extends AppCompatActivity {
                     tabla.setWidthPercentage(100);
                 } else {
                     if(registros.get(i).getType().contains("firma")){
-                        pdf.add(tabla);
-                        pdf.add(Chunk.NEWLINE);
 
-                        p = new Paragraph(registros.get(i).getKey());
-                        pdf.add(p);
-                        pdf.addSign((ImageView) findViewById(R.id.ImageViewFirma), registros.get(i).getValue(), 150, 150);
-                        pdf.add(Chunk.NEWLINE);
+                        tabla.addCell(pdf.addCell(registros.get(i).getKey()));
+                        tabla.addCell(pdf.addCell(pdf.addSign((ImageView) findViewById(R.id.ImageViewFirma), registros.get(i).getValue(), 150, 150)));
 
-                        tabla = pdf.createTable(2);
-                        tabla.setWidthPercentage(100);
                     } else if(registros.get(i).getType().contains("foto")){
-                        pdf.add(tabla);
-                        pdf.add(Chunk.NEWLINE);
 
-                        pdf.add(new Paragraph(registros.get(i).getKey()));
-                        final int index = i;
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    pdf.addPhoto(registros.get(index).getValue(), 300, 300);
-                                } catch (DocumentException e) {
-                                    e.printStackTrace();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).run();
-                        pdf.add(Chunk.NEWLINE);
+                        tabla.addCell(pdf.addCell(registros.get(i).getKey()));
+                        tabla.addCell(pdf.addCell(pdf.addPhoto(registros.get(i).getValue(), 250, 250)));
 
-                        tabla = pdf.createTable(2);
-                        tabla.setWidthPercentage(100);
                     } else {
                         tabla.addCell(pdf.addCell(registros.get(i).getKey()));
                         tabla.addCell(pdf.addCell(registros.get(i).getValue()));
