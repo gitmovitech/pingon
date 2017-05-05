@@ -49,7 +49,7 @@ public class FieldsFecha {
                 DatePickerDialog DatePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                        EditTextFecha.setText(day+"-"+month+"-"+year);
+                        EditTextFecha.setText(String.format("%02d",day)+"-"+String.format("%02d",month+1)+"-"+String.format("%02d",year));
                     }
                 }, year, month, day);
                 DatePickerDialog.show();

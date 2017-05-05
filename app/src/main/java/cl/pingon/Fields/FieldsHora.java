@@ -43,7 +43,7 @@ public class FieldsHora {
                 TimePickerDialog TimePickerDialog = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-                        EditTextHora.setText(hour+":"+minute);
+                        EditTextHora.setText(String.format("%02d",hour)+":"+String.format("%02d",minute));
                     }
                 },hour, minute, true);
                 TimePickerDialog.show();
