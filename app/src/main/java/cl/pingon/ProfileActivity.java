@@ -2,14 +2,17 @@ package cl.pingon;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,13 +22,19 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import cl.pingon.Libraries.DrawSign;
+import cl.pingon.Libraries.ImageUtils;
 import cl.pingon.Libraries.TimerUtils;
+import cl.pingon.Model.ModelChecklistFields;
 
 public class ProfileActivity extends AppCompatActivity {
 
     SharedPreferences session;
     String email;
     String sign;
+    Intent IntentSign;
+    ImageView Firma;
+    DrawSign firma;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,19 +58,19 @@ public class ProfileActivity extends AppCompatActivity {
         Button ChangeSign = (Button) findViewById(R.id.change_sign);
         EditText Email = (EditText) findViewById(R.id.email);
         EditText Password = (EditText) findViewById(R.id.password);
-        ImageView Firma = (ImageView) findViewById(R.id.firma);
+        Firma = (ImageView) findViewById(R.id.firma);
 
         byte[] decodedString = Base64.decode(sign, Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0,decodedString.length);
         Firma.setImageBitmap(decodedByte);
 
-
+        IntentSign = new Intent(this, SignDrawActivity.class);
 
         Email.setText(email);
         ChangeSign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivityForResult(IntentSign, 10);
             }
         });
     }
@@ -93,6 +102,18 @@ public class ProfileActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //FIRMA
+        if(requestCode == 10){
+            if(resultCode == RESULT_OK) {
+                String sign = data.getStringExtra("sign");
+                firma = new DrawSign(sign);
+                firma.DrawToImageView(Firma);
+            }
         }
     }
 }

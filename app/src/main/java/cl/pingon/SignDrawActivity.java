@@ -39,6 +39,8 @@ public class SignDrawActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         this.setTitle("Haga su firma");
 
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
+
         activity = this;
 
         activity_sign_draw = (CoordinatorLayout) findViewById(R.id.activity_sign_draw);
@@ -88,7 +90,11 @@ public class SignDrawActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Firma Guardada", Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent();
-                intent.putExtras(getIntent().getExtras());
+                try {
+                    intent.putExtras(getIntent().getExtras());
+                } catch (Exception e){
+
+                }
                 intent.putExtra("sign", JsonArrayPoints.toString());
                 setResult(RESULT_OK, intent);
                 finish();
@@ -102,5 +108,10 @@ public class SignDrawActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
     }
 }
