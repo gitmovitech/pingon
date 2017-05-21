@@ -222,7 +222,27 @@ public class PdfPreviewActivity extends AppCompatActivity {
     private void genPDF(final ArrayList<ModelKeyPairs> registros){
         try {
 
-            pdf = new PDF(this, "informe-"+ARN_ID+"-"+USU_ID+"-"+LOCAL_DOC_ID+".pdf");
+            /**
+             * OBTENER NOMBRE DEL AREA DE NEGOCIO
+             */
+            TblFormulariosHelper Formularios = new TblFormulariosHelper(getApplicationContext());
+            Cursor cursor = Formularios.getByArnId(ARN_ID);
+            cursor.moveToFirst();
+            String ARN_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
+            cursor.close();
+
+            /**
+             * OBTENER NOMBRE DEL CLIENTE
+             */
+            TblDocumentoHelper Documentos = new TblDocumentoHelper(getApplicationContext());
+            cursor = Documentos.getById(LOCAL_DOC_ID);
+            cursor.moveToFirst();
+            String NOMBRE_CLIENTE = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE));
+            String NOMBRE_OBRA = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_OBRA));
+            String NOMBRE_EQUIPO = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO));
+            cursor.close();
+
+            pdf = new PDF(this, ARN_NOMBRE+" - "+NOMBRE_CLIENTE+" - "+NOMBRE_OBRA+" - "+NOMBRE_EQUIPO+".pdf");
             pdf.open();
             pdf.addImage(R.drawable.pingon_pdf, 100, 80);
 
