@@ -9,6 +9,9 @@ import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
 import cl.pingon.Libraries.RESTService;
 import cl.pingon.SQLite.TblDocumentoDefinition;
 import cl.pingon.SQLite.TblDocumentoHelper;
@@ -16,6 +19,7 @@ import cl.pingon.SQLite.TblFormulariosDefinition;
 import cl.pingon.SQLite.TblFormulariosHelper;
 import cl.pingon.SQLite.TblRegistroDefinition;
 import cl.pingon.SQLite.TblRegistroHelper;
+import cl.pingon.Sync.SyncDocumentos;
 import cl.pingon.Sync.SyncRegistros;
 
 public class SyncService extends IntentService {
@@ -84,10 +88,25 @@ public class SyncService extends IntentService {
                 .setContentTitle(titulo)
                 .setContentText(subtitulo);
 
-        String url = "";//TODO pendiente de poner la url aqui
-        SyncRegistros sync_informes = new SyncRegistros(this, url, local_doc_id);
+        /**
+         * SINCRONIZAR DOCUMENTOS Y OBTENER ID
+         */
+        TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
+        String url_documentos = getResources().getString(R.string.url_sync_documentos);
+        SyncDocumentos sync_documentos = new SyncDocumentos(this, url_documentos, local_doc_id);
+        sync_documentos.AddData(Documentos.getById(local_doc_id));
+        sync_documentos.Post(new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("RESPONSE JSON", ":"+response.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //TODO Alerta de error
+            }
+        });
 
-        //TODO Programar primero la subida del documento y rescatar el DOC_ID del server
 
         TblRegistroHelper Registros = new TblRegistroHelper(this);
         Cursor cr = Registros.getSyncByLocalDocId(local_doc_id);
@@ -98,7 +117,7 @@ public class SyncService extends IntentService {
                 startForeground(1, builder.build());
                 contador++;
 
-                sync_informes.SyncData(cr);
+                //sync_informes.SyncData(cr);
 
                 Log.d("SYNCING", ":"+cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.ID)));
                 try {

@@ -192,13 +192,25 @@ public class TblDocumentoHelper extends SQLiteOpenHelper {
     public Cursor getById(int ID){
         SQLiteDatabase db = getReadableDatabase();
         String[] projection = {
+                TblDocumentoDefinition.Entry.USU_ID,
                 TblDocumentoDefinition.Entry.FRM_ID,
                 TblDocumentoDefinition.Entry.DOC_FECHA_CREACION,
+                TblDocumentoDefinition.Entry.DOC_FECHA_MODIFICACION,
+                TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO,
+                TblDocumentoDefinition.Entry.DOC_EXT_MARCA_EQUIPO,
+                TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE,
                 TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE,
                 TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE,
-                TblDocumentoDefinition.Entry.DOC_EXT_OBRA
+                TblDocumentoDefinition.Entry.DOC_EXT_OBRA,
+                TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO,
+                TblDocumentoDefinition.Entry.SEND_STATUS
         };
-        Cursor cursor = db.query(TblDocumentoDefinition.Entry.TABLE_NAME, projection, "ID = ?", new String[]{String.valueOf(ID)}, null, null, null);
+        Cursor cursor = db.query(
+                TblDocumentoDefinition.Entry.TABLE_NAME,
+                projection,
+                TblDocumentoDefinition.Entry.ID  +" = ?",
+                new String[]{String.valueOf(ID)},
+                null, null, null);
         return cursor;
     }
 }
