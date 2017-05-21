@@ -7,11 +7,10 @@
     android:layout_height="match_parent"
     tools:context="cl.pingon.InformesActivity">
 
-    <android.support.v7.widget.CardView
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_margin="0dp"
-        app:cardCornerRadius="0dp"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:padding="10dp"
@@ -38,18 +37,17 @@
 
         </LinearLayout>
 
-    </android.support.v7.widget.CardView>
-
-    <LinearLayout
-        android:layout_marginTop="53dp"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ListView
-            android:id="@+id/ListDetalle"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
+
+            <ListView
+                android:id="@+id/ListDetalle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
