@@ -151,8 +151,8 @@ public class InformesTabsActivity extends AppCompatActivity {
             for(int m = 0; m < MenuButton.size(); m++){
                 if(MenuButton.getItem(m).getItemId() == R.id.ButtonSend){
                     MenuButton.getItem(m).setVisible(true);
-                    Toast toast = Toast.makeText(getApplicationContext(), "Campos obligatorios completos.\n Ya puede enviar este informe.", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.TOP, 0, 0);
+                    Toast toast = Toast.makeText(getApplicationContext(), getResources().getString(R.string.completed_fields_message), Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
                     break;
                 }
