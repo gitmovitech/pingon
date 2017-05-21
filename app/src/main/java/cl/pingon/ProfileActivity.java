@@ -42,6 +42,7 @@ public class ProfileActivity extends AppCompatActivity {
     SharedPreferences session;
     String email;
     String sign;
+    String user_id;
     Intent IntentSign;
     ImageView Firma;
     DrawSign firma;
@@ -66,6 +67,7 @@ public class ProfileActivity extends AppCompatActivity {
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
         email = session.getString("email", "");
         sign = session.getString("sign", "");
+        user_id = session.getString("user_id", "");
 
         this.setTitle(getResources().getString(R.string.profile_title));
 
@@ -118,7 +120,7 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.Save:
-                String url = getResources().getString(R.string.url_profile_update) +"/"+session.getString("token","");
+                String url = getResources().getString(R.string.url_profile_update) +"/"+session.getString("token","")+"/"+user_id;
                 Map<String,String> params = new HashMap<String, String>();
                 params.put("SIGN", sign);
                 params.put("EMAIL", Email.getText().toString());
@@ -127,6 +129,12 @@ public class ProfileActivity extends AppCompatActivity {
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
+
+                                SharedPreferences.Editor editor = session.edit();
+                                editor.putString("email", Email.getText().toString());
+                                editor.putString("sign", sign);
+                                editor.commit();
+
                                 alert.setTitle(getResources().getString(R.string.profile_title));
                                 alert.setMessage(getResources().getString(R.string.profile_save_message));
                                 alert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
@@ -162,8 +170,9 @@ public class ProfileActivity extends AppCompatActivity {
         //FIRMA
         if(requestCode == 10){
             if(resultCode == RESULT_OK) {
-                String sign = data.getStringExtra("sign");
-                firma = new DrawSign(sign);
+                String nsign = data.getStringExtra("sign");
+                sign = nsign;
+                firma = new DrawSign(nsign);
                 firma.DrawToImageView(Firma);
             }
         }
