@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cl.pingon.ProfileActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:padding="16dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:drawableRight="@drawable/account_key"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:text="@string/change_password"
+                android:layout_width="match_parent"
+                android:gravity="left|center_vertical"
+                android:layout_height="70dp" />
+
+            <Button
+                android:drawableRight="@drawable/mail_ru"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:text="@string/change_email"
+                android:layout_width="match_parent"
+                android:gravity="left|center_vertical"
+                android:layout_height="70dp" />
+
+            <Button
+                android:drawableRight="@drawable/feather_white"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:text="@string/change_sign"
+                android:layout_width="match_parent"
+                android:gravity="left|center_vertical"
+                android:layout_height="70dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

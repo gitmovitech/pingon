@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -13,6 +16,7 @@ public class BuzonActivity extends AppCompatActivity {
     Intent IntentBorradores;
     Intent IntentPendientes;
     Intent IntentEnviados;
+    Intent IntentProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,7 @@ public class BuzonActivity extends AppCompatActivity {
         IntentBorradores = new Intent(this, BorradoresActivity.class);
         IntentPendientes = new Intent(this, PendientesEnvioActivity.class);
         IntentEnviados = new Intent(this, EnviadosActivity.class);
+        IntentProfile = new Intent(this, ProfileActivity.class);
 
         Button ButtonNuevo = (Button) findViewById(R.id.ButtonNuevoInforme);
         Button ButtonBorradores = (Button) findViewById(R.id.ButtonBorradores);
@@ -65,5 +70,35 @@ public class BuzonActivity extends AppCompatActivity {
                 startActivity(IntentPendientes);
             }
         } catch (Exception e){}
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_buzon, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.Profile:
+                try{
+                    IntentProfile.putExtras(getIntent().getExtras());
+                } catch (Exception e){
+
+                }
+                startActivityForResult(IntentProfile, 1);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == 1) {
+
+        }
     }
 }

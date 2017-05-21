@@ -24,6 +24,11 @@
         Todos los campos obligatorios están completos.\nYa puede enviar este informe.
     </string>
 
+    <string name="profile_title">Perfil de usuario</string>
+    <string name="change_password">Cambiar contraseña</string>
+    <string name="change_email">Actualizar email</string>
+    <string name="change_sign">Actualizar firma</string>
+
     <string name="url_signin">http://186.67.177.227:2234/signin</string>
     <string name="url_sync_area_negocio">http://186.67.177.227:2234/area-negocio</string>
     <string name="url_sync_emp_company">http://186.67.177.227:2234/emp-company</string>
