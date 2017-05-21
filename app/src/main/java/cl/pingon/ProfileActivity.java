@@ -8,6 +8,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.ContactsContract;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,13 +19,21 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import cl.pingon.Libraries.DrawSign;
 import cl.pingon.Libraries.ImageUtils;
+import cl.pingon.Libraries.RESTService;
 import cl.pingon.Libraries.TimerUtils;
 import cl.pingon.Model.ModelChecklistFields;
 
@@ -35,6 +45,10 @@ public class ProfileActivity extends AppCompatActivity {
     Intent IntentSign;
     ImageView Firma;
     DrawSign firma;
+    RESTService REST;
+    EditText Email;
+    EditText Password;
+    AlertDialog.Builder alert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +70,8 @@ public class ProfileActivity extends AppCompatActivity {
         this.setTitle(getResources().getString(R.string.profile_title));
 
         Button ChangeSign = (Button) findViewById(R.id.change_sign);
-        EditText Email = (EditText) findViewById(R.id.email);
-        EditText Password = (EditText) findViewById(R.id.password);
+        Email = (EditText) findViewById(R.id.email);
+        Password = (EditText) findViewById(R.id.password);
         Firma = (ImageView) findViewById(R.id.firma);
 
         byte[] decodedString = Base64.decode(sign, Base64.DEFAULT);
@@ -66,6 +80,10 @@ public class ProfileActivity extends AppCompatActivity {
 
         IntentSign = new Intent(this, SignDrawActivity.class);
 
+        REST = new RESTService(this);
+
+        alert = new AlertDialog.Builder(this);
+
         Email.setText(email);
         ChangeSign.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +91,8 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivityForResult(IntentSign, 10);
             }
         });
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     @Override
@@ -98,7 +118,39 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.Save:
-
+                String url = getResources().getString(R.string.url_profile_update) +"/"+session.getString("token","");
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("SIGN", sign);
+                params.put("EMAIL", Email.getText().toString());
+                params.put("PASSWORD", Password.getText().toString());
+                REST.post(this, url, params,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                alert.setTitle(getResources().getString(R.string.profile_title));
+                                alert.setMessage(getResources().getString(R.string.profile_save_message));
+                                alert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+                                alert.create();
+                                alert.show();
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                alert.setTitle(getResources().getString(R.string.profile_title));
+                                alert.setMessage(getResources().getString(R.string.profile_save_message_error));
+                                alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+                                alert.create();
+                                alert.show();                            }
+                        });
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
