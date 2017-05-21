@@ -596,7 +596,13 @@ public class InformesDetallesActivity extends AppCompatActivity {
         //FOTO
         if(requestCode == 1){
             ImageUtils img = new ImageUtils();
-            Bitmap ImageBitmapDecoded = img.ImageThumb(BitmapFactory.decodeFile(ImageName+RowItemIndex+".jpg"));
+            Bitmap ImageBitmapDecoded = null;
+            try {
+                ImageBitmapDecoded = img.ImageThumb(BitmapFactory.decodeFile(ImageName + RowItemIndex + ".jpg"));
+            } catch (Exception E){
+                Log.e("IMAGENAME", ":"+ImageName);
+                Log.e("IMAGEINDEX", ":"+RowItemIndex);
+            }
             AdapterChecklist.setImageButton(ImageBitmapDecoded, RowItemIndex);
             ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
             Fields.setValue(ImageName+RowItemIndex+".jpg");
