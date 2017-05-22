@@ -98,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
         ChecklistUrl = getResources().getString(R.string.url_sync_checklist).toString()+"/"+session.getString("token","");
         ListOptionsUrl = getResources().getString(R.string.url_sync_list_options).toString()+"/"+session.getString("token","");
 
-
         if(session.getString("token","") != "") {
 
             SyncEmpCompany();
@@ -129,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * SINCRONIZACION DE COMPANIES
+     * SINCRONIZACION DE CLIENTES
      */
     private void SyncEmpCompany(){
         EmpCompany = new TblEmpCompanyHelper(this);
@@ -144,48 +143,47 @@ public class MainActivity extends AppCompatActivity {
                 SyncEmpCompanyThread = new Thread(new Runnable() {
                     public void run() {
                         try {
-                            try {
-                                if(ResponseEmpCompany.getInt("ok") == 1){
+                            if(ResponseEmpCompany.getInt("ok") == 1){
 
-                                    JSONArray data = (JSONArray) ResponseEmpCompany.get("data");
-                                    JSONObject item;
-                                    Integer ID = null;
-                                    String NAME = null;
-                                    String RUT = null;
-                                    Boolean addItem;
-                                    ContentValues values;
+                                JSONArray data = (JSONArray) ResponseEmpCompany.get("data");
+                                JSONObject item;
+                                Integer ID = null;
+                                String NAME = null;
+                                String RUT = null;
+                                Boolean addItem;
+                                ContentValues values;
 
-                                    for(int i = 0;i < data.length(); i++){
-                                        item = (JSONObject) data.get(i);
-                                        addItem = true;
-                                        while(CursorEmpCompany.moveToNext()) {
-                                            ID = CursorEmpCompany.getInt(CursorEmpCompany.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.ID));
-                                            NAME = CursorEmpCompany.getString(CursorEmpCompany.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.NAME));
-                                            RUT = CursorEmpCompany.getString(CursorEmpCompany.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.RUT));
-                                            if(ID == item.getInt(TblEmpCompanyDefinition.Entry.ID)){
-                                                addItem = false;
+                                for(int i = 0;i < data.length(); i++){
+                                    item = (JSONObject) data.get(i);
+                                    addItem = true;
+                                    while(CursorEmpCompany.moveToNext()) {
+                                        ID = CursorEmpCompany.getInt(CursorEmpCompany.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.ID));
+                                        NAME = CursorEmpCompany.getString(CursorEmpCompany.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.NAME));
+                                        RUT = CursorEmpCompany.getString(CursorEmpCompany.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.RUT));
+                                        if(ID == item.getInt(TblEmpCompanyDefinition.Entry.ID)){
+                                            addItem = false;
 
-                                                values = new ContentValues();
-                                                if(NAME != item.getString(TblEmpCompanyDefinition.Entry.NAME)){
-                                                    values.put(TblEmpCompanyDefinition.Entry.NAME, item.getString(TblEmpCompanyDefinition.Entry.NAME));
-                                                }
-                                                if(RUT != item.getString(TblEmpCompanyDefinition.Entry.RUT)){
-                                                    values.put(TblEmpCompanyDefinition.Entry.RUT, item.getString(TblEmpCompanyDefinition.Entry.RUT));
-                                                }
-                                                EmpCompany.update(ID, values);
-                                                break;
-                                            }
-                                        }
-                                        if(addItem){
                                             values = new ContentValues();
-                                            values.put(TblEmpCompanyDefinition.Entry.ID, item.getInt(TblEmpCompanyDefinition.Entry.ID));
-                                            values.put(TblEmpCompanyDefinition.Entry.NAME, item.getString(TblEmpCompanyDefinition.Entry.NAME));
-                                            values.put(TblEmpCompanyDefinition.Entry.RUT, item.getString(TblEmpCompanyDefinition.Entry.RUT));
-                                            EmpCompany.insert(values);
+                                            if(NAME != item.getString(TblEmpCompanyDefinition.Entry.NAME)){
+                                                values.put(TblEmpCompanyDefinition.Entry.NAME, item.getString(TblEmpCompanyDefinition.Entry.NAME));
+                                            }
+                                            if(RUT != item.getString(TblEmpCompanyDefinition.Entry.RUT)){
+                                                values.put(TblEmpCompanyDefinition.Entry.RUT, item.getString(TblEmpCompanyDefinition.Entry.RUT));
+                                            }
+                                            EmpCompany.update(ID, values);
+                                            break;
                                         }
                                     }
-                                    CursorEmpCompany.close();
-                                    SyncReady();
+                                    if(addItem){
+                                        values = new ContentValues();
+                                        values.put(TblEmpCompanyDefinition.Entry.ID, item.getInt(TblEmpCompanyDefinition.Entry.ID));
+                                        values.put(TblEmpCompanyDefinition.Entry.NAME, item.getString(TblEmpCompanyDefinition.Entry.NAME));
+                                        values.put(TblEmpCompanyDefinition.Entry.RUT, item.getString(TblEmpCompanyDefinition.Entry.RUT));
+                                        EmpCompany.insert(values);
+                                    }
+                                }
+                                CursorEmpCompany.close();
+                                SyncReady();
 
                                     /*Cursor cursor = EmpCompany.getAll();
                                     while(cursor.moveToNext()) {
@@ -197,14 +195,13 @@ public class MainActivity extends AppCompatActivity {
                                         Log.d("RUT", RUT.toString());
                                         Log.d("----------", "--------------");
                                     }*/
-                                } else {
-                                    CheckErrorToExit(CursorEmpCompany, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                CheckErrorToExit(CursorEmpCompany, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
+                            } else {
+                                CheckErrorToExit(CursorEmpCompany, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
                             }
-                        } catch (Exception e) {}
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            CheckErrorToExit(CursorEmpCompany, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
+                        }
                     }
                 });
                 SyncEmpCompanyThread.start();
@@ -212,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                CheckErrorToExit(CursorEmpCompany, "Ha habido un error de sincronización con el servidor (ERROR). Si el problema persiste por favor contáctenos.");
+                CheckErrorToExit(CursorEmpCompany, "Ha habido un error de sincronización con el servidor (EMP COMPANY). Si el problema persiste por favor contáctenos.");
             }
         }, headers);
 
@@ -231,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
         REST.get(url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+
                 final JSONObject ResponseEmpProjects = response;
                 SyncEmpProjectsThread = new Thread(new Runnable() {
                     public void run() {
@@ -307,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (ERROR). Si el problema persiste por favor contáctenos.");
+                CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (EMP PROJECTS). Si el problema persiste por favor contáctenos.");
             }
         }, headers);
 
@@ -387,7 +385,7 @@ public class MainActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                CheckErrorToExit(CursorEmpBrands, "Ha habido un error de sincronización con el servidor (ERROR). Si el problema persiste por favor contáctenos.");
+                CheckErrorToExit(CursorEmpBrands, "Ha habido un error de sincronización con el servidor (EMP BRANDS). Si el problema persiste por favor contáctenos.");
             }
         }, headers);
 
@@ -480,7 +478,7 @@ public class MainActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (ERROR). Si el problema persiste por favor contáctenos.");
+                CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (PRODUCTS). Si el problema persiste por favor contáctenos.");
             }
         }, headers);
 

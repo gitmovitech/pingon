@@ -48,9 +48,14 @@ public class RESTService {
         VolleySingleton.getInstance(contexto).addToRequestQueue(peticion);
     }
 
-    //TODO Test metodo POST
+    /**
+     * Servicio POST
+     * @param uri
+     * @param params
+     * @param jsonListener
+     * @param errorListener
+     */
     public void post(String uri, JSONObject params, Response.Listener<JSONObject> jsonListener, Response.ErrorListener errorListener){
-
         JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.POST, uri, params, jsonListener,errorListener);
         RequestQueue requestQueue = Volley.newRequestQueue(contexto);
         requestQueue.add(stringRequest);

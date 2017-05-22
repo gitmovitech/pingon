@@ -1,6 +1,7 @@
 package cl.pingon.Sync;
 
 import android.content.ContentValues;
+import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -126,7 +127,8 @@ public class SyncListOptions {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (ERROR). Si el problema persiste por favor contáctenos.");
+                Log.d("ERROR VOLLEY", error.toString());
+                MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (OPTIONS). Si el problema persiste por favor contáctenos.");
             }
         }, headers);
     }

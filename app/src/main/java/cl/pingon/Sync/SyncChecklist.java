@@ -176,7 +176,7 @@ public class SyncChecklist {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (ERROR). Si el problema persiste por favor contáctenos.");
+                MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (CHECKLIST). Si el problema persiste por favor contáctenos.");
             }
         }, headers);
 
