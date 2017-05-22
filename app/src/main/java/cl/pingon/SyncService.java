@@ -12,6 +12,8 @@ import android.util.Log;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
+import org.json.JSONObject;
+
 import cl.pingon.Libraries.RESTService;
 import cl.pingon.SQLite.TblDocumentoDefinition;
 import cl.pingon.SQLite.TblDocumentoHelper;
@@ -95,9 +97,9 @@ public class SyncService extends IntentService {
         String url_documentos = getResources().getString(R.string.url_sync_documentos);
         SyncDocumentos sync_documentos = new SyncDocumentos(this, url_documentos, local_doc_id);
         sync_documentos.AddData(Documentos.getById(local_doc_id));
-        sync_documentos.Post(new Response.Listener<String>() {
+        sync_documentos.Post(new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(String response) {
+            public void onResponse(JSONObject response) {
                 Log.d("RESPONSE JSON", ":"+response.toString());
             }
         }, new Response.ErrorListener() {

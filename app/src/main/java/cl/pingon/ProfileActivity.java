@@ -28,6 +28,8 @@ import android.widget.LinearLayout;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -121,15 +123,16 @@ public class ProfileActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.Save:
                 String url = getResources().getString(R.string.url_profile_update) +"/"+session.getString("token","")+"/"+user_id;
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("SIGN", sign);
-                params.put("EMAIL", Email.getText().toString());
-                params.put("PASSWORD", Password.getText().toString());
-                REST.post(this, url, params,
-                        new Response.Listener<String>() {
+                JSONObject params = new JSONObject();
+                try {
+                    params.put("SIGN", sign);
+                    params.put("EMAIL", Email.getText().toString());
+                    params.put("PASSWORD", Password.getText().toString());
+                } catch(Exception e){}
+                REST.post(url, params,
+                        new Response.Listener<JSONObject>() {
                             @Override
-                            public void onResponse(String response) {
-
+                            public void onResponse(JSONObject response) {
                                 SharedPreferences.Editor editor = session.edit();
                                 editor.putString("email", Email.getText().toString());
                                 editor.putString("sign", sign);
@@ -157,7 +160,8 @@ public class ProfileActivity extends AppCompatActivity {
                                     }
                                 });
                                 alert.create();
-                                alert.show();                            }
+                                alert.show();
+                            }
                         });
                 return true;
             default:

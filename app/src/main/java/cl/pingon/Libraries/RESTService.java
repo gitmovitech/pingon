@@ -48,38 +48,11 @@ public class RESTService {
         VolleySingleton.getInstance(contexto).addToRequestQueue(peticion);
     }
 
-    //TODO Probar metodo post para envio de formulario al servidor, ver como subir archivos
-    public void post(Context context, String uri, final Map<String,String> params, Response.Listener<String> jsonListener, Response.ErrorListener errorListener){
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, uri, jsonListener, errorListener){
-            @Override
-            protected Map<String,String> getParams(){
-                /*Map<String,String> params = new HashMap<String, String>();
-                params.put(KEY_USERNAME,username);
-                params.put(KEY_PASSWORD,password);
-                params.put(KEY_EMAIL, email);*/
-                return params;
-            }
-        };
+    //TODO Test metodo POST
+    public void post(String uri, JSONObject params, Response.Listener<JSONObject> jsonListener, Response.ErrorListener errorListener){
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-        requestQueue.add(stringRequest);
-    }
-
-    public void login(String uri, String username, String password, Response.Listener<String> jsonListener,
-                      Response.ErrorListener errorListener, final HashMap<Object, Object> cabeceras) {
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, uri, jsonListener, errorListener){
-            protected Map<String,String> getLoginParams(String username, String password){
-                Log.d("username", username);
-                Log.d("password", password);
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("user",username);
-                params.put("pass",password);
-                return params;
-            }
-        };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this.contexto);
+        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.POST, uri, params, jsonListener,errorListener);
+        RequestQueue requestQueue = Volley.newRequestQueue(contexto);
         requestQueue.add(stringRequest);
     }
 

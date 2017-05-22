@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AutoCompleteTextView;
@@ -22,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import cl.pingon.Libraries.RESTService;
 
@@ -49,6 +51,8 @@ public class LoginActivity extends AppCompatActivity {
         alert = new AlertDialog.Builder(this);
 
         IntentMain = new Intent(this, MainActivity.class);
+
+        REST = new RESTService(this);
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
         if(session.getString("token","") != ""){
@@ -82,13 +86,19 @@ public class LoginActivity extends AppCompatActivity {
                         progress.show();
 
                         String url = getResources().getString(R.string.url_signin) + "?user=" + EditTextUser.getText().toString() + "&pass=" + EditTextPassword.getText().toString();
+                        JSONObject params = new JSONObject();
+                        try {
+                            params.put("user", EditTextUser.getText().toString());
+                            params.put("pass", EditTextPassword.getText().toString());
+                        } catch(Exception e){
 
-                        HashMap<String, String> cabeceras = new HashMap<>();
-                        REST.get(url,
+                        }
+                        REST.post(url, params,
                                 new Response.Listener<JSONObject>() {
                                     @Override
                                     public void onResponse(JSONObject response) {
                                         try {
+                                            //Log.d("LOGIN RESPONSE", response.toString());
                                             if (response.getInt("ok") == 1) {
 
                                                 SharedPreferences.Editor editor = session.edit();
@@ -135,13 +145,11 @@ public class LoginActivity extends AppCompatActivity {
                                         alert.create();
                                         alert.show();
                                     }
-                                }, cabeceras);
+                                });
 
                     }
                 }
             });
-
-            REST = new RESTService(this);
 
         }
 
