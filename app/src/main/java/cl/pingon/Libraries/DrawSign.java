@@ -33,7 +33,7 @@ public class DrawSign {
         imageview.setImageBitmap(createSign());
     }
 
-    private Bitmap createSign(){
+    public Bitmap createSign(){
         Path path = convertToPath(sign);
 
         Paint paint = new Paint();

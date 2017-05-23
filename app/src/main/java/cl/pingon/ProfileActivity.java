@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cl.pingon.Libraries.DrawSign;
+import cl.pingon.Libraries.DrawView;
 import cl.pingon.Libraries.ImageUtils;
 import cl.pingon.Libraries.RESTService;
 import cl.pingon.Libraries.TimerUtils;
@@ -122,10 +123,14 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.Save:
-                String url = getResources().getString(R.string.url_profile_update) +"/"+session.getString("token","")+"/"+user_id;
+                String url = getResources().getString(R.string.url_profile_update);
+                final DrawSign firma = new DrawSign(sign);
+                firma.createSign();
                 JSONObject params = new JSONObject();
                 try {
-                    params.put("SIGN", sign);
+                    params.put("token", session.getString("token",""));
+                    params.put("user_id", user_id);
+                    params.put("SIGN", firma.convertToBase64());
                     params.put("EMAIL", Email.getText().toString());
                     params.put("PASSWORD", Password.getText().toString());
                 } catch(Exception e){}
@@ -135,7 +140,7 @@ public class ProfileActivity extends AppCompatActivity {
                             public void onResponse(JSONObject response) {
                                 SharedPreferences.Editor editor = session.edit();
                                 editor.putString("email", Email.getText().toString());
-                                editor.putString("sign", sign);
+                                editor.putString("sign", firma.convertToBase64());
                                 editor.commit();
 
                                 alert.setTitle(getResources().getString(R.string.profile_title));
