@@ -27,24 +27,20 @@ public class RESTService {
         this.contexto = contexto;
     }
 
-    public void get(String uri, Response.Listener<JSONObject> jsonListener,
-                    Response.ErrorListener errorListener,
-                    final HashMap<String, String> cabeceras) {
-
-        // Crear petición GET
-        JsonObjectRequest peticion = new JsonObjectRequest(
-                uri,
-                null,
-                jsonListener,
-                errorListener
-        ) {
+    /**
+     * Servicio GET
+     * @param uri
+     * @param jsonListener
+     * @param errorListener
+     * @param cabeceras
+     */
+    public void get(String uri, Response.Listener<JSONObject> jsonListener,Response.ErrorListener errorListener,final HashMap<String, String> cabeceras) {
+        JsonObjectRequest peticion = new JsonObjectRequest(uri,null,jsonListener,errorListener) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 return cabeceras;
             }
         };
-
-        // Añadir petición a la pila
         VolleySingleton.getInstance(contexto).addToRequestQueue(peticion);
     }
 
