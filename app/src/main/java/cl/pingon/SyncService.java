@@ -1,6 +1,7 @@
 package cl.pingon;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -32,6 +33,9 @@ public class SyncService extends IntentService {
     Integer ARN_ID;
     Integer FMR_ID;
     RESTService REST;
+    NotificationCompat.Builder builder;
+    String titulo;
+    String subtitulo;
 
     public SyncService() {
         super("SyncService");
@@ -73,22 +77,16 @@ public class SyncService extends IntentService {
         Cursor cf = Formularios.getByArnIdFrmId(ARN_ID, FMR_ID);
         cf.moveToFirst();
 
-        String titulo = cf.getString(cf.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
+        titulo = cf.getString(cf.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
         titulo += " / ";
         titulo += cf.getString(cf.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
 
-        String subtitulo = cd.getString(cd.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE));
+        subtitulo = cd.getString(cd.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE));
         subtitulo += " / ";
         subtitulo +=  cd.getString(cd.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_OBRA));
 
         cd.close();
         cf.close();
-
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.sync)
-                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.icon))
-                .setContentTitle(titulo)
-                .setContentText(subtitulo);
 
         /**
          * SINCRONIZAR DOCUMENTOS Y OBTENER ID
@@ -106,6 +104,9 @@ public class SyncService extends IntentService {
                         JSONObject JSONResponse = response.getJSONObject("response");
                         final Integer DOC_ID = JSONResponse.getInt("id");
 
+                        String url_registros = getResources().getString(R.string.url_sync_registros);
+                        SyncRegistros sync_registros = new SyncRegistros(getApplicationContext(), url_registros, local_doc_id, DOC_ID);
+                        sync_registros.addToken(session.getString("token", ""));
 
                         /**
                          * SUBIR REGISTROS
@@ -115,22 +116,43 @@ public class SyncService extends IntentService {
                         Integer contador = 0;
                         if(cr.getCount() > 0){
                             while(cr.moveToNext()){
+                                builder = new NotificationCompat.Builder(getApplicationContext())
+                                        .setSmallIcon(R.drawable.sync)
+                                        .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.icon))
+                                        .setContentTitle(titulo)
+                                        .setContentText(subtitulo);
                                 builder.setProgress(cr.getCount(), contador, false);
                                 startForeground(1, builder.build());
+                                //TODO Cambiar IntentService por Service para arreglar la notificacion
+
+                                sync_registros.addData(cr);
+                                sync_registros.Post(new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        //TODO Respuesta de registro
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        //TODO trabajar en respuesta de registro
+                                    }
+                                });
                                 contador++;
 
                                 //sync_informes.SyncData(cr);
 
                                 Log.d("SYNCING", ":"+cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.ID)));
                                 try {
-                                    Thread.sleep(500);
+                                    Thread.sleep(1000);
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
                             }
-                            stopForeground(true);
+                            //stopForeground(true);
                         }
                         cr.close();
+
+                        //TODO Subir archivo a producción
 
                     }
                 } catch (Exception e){}
@@ -142,6 +164,8 @@ public class SyncService extends IntentService {
                 //TODO Alerta de error
             }
         });
+
+        Log.d("FINISHED", "RAZON");
 
     }
 
