@@ -242,7 +242,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
             String NOMBRE_EQUIPO = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO));
             cursor.close();
 
-            pdf = new PDF(this, ARN_NOMBRE+" - "+NOMBRE_CLIENTE+" - "+NOMBRE_OBRA+" - "+NOMBRE_EQUIPO+".pdf");
+            pdf = new PDF(this, LOCAL_DOC_ID+"__"+ARN_NOMBRE+" - "+NOMBRE_CLIENTE+" - "+NOMBRE_OBRA+" - "+NOMBRE_EQUIPO+".pdf");
             pdf.open();
             pdf.addImage(R.drawable.pingon_pdf, 100, 80);
 
