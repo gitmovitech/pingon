@@ -2,8 +2,10 @@ package cl.pingon.Libraries;
 
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.Base64;
@@ -23,6 +25,36 @@ public class DrawSign {
 
     public DrawSign(String sign){
         this.sign = cleanString(sign);
+    }
+
+    public DrawSign(){
+
+    }
+
+    public String base64FromFile(String path){
+        Bitmap bm = BitmapFactory.decodeFile(path);
+        bm = getResizedBitmap(bm, 0, 1024);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+        return encodedImage;
+    }
+
+    public Bitmap getResizedBitmap(Bitmap image, int newHeight, int newWidth) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        newHeight = (newWidth*height) / width;
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // create a matrix for the manipulation
+        Matrix matrix = new Matrix();
+        // resize the bit map
+        matrix.postScale(scaleWidth, scaleHeight);
+        // recreate the new Bitmap
+        Bitmap resizedBitmap = Bitmap.createBitmap(image, 0, 0, width, height,
+                matrix, false);
+        return resizedBitmap;
     }
 
     public Bitmap toBitmap(){

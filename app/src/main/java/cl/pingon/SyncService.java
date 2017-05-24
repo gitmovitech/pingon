@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import cl.pingon.Libraries.DrawSign;
 import cl.pingon.Libraries.RESTService;
 import cl.pingon.SQLite.TblDocumentoDefinition;
 import cl.pingon.SQLite.TblDocumentoHelper;
@@ -200,7 +201,7 @@ public class SyncService extends Service {
         if(cr.getCount() > 0){
             builder.setProgress(cr.getCount(),contador, false);
             startForeground(1, builder.build());
-            subirRegistro(cr, sync_registros, 0);
+            subirRegistro(cr, sync_registros, 0, DOC_ID);
         } else {
             stopForeground(true);
             cr.close();
@@ -213,9 +214,42 @@ public class SyncService extends Service {
      * @param cr
      * @param sync_registros
      */
-    private void subirRegistro(Cursor cr, SyncRegistros sync_registros, Integer index){
+    private void subirRegistro(Cursor cr, SyncRegistros sync_registros, Integer index, Integer DOC_ID){
 
-        Log.d("REGS", ":"+cr.getCount()+":"+index);
+        if(index < cr.getCount()){
+            cr.moveToPosition(index);
+
+            JSONObject params = new JSONObject();
+            try{
+                params.put(TblRegistroDefinition.Entry.CAM_ID, cr.getInt(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID)));
+                params.put(TblRegistroDefinition.Entry.DOC_ID, DOC_ID);
+                params.put(TblRegistroDefinition.Entry.FRM_ID, cr.getInt(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.FRM_ID)));
+                params.put(TblRegistroDefinition.Entry.REG_TIPO, cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)));
+                if(cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).contains("foto")){
+                    params.put(TblRegistroDefinition.Entry.REG_VALOR, imagefileToBase64(cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)) ));
+                } else {
+                    params.put(TblRegistroDefinition.Entry.REG_VALOR, cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
+                }
+
+                
+
+            } catch (Exception e){}
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            index++;
+            builder.setProgress(cr.getCount(), index, false);
+            startForeground(1, builder.build());
+            subirRegistro(cr, sync_registros, index, DOC_ID);
+        } else {
+            cr.close();
+            stopForeground(true);
+        }
+
 
         /*while(cr.moveToNext()){
 
@@ -245,6 +279,11 @@ public class SyncService extends Service {
             }
         }*/
         //stopForeground(true);
+    }
+
+    private String imagefileToBase64(String path){
+        DrawSign sign = new DrawSign();
+        return sign.base64FromFile(path);
     }
 
     private boolean detectInternet(){
