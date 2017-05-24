@@ -1,12 +1,14 @@
 package cl.pingon;
 
-import android.app.IntentService;
-import android.app.Notification;
-import android.content.Intent;
+import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -14,6 +16,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
 import org.json.JSONObject;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cl.pingon.Libraries.RESTService;
 import cl.pingon.SQLite.TblDocumentoDefinition;
@@ -25,51 +30,94 @@ import cl.pingon.SQLite.TblRegistroHelper;
 import cl.pingon.Sync.SyncDocumentos;
 import cl.pingon.Sync.SyncRegistros;
 
-public class SyncService extends IntentService {
+public class SyncService extends Service {
 
-    private static final String ACTION_SYNC = "cl.pingon.action.SYNC";
-    private static final String LOCAL_DOC_ID = "cl.pingon.extra.LOCAL_DOC_ID";
+    TblDocumentoHelper Documentos;
+    Integer Processing = 0;
     SharedPreferences session;
+    NotificationCompat.Builder builder;
     Integer ARN_ID;
     Integer FMR_ID;
     RESTService REST;
-    NotificationCompat.Builder builder;
     String titulo;
     String subtitulo;
 
-    public SyncService() {
-        super("SyncService");
-    }
+    TblDocumentoHelper Documento;
+    TblFormulariosHelper Formularios;
 
-    public static void startActionSync(Context context, Integer local_doc_id) {
-        Intent intent = new Intent(context, SyncService.class);
-        intent.setAction(ACTION_SYNC);
-        intent.putExtra(LOCAL_DOC_ID, local_doc_id);
-        context.startService(intent);
+    public SyncService() {
+
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        if (intent != null) {
-            final String action = intent.getAction();
-            if (ACTION_SYNC.equals(action)) {
-                final Integer local_doc_id = intent.getIntExtra(LOCAL_DOC_ID, 0);
-                handleActionSync(local_doc_id);
-            }
-        }
-    }
-
-    private void handleActionSync(final Integer local_doc_id) {
+    public void onCreate() {
 
         REST = new RESTService(getApplicationContext());
 
         session = getSharedPreferences("session", this.MODE_PRIVATE);
         ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
 
-        TblDocumentoHelper Documento = new TblDocumentoHelper(this);
-        TblFormulariosHelper Formularios = new TblFormulariosHelper(this);
+        Documento = new TblDocumentoHelper(this);
+        Formularios = new TblFormulariosHelper(this);
 
+        new Timer().scheduleAtFixedRate(new TimerTask(){
+            @Override
+            public void run(){
+                if(Processing == 0){
+                    Sync();
+                }
+            }
+        },0,60000);
+    }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_NOT_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {}
+
+    /**
+     * Proceso de sincronizacion iniciado
+     */
+    private void Sync(){
+        Processing = 1;
+        Documentos = new TblDocumentoHelper(this);
+        Cursor c = Documentos.getAllSync();
+        if(c.getCount() > 0){
+
+            builder = new NotificationCompat.Builder(getApplicationContext())
+                    .setSmallIcon(R.drawable.sync)
+                    .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.icon))
+                    .setContentTitle("Sincronización")
+                    .setContentText("Preparando información para enviar");
+            builder.setProgress(0,0, true);
+            startForeground(1, builder.build());
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            //if(detectInternet()){
+                while(c.moveToNext()){
+                    startSync(c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.ID)));
+                }
+            /*} else {
+                Processing = 0;
+            }*/
+        } else {
+            Processing = 0;
+        }
+        c.close();
+    }
+
+    /**
+     * Sincronizacion por cada documento encontrado en la base de datos
+     * @param local_doc_id
+     */
+    private void startSync(Integer local_doc_id){
         Cursor cd = Documento.getById(local_doc_id);
         cd.moveToFirst();
         FMR_ID = cd.getInt(cd.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.FRM_ID));
@@ -88,9 +136,26 @@ public class SyncService extends IntentService {
         cd.close();
         cf.close();
 
-        /**
-         * SINCRONIZAR DOCUMENTOS Y OBTENER ID
-         */
+
+        builder.setContentTitle(titulo);
+        builder.setContentText(subtitulo);
+        startForeground(1, builder.build());
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        subirDocumento(local_doc_id);
+
+    }
+
+    /**
+     * Subida al servidor de un documento
+     * @param local_doc_id
+     */
+    private void subirDocumento(final Integer local_doc_id){
+
         TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
         String url_documentos = getResources().getString(R.string.url_sync_documentos);
         SyncDocumentos sync_documentos = new SyncDocumentos(this, url_documentos, local_doc_id);
@@ -103,57 +168,7 @@ public class SyncService extends IntentService {
                     if (response.getString("ok").contains("1")) {
                         JSONObject JSONResponse = response.getJSONObject("response");
                         final Integer DOC_ID = JSONResponse.getInt("id");
-
-                        String url_registros = getResources().getString(R.string.url_sync_registros);
-                        SyncRegistros sync_registros = new SyncRegistros(getApplicationContext(), url_registros, local_doc_id, DOC_ID);
-                        sync_registros.addToken(session.getString("token", ""));
-
-                        /**
-                         * SUBIR REGISTROS
-                         */
-                        TblRegistroHelper Registros = new TblRegistroHelper(getApplicationContext());
-                        Cursor cr = Registros.getSyncByLocalDocId(local_doc_id);
-                        Integer contador = 0;
-                        if(cr.getCount() > 0){
-                            while(cr.moveToNext()){
-                                builder = new NotificationCompat.Builder(getApplicationContext())
-                                        .setSmallIcon(R.drawable.sync)
-                                        .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.icon))
-                                        .setContentTitle(titulo)
-                                        .setContentText(subtitulo);
-                                builder.setProgress(cr.getCount(), contador, false);
-                                startForeground(1, builder.build());
-                                //TODO Cambiar IntentService por Service para arreglar la notificacion
-
-                                sync_registros.addData(cr);
-                                sync_registros.Post(new Response.Listener<JSONObject>() {
-                                    @Override
-                                    public void onResponse(JSONObject response) {
-                                        //TODO Respuesta de registro
-                                    }
-                                }, new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        //TODO trabajar en respuesta de registro
-                                    }
-                                });
-                                contador++;
-
-                                //sync_informes.SyncData(cr);
-
-                                Log.d("SYNCING", ":"+cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.ID)));
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            //stopForeground(true);
-                        }
-                        cr.close();
-
-                        //TODO Subir archivo a producción
-
+                        subirRegistros(DOC_ID, local_doc_id);
                     }
                 } catch (Exception e){}
 
@@ -161,12 +176,89 @@ public class SyncService extends IntentService {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                //TODO Alerta de error
+                Log.d("ERROR VOLLEY", error.toString());
+                stopForeground(true);
+                Processing = 0;
             }
         });
+    }
 
-        Log.d("FINISHED", "RAZON");
+    /**
+     * Recopilación de registros para sincronizar con el servidor
+     * @param DOC_ID
+     * @param local_doc_id
+     */
+    private void subirRegistros(Integer DOC_ID, Integer local_doc_id){
+
+        String url_registros = getResources().getString(R.string.url_sync_registros);
+        SyncRegistros sync_registros = new SyncRegistros(getApplicationContext(), url_registros, local_doc_id, DOC_ID);
+        sync_registros.addToken(session.getString("token", ""));
+
+        TblRegistroHelper Registros = new TblRegistroHelper(getApplicationContext());
+        final Cursor cr = Registros.getSyncByLocalDocId(local_doc_id);
+        final Integer contador = 0;
+        if(cr.getCount() > 0){
+            builder.setProgress(cr.getCount(),contador, false);
+            startForeground(1, builder.build());
+            subirRegistro(cr, sync_registros, 0);
+        } else {
+            stopForeground(true);
+            cr.close();
+        }
 
     }
 
+    /**
+     * Subida al servidor de cada registro de forma sincrona
+     * @param cr
+     * @param sync_registros
+     */
+    private void subirRegistro(Cursor cr, SyncRegistros sync_registros, Integer index){
+
+        Log.d("REGS", ":"+cr.getCount()+":"+index);
+
+        /*while(cr.moveToNext()){
+
+            sync_registros.addData(cr);
+            sync_registros.Post(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    builder.setProgress(cr.getCount(),contador, false);
+                    startForeground(1, builder.build());
+                    contador++;
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    //TODO trabajar en respuesta de registro
+                }
+            });
+
+
+            //sync_informes.SyncData(cr);
+
+            Log.d("SYNCING", ":"+cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.ID)));
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }*/
+        //stopForeground(true);
+    }
+
+    private boolean detectInternet(){
+        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if(activeNetwork != null){
+            return activeNetwork.isConnected();
+        } else{
+            return false;
+        }
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
 }

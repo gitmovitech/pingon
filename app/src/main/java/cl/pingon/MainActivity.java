@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
         activity = this;
         alert = new AlertDialog.Builder(this);
 
-
         IntentBuzon = new Intent(this, BuzonActivity.class);
 
         /**

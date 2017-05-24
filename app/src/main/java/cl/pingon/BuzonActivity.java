@@ -62,7 +62,7 @@ public class BuzonActivity extends AppCompatActivity {
             }
         });
 
-        Intent IntentSyncListenerService = new Intent(this, SyncListenerService.class);
+        Intent IntentSyncListenerService = new Intent(this, SyncService.class);
         startService(IntentSyncListenerService);
 
         try {

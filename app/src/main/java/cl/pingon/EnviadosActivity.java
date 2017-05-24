@@ -9,15 +9,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import cl.pingon.Adapter.AdapterInformes;
 import cl.pingon.Adapter.AdapterListadoPendientes;
-import cl.pingon.Model.Informes;
 import cl.pingon.Model.ListadoPendientes;
 import cl.pingon.SQLite.TblDocumentoDefinition;
 import cl.pingon.SQLite.TblDocumentoHelper;
@@ -80,7 +77,7 @@ public class EnviadosActivity extends AppCompatActivity {
             Snackbar.make(findViewById(R.id.ListDetalle), "No hay informes enviados", Snackbar.LENGTH_LONG).setAction("Action", null).show();
         }
 
-        Intent IntentSyncListenerService = new Intent(this, SyncListenerService.class);
+        Intent IntentSyncListenerService = new Intent(this, SyncService.class);
         IntentSyncListenerService.putExtra("param1", "test");
         startService(IntentSyncListenerService);
     }

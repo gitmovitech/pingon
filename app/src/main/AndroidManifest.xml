@@ -37,16 +37,14 @@
         <activity android:name=".InformesTabsActivity" />
         <activity android:name=".SignDrawActivity" />
         <activity android:name=".PdfPreviewActivity" />
+        <activity android:name=".ProfileActivity" />
+
 
         <service
             android:name=".SyncService"
-            android:exported="false" />
-        <service
-            android:name=".SyncListenerService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".ProfileActivity"></activity>
     </application>
 
 </manifest>
