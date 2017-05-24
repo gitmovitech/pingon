@@ -214,37 +214,57 @@ public class SyncService extends Service {
      * @param cr
      * @param sync_registros
      */
-    private void subirRegistro(Cursor cr, SyncRegistros sync_registros, Integer index, Integer DOC_ID){
+    Integer registroPosition = 0;
+    private void subirRegistro(final Cursor cr, final SyncRegistros sync_registros, Integer index, final Integer DOC_ID){
 
-        if(index < cr.getCount()){
-            cr.moveToPosition(index);
+        registroPosition = index;
+        if(registroPosition < cr.getCount()){
+            cr.moveToPosition(registroPosition);
 
             JSONObject params = new JSONObject();
             try{
+                params.put("token", session.getString("token", ""));
                 params.put(TblRegistroDefinition.Entry.CAM_ID, cr.getInt(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID)));
                 params.put(TblRegistroDefinition.Entry.DOC_ID, DOC_ID);
                 params.put(TblRegistroDefinition.Entry.FRM_ID, cr.getInt(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.FRM_ID)));
                 params.put(TblRegistroDefinition.Entry.REG_TIPO, cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)));
                 if(cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).contains("foto")){
-                    params.put(TblRegistroDefinition.Entry.REG_VALOR, imagefileToBase64(cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)) ));
+                    uploadImage(cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)), cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
                 } else {
                     params.put(TblRegistroDefinition.Entry.REG_VALOR, cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
+                    //ENVIO REGISTRO AL SERVIDOR
+                    REST.post(getResources().getString(R.string.url_sync_registros), params, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+
+                            Log.d("REGISTRO RESPONSE", ":" + response.toString());
+                            //Todo validar insercion antes de continuar enviando informacion
+
+                            registroPosition++;
+                            builder.setProgress(cr.getCount(), registroPosition, false);
+                            startForeground(1, builder.build());
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            subirRegistro(cr, sync_registros, registroPosition, DOC_ID);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            cr.close();
+                            stopForeground(true);
+                        }
+                    });
                 }
 
-                
-
-            } catch (Exception e){}
-
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (Exception e){
+                cr.close();
+                stopForeground(true);
             }
 
-            index++;
-            builder.setProgress(cr.getCount(), index, false);
-            startForeground(1, builder.build());
-            subirRegistro(cr, sync_registros, index, DOC_ID);
+
         } else {
             cr.close();
             stopForeground(true);
@@ -284,6 +304,14 @@ public class SyncService extends Service {
     private String imagefileToBase64(String path){
         DrawSign sign = new DrawSign();
         return sign.base64FromFile(path);
+    }
+
+    private void uploadImage(String name, String path){
+        String base64file = imagefileToBase64(path);
+        String[] namearr = name.split("/");
+        builder.setContentText("Subiendo imagen \""+namearr[namearr.length-1]+"\" ("+Math.round(base64file.length()/1024)+" KB).");
+        builder.setProgress(0, 0, true);
+        startForeground(1, builder.build());
     }
 
     private boolean detectInternet(){

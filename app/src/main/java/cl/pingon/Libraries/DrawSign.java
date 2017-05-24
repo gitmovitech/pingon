@@ -35,7 +35,7 @@ public class DrawSign {
         Bitmap bm = BitmapFactory.decodeFile(path);
         bm = getResizedBitmap(bm, 0, 1024);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bm.compress(Bitmap.CompressFormat.JPEG, 90, baos);
         byte[] b = baos.toByteArray();
         String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
         return encodedImage;
