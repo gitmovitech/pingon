@@ -23,12 +23,17 @@ public class SyncDocumentos {
     Integer LOCAL_DOC_ID;
     Context context;
     JSONObject params;
+    String token;
 
     public SyncDocumentos(Context context, String url, int LOCAL_DOC_ID){
         this.URL = url;
         this.LOCAL_DOC_ID = LOCAL_DOC_ID;
         this.context = context;
         REST = new RESTService(context);
+    }
+
+    public void addToken(String token){
+        this.token = token;
     }
 
     public void AddData(Cursor c){
@@ -46,6 +51,7 @@ public class SyncDocumentos {
             params.put(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE, c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE)));
             params.put(TblDocumentoDefinition.Entry.DOC_EXT_OBRA, c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_OBRA)));
             params.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO, c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO)));
+            params.put("token", token);
         } catch(Exception e){}
         c.close();
     }
