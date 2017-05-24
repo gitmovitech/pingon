@@ -44,7 +44,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     SharedPreferences session;
     String email;
-    String sign;
+    String sign = "";
+    String sign64;
     String user_id;
     Intent IntentSign;
     ImageView Firma;
@@ -69,7 +70,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
         email = session.getString("email", "");
-        sign = session.getString("sign", "");
+        sign64 = session.getString("sign", "");
         user_id = session.getString("user_id", "");
 
         this.setTitle(getResources().getString(R.string.profile_title));
@@ -79,7 +80,7 @@ public class ProfileActivity extends AppCompatActivity {
         Password = (EditText) findViewById(R.id.password);
         Firma = (ImageView) findViewById(R.id.firma);
 
-        byte[] decodedString = Base64.decode(sign, Base64.DEFAULT);
+        byte[] decodedString = Base64.decode(sign64, Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0,decodedString.length);
         Firma.setImageBitmap(decodedByte);
 
@@ -124,13 +125,21 @@ public class ProfileActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.Save:
                 String url = getResources().getString(R.string.url_profile_update);
-                final DrawSign firma = new DrawSign(sign);
-                firma.createSign();
+                if(!sign.isEmpty()){
+                    final DrawSign firma = new DrawSign(sign);
+                    firma.createSign();
+                }
                 JSONObject params = new JSONObject();
                 try {
                     params.put("token", session.getString("token",""));
                     params.put("user_id", user_id);
-                    params.put("SIGN", firma.convertToBase64());
+                    if(!sign.isEmpty()) {
+                        params.put("SIGN", firma.convertToBase64());
+                        Log.d("EMPTY", firma.convertToBase64());
+                    } else {
+                        params.put("SIGN", sign64);
+                        Log.d("EMPTY", sign64);
+                    }
                     params.put("EMAIL", Email.getText().toString());
                     params.put("PASSWORD", Password.getText().toString());
                 } catch(Exception e){}
@@ -140,7 +149,11 @@ public class ProfileActivity extends AppCompatActivity {
                             public void onResponse(JSONObject response) {
                                 SharedPreferences.Editor editor = session.edit();
                                 editor.putString("email", Email.getText().toString());
-                                editor.putString("sign", firma.convertToBase64());
+                                if(!sign.isEmpty()) {
+                                    editor.putString("sign", firma.convertToBase64());
+                                } else {
+                                    editor.putString("sign", sign64);
+                                }
                                 editor.commit();
 
                                 alert.setTitle(getResources().getString(R.string.profile_title));

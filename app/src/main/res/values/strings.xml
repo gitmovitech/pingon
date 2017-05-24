@@ -31,17 +31,17 @@
     <string name="change_email">Actualizar email</string>
     <string name="change_sign">Actualizar firma</string>
 
-    <string name="url_signin">http://186.67.177.227:2234/signin</string>
-    <string name="url_sync_area_negocio">http://186.67.177.227:2234/area-negocio</string>
-    <string name="url_sync_emp_company">http://186.67.177.227:2234/emp-company</string>
-    <string name="url_sync_emp_projects">http://186.67.177.227:2234/emp-projects</string>
-    <string name="url_sync_emp_brands">http://186.67.177.227:2234/emp-brands</string>
-    <string name="url_sync_emp_products">http://186.67.177.227:2234/emp-products</string>
-    <string name="url_sync_formularios">http://186.67.177.227:2234/formularios</string>
-    <string name="url_sync_checklist">http://186.67.177.227:2234/checklist</string>
-    <string name="url_sync_list_options">http://186.67.177.227:2234/list-options</string>
-    <string name="url_sync_documentos">http://186.67.177.227:2234/documentos</string>
-    <string name="url_sync_registros">http://186.67.177.227:2234/registros</string>
-    <string name="url_profile_update">http://186.67.177.227:2234/profile/update</string>
+    <string name="url_signin">http://104.154.36.61:2234/signin</string>
+    <string name="url_sync_area_negocio">http://104.154.36.61:2234/area-negocio</string>
+    <string name="url_sync_emp_company">http://104.154.36.61:2234/emp-company</string>
+    <string name="url_sync_emp_projects">http://104.154.36.61:2234/emp-projects</string>
+    <string name="url_sync_emp_brands">http://104.154.36.61:2234/emp-brands</string>
+    <string name="url_sync_emp_products">http://104.154.36.61:2234/emp-products</string>
+    <string name="url_sync_formularios">http://104.154.36.61:2234/formularios</string>
+    <string name="url_sync_checklist">http://104.154.36.61:2234/checklist</string>
+    <string name="url_sync_list_options">http://104.154.36.61:2234/list-options</string>
+    <string name="url_sync_documentos">http://104.154.36.61:2234/documentos</string>
+    <string name="url_sync_registros">http://104.154.36.61:2234/registros</string>
+    <string name="url_profile_update">http://104.154.36.61:2234/profile/update</string>
     <string name="title_activity_eliminar">ELIMINAR</string>
 </resources>
