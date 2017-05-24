@@ -312,6 +312,7 @@ public class SyncService extends Service {
         builder.setContentText("Subiendo imagen \""+namearr[namearr.length-1]+"\" ("+Math.round(base64file.length()/1024)+" KB).");
         builder.setProgress(0, 0, true);
         startForeground(1, builder.build());
+        //Todo subir archivo
     }
 
     private boolean detectInternet(){
