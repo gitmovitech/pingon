@@ -15,12 +15,25 @@ import android.util.Log;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
+import net.gotev.uploadservice.MultipartUploadRequest;
+import net.gotev.uploadservice.UploadNotificationConfig;
+import net.gotev.uploadservice.UploadService;
+import net.gotev.uploadservice.okhttp.OkHttpStack;
+
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import cl.pingon.Libraries.DrawSign;
+import cl.pingon.Libraries.FileTransfer;
 import cl.pingon.Libraries.RESTService;
 import cl.pingon.SQLite.TblDocumentoDefinition;
 import cl.pingon.SQLite.TblDocumentoHelper;
@@ -42,6 +55,7 @@ public class SyncService extends Service {
     RESTService REST;
     String titulo;
     String subtitulo;
+    Context context;
 
     TblDocumentoHelper Documento;
     TblFormulariosHelper Formularios;
@@ -53,10 +67,15 @@ public class SyncService extends Service {
     @Override
     public void onCreate() {
 
+        UploadService.NAMESPACE = BuildConfig.APPLICATION_ID;
+        UploadService.HTTP_STACK = new OkHttpStack();
+
         REST = new RESTService(getApplicationContext());
 
         session = getSharedPreferences("session", this.MODE_PRIVATE);
         ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
+
+        context = this;
 
         Documento = new TblDocumentoHelper(this);
         Formularios = new TblFormulariosHelper(this);
@@ -69,6 +88,19 @@ public class SyncService extends Service {
                 }
             }
         },0,60000);
+    }
+
+    private void uploadMultipart(String url, String filepath, String filename) {
+        try {
+            new MultipartUploadRequest(context, url)
+                    // starting from 3.1+, you can also use content:// URI string instead of absolute file
+                    .addFileToUpload(filepath, filename)
+                    .setNotificationConfig(new UploadNotificationConfig())
+                    .setMaxRetries(5)
+                    .startUpload();
+        } catch (Exception exc) {
+            Log.e("AndroidUploadService", exc.getMessage(), exc);
+        }
     }
 
     @Override
@@ -101,13 +133,13 @@ public class SyncService extends Service {
                 e.printStackTrace();
             }
 
-            //if(detectInternet()){
+            if(detectInternet()){
                 while(c.moveToNext()){
                     startSync(c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.ID)));
                 }
-            /*} else {
+            } else {
                 Processing = 0;
-            }*/
+            }
         } else {
             Processing = 0;
         }
@@ -229,6 +261,7 @@ public class SyncService extends Service {
                 params.put(TblRegistroDefinition.Entry.FRM_ID, cr.getInt(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.FRM_ID)));
                 params.put(TblRegistroDefinition.Entry.REG_TIPO, cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)));
                 if(cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).contains("foto")){
+                    Log.d("UPLOADING", "IMAGE");
                     uploadImage(cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)), cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
                 } else {
                     params.put(TblRegistroDefinition.Entry.REG_VALOR, cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
@@ -266,39 +299,11 @@ public class SyncService extends Service {
 
 
         } else {
+            Log.d("REGISTRO", "ENVIADO");
             cr.close();
             stopForeground(true);
         }
 
-
-        /*while(cr.moveToNext()){
-
-            sync_registros.addData(cr);
-            sync_registros.Post(new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    builder.setProgress(cr.getCount(),contador, false);
-                    startForeground(1, builder.build());
-                    contador++;
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    //TODO trabajar en respuesta de registro
-                }
-            });
-
-
-            //sync_informes.SyncData(cr);
-
-            Log.d("SYNCING", ":"+cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.ID)));
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }*/
-        //stopForeground(true);
     }
 
     private String imagefileToBase64(String path){
@@ -312,7 +317,7 @@ public class SyncService extends Service {
         builder.setContentText("Subiendo imagen \""+namearr[namearr.length-1]+"\" ("+Math.round(base64file.length()/1024)+" KB).");
         builder.setProgress(0, 0, true);
         startForeground(1, builder.build());
-        //Todo subir archivo
+        uploadMultipart(getResources().getString(R.string.url_sync_upload_file), path, "test.jpg");
     }
 
     private boolean detectInternet(){

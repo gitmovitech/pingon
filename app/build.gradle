@@ -25,6 +25,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile files('libs/droidText.0.4.jar')
+    compile 'net.gotev:uploadservice:3.2.4'
+    compile 'net.gotev:uploadservice-okhttp:3.2.4'
     compile 'com.mcxiaoke.volley:library:1.0.+'
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.android.support:design:25.2.0'
