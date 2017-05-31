@@ -1,6 +1,7 @@
 package cl.pingon;
 
 import android.app.Service;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -245,7 +246,7 @@ public class SyncService extends Service {
         if(cr.getCount() > 0){
             builder.setProgress(cr.getCount(),contador, false);
             startForeground(1, builder.build());
-            subirRegistro(cr, sync_registros, 0, DOC_ID);
+            subirRegistro(cr, sync_registros, 0, DOC_ID, local_doc_id);
         } else {
             stopForeground(true);
             cr.close();
@@ -259,7 +260,7 @@ public class SyncService extends Service {
      * @param sync_registros
      */
     Integer registroPosition = 0;
-    private void subirRegistro(final Cursor cr, final SyncRegistros sync_registros, Integer index, final Integer DOC_ID){
+    private void subirRegistro(final Cursor cr, final SyncRegistros sync_registros, Integer index, final Integer DOC_ID, final Integer local_doc_id){
 
         registroPosition = index;
         if(registroPosition < cr.getCount()){
@@ -294,7 +295,7 @@ public class SyncService extends Service {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    subirRegistro(cr, sync_registros, registroPosition, DOC_ID);
+                                    subirRegistro(cr, sync_registros, registroPosition, DOC_ID, local_doc_id);
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -316,11 +317,24 @@ public class SyncService extends Service {
 
 
         } else {
-            RollbackDataSent();
+            //RollbackDataSent();
+            setSentDocumentAndRegisters(local_doc_id);
             cr.close();
             stopForeground(true);
         }
 
+    }
+
+    /**
+     * SETEA DOCUMENTO COMO ENVIADO EN BASE DE DATOS LOCAL Y MODIFICA DOC_ID CON DATO DESDE EL SERVIDOR
+     * @param local_doc_id
+     */
+    private void setSentDocumentAndRegisters(Integer local_doc_id){
+        TblDocumentoHelper Documento = new TblDocumentoHelper(getApplicationContext());
+        ContentValues values = new ContentValues();
+        values.put(TblDocumentoDefinition.Entry.SEND_STATUS, "SENT");
+        values.put(TblDocumentoDefinition.Entry.DOC_ID, RollbackDocIdInserted);
+        Documento.update(local_doc_id, values);
     }
 
     private void RollbackDataSent(){
@@ -366,6 +380,10 @@ public class SyncService extends Service {
         uploadMultipart(getResources().getString(R.string.url_sync_upload_file), path, "test.jpg");
     }
 
+    /**
+     * DETECCIÓN DE CONEXIÓN A INTERNET
+     * @return
+     */
     private boolean detectInternet(){
         ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
