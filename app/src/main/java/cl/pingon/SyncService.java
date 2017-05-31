@@ -20,6 +20,8 @@ import net.gotev.uploadservice.UploadNotificationConfig;
 import net.gotev.uploadservice.UploadService;
 import net.gotev.uploadservice.okhttp.OkHttpStack;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -27,8 +29,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -57,6 +61,9 @@ public class SyncService extends Service {
     String subtitulo;
     Context context;
 
+    ArrayList<Integer> RollbackRegisteredIds;
+    Integer RollbackDocIdInserted;
+
     TblDocumentoHelper Documento;
     TblFormulariosHelper Formularios;
 
@@ -69,6 +76,9 @@ public class SyncService extends Service {
 
         UploadService.NAMESPACE = BuildConfig.APPLICATION_ID;
         UploadService.HTTP_STACK = new OkHttpStack();
+
+        RollbackRegisteredIds = new ArrayList<>();
+        RollbackDocIdInserted = 0;
 
         REST = new RESTService(getApplicationContext());
 
@@ -127,6 +137,7 @@ public class SyncService extends Service {
                     .setContentText("Preparando información para enviar");
             builder.setProgress(0,0, true);
             startForeground(1, builder.build());
+
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -201,6 +212,7 @@ public class SyncService extends Service {
                     if (response.getString("ok").contains("1")) {
                         JSONObject JSONResponse = response.getJSONObject("response");
                         final Integer DOC_ID = JSONResponse.getInt("id");
+                        RollbackDocIdInserted = DOC_ID;
                         subirRegistros(DOC_ID, local_doc_id);
                     }
                 } catch (Exception e){}
@@ -265,23 +277,28 @@ public class SyncService extends Service {
                     uploadImage(cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)), cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
                 } else {
                     params.put(TblRegistroDefinition.Entry.REG_VALOR, cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
-                    //ENVIO REGISTRO AL SERVIDOR
+
                     REST.post(getResources().getString(R.string.url_sync_registros), params, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
 
-                            Log.d("REGISTRO RESPONSE", ":" + response.toString());
-                            //Todo validar insercion antes de continuar enviando informacion
-
-                            registroPosition++;
-                            builder.setProgress(cr.getCount(), registroPosition, false);
-                            startForeground(1, builder.build());
                             try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e) {
+                                if(response.getString("ok").contains("1")){
+                                    RollbackRegisteredIds.add(response.getJSONObject("response").getInt("id"));
+
+                                    registroPosition++;
+                                    builder.setProgress(cr.getCount(), registroPosition, false);
+                                    startForeground(1, builder.build());
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    subirRegistro(cr, sync_registros, registroPosition, DOC_ID);
+                                }
+                            } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            subirRegistro(cr, sync_registros, registroPosition, DOC_ID);
                         }
                     }, new Response.ErrorListener() {
                         @Override
@@ -299,11 +316,40 @@ public class SyncService extends Service {
 
 
         } else {
-            Log.d("REGISTRO", "ENVIADO");
+            RollbackDataSent();
             cr.close();
             stopForeground(true);
         }
 
+    }
+
+    private void RollbackDataSent(){
+        Log.d("DOC_ID CREADO", ":"+ RollbackDocIdInserted);
+        Log.d("REGISTROS CREADOS", RollbackRegisteredIds.toString());
+        if(RollbackDocIdInserted > 0){
+            if(RollbackRegisteredIds.size() > 0){
+                JSONObject registros = new JSONObject();
+                try {
+                    registros.put("doc_id", RollbackDocIdInserted);
+                    registros.put("ids", RollbackRegisteredIds.toString());
+
+                    REST.post(getResources().getString(R.string.url_rollback_data_sent), registros, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            //Si esta OK, no hay nada que hacer, solo estar feliz porque la wea funcionó xD
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            //SI hay error en el rollback nada se puede hacer por ahora (quizas otro procedimiento de sincronizacion en el futuro)
+                        }
+                    });
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     private String imagefileToBase64(String path){
