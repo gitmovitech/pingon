@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -43,6 +44,8 @@ import com.lowagie.text.pdf.draw.LineSeparator;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -70,6 +73,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
     private String USU_NAME;
     private int LOCAL_DOC_ID;
     ArrayList<ModelKeyPairs> header = new ArrayList<>();
+    private String android_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +88,8 @@ public class PdfPreviewActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
         this.setTitle("Previsualización del informe");
         getSupportActionBar().setSubtitle("Generación del documento PDF");
+
+        android_id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
         ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
@@ -222,6 +228,8 @@ public class PdfPreviewActivity extends AppCompatActivity {
     private void genPDF(final ArrayList<ModelKeyPairs> registros){
         try {
 
+            String[] videofile;
+
             /**
              * OBTENER NOMBRE DEL AREA DE NEGOCIO
              */
@@ -297,6 +305,13 @@ public class PdfPreviewActivity extends AppCompatActivity {
 
                         tabla.addCell(pdf.addCell(registros.get(i).getKey()));
                         tabla.addCell(pdf.addCell(pdf.addPhoto(registros.get(i).getValue(), 250, 250)));
+
+                    } else if(registros.get(i).getType().contains("video")){
+
+                        videofile = registros.get(i).getValue().split("/");
+
+                        tabla.addCell(pdf.addCell(registros.get(i).getKey()));
+                        tabla.addCell(pdf.addCell(getResources().getString(R.string.url_download)+"/video/"+android_id+"/"+LOCAL_DOC_ID+"/"+videofile[videofile.length-1]));
 
                     } else {
                         tabla.addCell(pdf.addCell(registros.get(i).getKey()));

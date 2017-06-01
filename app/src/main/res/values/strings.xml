@@ -45,5 +45,6 @@
     <string name="url_profile_update">http://104.154.36.61:2234/profile/update</string>
     <string name="url_sync_upload_file">http://104.154.36.61:2234/upload</string>
     <string name="url_rollback_data_sent">http://104.154.36.61:2234/rollback-data-sent</string>
+    <string name="url_download">http://104.154.36.61:2234/download</string>
     <string name="title_activity_eliminar">ELIMINAR</string>
 </resources>
