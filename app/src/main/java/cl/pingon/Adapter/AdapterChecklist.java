@@ -27,6 +27,7 @@ import cl.pingon.Fields.FieldsLista;
 import cl.pingon.Fields.FieldsMoneda;
 import cl.pingon.Fields.FieldsNumeroEntero;
 import cl.pingon.Fields.FieldsSistema;
+import cl.pingon.Fields.FieldsSliderbar;
 import cl.pingon.Fields.FieldsText;
 import cl.pingon.Fields.FieldsTitle;
 import cl.pingon.InformesDetallesActivity;
@@ -144,6 +145,10 @@ public abstract class AdapterChecklist extends BaseAdapter {
                 case "lista":
                     FieldsLista FieldsLista = new FieldsLista(context, Inflater, ChecklistFields.get(contador));
                     ViewReturn = FieldsLista.getView();
+                    break;
+                case "slider_bar":
+                    FieldsSliderbar FieldsSliderbar = new FieldsSliderbar(Inflater, ChecklistFields.get(contador));
+                    ViewReturn = FieldsSliderbar.getView();
                     break;
                 case "video":
                     ViewReturn = Video(Inflater, ChecklistFields.get(contador), contador);

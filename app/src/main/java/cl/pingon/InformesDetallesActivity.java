@@ -28,6 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -78,7 +79,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         /**
          * SOLUCION PROBLEMA SCROLL EN EL LISTVIEW
          */
-        ListViewInformesDetalles.setOnTouchListener(new ListView.OnTouchListener() {
+        /*ListViewInformesDetalles.setOnTouchListener(new ListView.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 try {
@@ -92,12 +93,12 @@ public class InformesDetallesActivity extends AppCompatActivity {
                             v.getParent().requestDisallowInterceptTouchEvent(false);
                             break;
                     }
-                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
                     v.onTouchEvent(event);
                 } catch (Exception e){}
                 return true;
             }
-        });
+        });*/
 
         /**
          * CARGAR LOS CHECKLIST
@@ -184,6 +185,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         EditText EditText;
         Spinner Spinner;
         RadioButton RadioButton;
+        SeekBar SeekBar;
         String MessageErrors = "";
         int MessageCount = 1;
 
@@ -295,6 +297,13 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         } else {
                             data.get(x).setValue(EditText.getText().toString());
                         }
+                    } catch(Exception e){}
+                    break;
+                case "slider_bar":
+                    try {
+                        WidgetView = data.get(x).getView();
+                        SeekBar = (SeekBar) WidgetView.findViewById(R.id.seekBar);
+                        data.get(x).setValue(String.valueOf(SeekBar.getProgress()));
                     } catch(Exception e){}
                     break;
                 case "etiqueta":
