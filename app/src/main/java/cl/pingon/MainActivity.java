@@ -37,6 +37,7 @@ import cl.pingon.SQLite.TblFormulariosHelper;
 import cl.pingon.Sync.SyncChecklist;
 import cl.pingon.Sync.SyncFormularios;
 import cl.pingon.Sync.SyncListOptions;
+import cl.pingon.Sync.SyncProjects;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -48,21 +49,18 @@ public class MainActivity extends AppCompatActivity {
     AlertDialog.Builder alert;
 
     TblEmpCompanyHelper EmpCompany;
-    TblEmpProjectsHelper EmpProjects;
     TblEmpBrandsHelper EmpBrands;
     TblEmpProductsHelper EmpProducts;
-    TblFormulariosHelper Formularios;
 
     int Syncronized = 0;
     private Thread SyncEmpCompanyThread;
-    private Thread SyncEmpProjectsThread;
     private Thread SyncEmpBrandsThread;
     private Thread SyncEmpProductsThread;
-    private Thread SyncFormulariosThread;
 
     String ChecklistUrl;
     String ListOptionsUrl;
     String FormulariosUrl;
+    String ProjectsUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,29 +76,21 @@ public class MainActivity extends AppCompatActivity {
 
         IntentBuzon = new Intent(this, BuzonActivity.class);
 
-        /**
-         * UNIT TEST
-         *
-        Intent IntentInformes = new Intent(this, InformesActivity.class);
-        IntentInformes.putExtra("DOC_EXT_ID_CLIENTE", 308);
-        IntentInformes.putExtra("DOC_EXT_NOMBRE_CLIENTE", "Renta Equipos Simunovic SPA");
-        IntentInformes.putExtra("DOC_EXT_ID_PROYECTO", 222);
-        IntentInformes.putExtra("DOC_EXT_OBRA", "Simunovic SPA");
-        IntentInformes.putExtra("DOC_EXT_EQUIPO", "J 50.10");
-        IntentInformes.putExtra("DOC_EXT_MARCA_EQUIPO", "Jaso");
-        IntentInformes.putExtra("DOC_EXT_NUMERO_SERIE", "1017");
-        startActivity(IntentInformes); finish();*/
-
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
         REST = new RESTService(this);
         FormulariosUrl = getResources().getString(R.string.url_sync_formularios).toString()+"/"+session.getString("token","");
         ChecklistUrl = getResources().getString(R.string.url_sync_checklist).toString()+"/"+session.getString("token","");
         ListOptionsUrl = getResources().getString(R.string.url_sync_list_options).toString()+"/"+session.getString("token","");
+        ProjectsUrl = getResources().getString(R.string.url_sync_emp_projects).toString()+"/"+session.getString("token","");
+
 
         if(session.getString("token","") != "") {
 
             SyncEmpCompany();
-            SyncEmpProjects();
+
+            SyncProjects Projects = new SyncProjects(this, this, ProjectsUrl);
+            Projects.Sync();
+
             SyncEmpBrands();
             SyncEmpProducts();
 
@@ -209,102 +199,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 CheckErrorToExit(CursorEmpCompany, "Ha habido un error de sincronización con el servidor (EMP COMPANY). Si el problema persiste por favor contáctenos.");
-            }
-        }, headers);
-
-    }
-
-
-    /**
-     * SINCRONIZACION DE PROYECTOS
-     */
-    private void SyncEmpProjects(){
-        EmpProjects = new TblEmpProjectsHelper(this);
-        final Cursor CursorEmpProjects = EmpProjects.getAll();
-        HashMap<String, String> headers = new HashMap<>();
-        String url = getResources().getString(R.string.url_sync_emp_projects).toString()+"/"+session.getString("token","");
-
-        REST.get(url, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-
-                final JSONObject ResponseEmpProjects = response;
-                SyncEmpProjectsThread = new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            try {
-                                if(ResponseEmpProjects.getInt("ok") == 1){
-
-                                    JSONArray data = (JSONArray) ResponseEmpProjects.get("data");
-                                    JSONObject item;
-                                    Integer ID = null;
-                                    String NAME = null;
-                                    String COORDINATES = null;
-                                    String ADDRESS = null;
-                                    Integer COMPANY_ID = null;
-                                    Boolean addItem;
-                                    ContentValues values;
-
-                                    for(int i = 0;i < data.length(); i++){
-                                        item = (JSONObject) data.get(i);
-                                        addItem = true;
-                                        while(CursorEmpProjects.moveToNext()) {
-                                            ID = CursorEmpProjects.getInt(CursorEmpProjects.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ID));
-                                            NAME = CursorEmpProjects.getString(CursorEmpProjects.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.NAME));
-                                            COORDINATES = CursorEmpProjects.getString(CursorEmpProjects.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COORDINATES));
-                                            ADDRESS = CursorEmpProjects.getString(CursorEmpProjects.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ADDRESS));
-                                            COMPANY_ID = CursorEmpProjects.getInt(CursorEmpProjects.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COMPANY_ID));
-                                            if(ID == item.getInt(TblEmpProjectsDefinition.Entry.ID)){
-                                                addItem = false;
-
-                                                values = new ContentValues();
-                                                if(NAME != item.getString(TblEmpProjectsDefinition.Entry.NAME)){
-                                                    values.put(TblEmpProjectsDefinition.Entry.NAME, item.getString(TblEmpProjectsDefinition.Entry.NAME));
-                                                }
-                                                if(COORDINATES != item.getString(TblEmpProjectsDefinition.Entry.COORDINATES)){
-                                                    values.put(TblEmpProjectsDefinition.Entry.COORDINATES, item.getString(TblEmpProjectsDefinition.Entry.COORDINATES));
-                                                }
-                                                if(ADDRESS != item.getString(TblEmpProjectsDefinition.Entry.ADDRESS)){
-                                                    values.put(TblEmpProjectsDefinition.Entry.ADDRESS, item.getString(TblEmpProjectsDefinition.Entry.ADDRESS));
-                                                }
-                                                if(COMPANY_ID != item.getInt(TblEmpProjectsDefinition.Entry.COMPANY_ID)){
-                                                    values.put(TblEmpProjectsDefinition.Entry.COMPANY_ID, item.getInt(TblEmpProjectsDefinition.Entry.COMPANY_ID));
-                                                }
-                                                EmpProjects.update(ID, values);
-                                                break;
-                                            }
-                                        }
-                                        if(addItem){
-                                            values = new ContentValues();
-                                            values.put(TblEmpProjectsDefinition.Entry.ID, item.getInt(TblEmpProjectsDefinition.Entry.ID));
-                                            values.put(TblEmpProjectsDefinition.Entry.NAME, item.getString(TblEmpProjectsDefinition.Entry.NAME));
-                                            values.put(TblEmpProjectsDefinition.Entry.COORDINATES, item.getString(TblEmpProjectsDefinition.Entry.COORDINATES));
-                                            values.put(TblEmpProjectsDefinition.Entry.ADDRESS, item.getString(TblEmpProjectsDefinition.Entry.ADDRESS));
-                                            values.put(TblEmpProjectsDefinition.Entry.COMPANY_ID, item.getInt(TblEmpProjectsDefinition.Entry.COMPANY_ID));
-                                            EmpProjects.insert(values);
-                                        }
-                                    }
-                                    CursorEmpProjects.close();
-                                    SyncReady();
-
-                                } else {
-                                    CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
-                            }
-                        } catch (Exception e) {}
-                    }
-                });
-                SyncEmpProjectsThread.start();
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (EMP PROJECTS). Si el problema persiste por favor contáctenos.");
             }
         }, headers);
 
