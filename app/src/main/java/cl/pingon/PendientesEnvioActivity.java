@@ -81,12 +81,24 @@ public class PendientesEnvioActivity extends AppCompatActivity {
         ListViewEnviados.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int p, long id) {
+
+                TblFormulariosHelper Formularios = new TblFormulariosHelper(getApplicationContext());
+                Cursor cursor = Formularios.getByArnId(Integer.parseInt(session.getString("arn_id", "")));
+                cursor.moveToFirst();
+                String ARN_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
+                cursor.close();
+
                 String pdfPath = Environment.getExternalStorageDirectory() + "/Pingon/pdfs/";
-                String pdfFile = pdfPath+ "informe-"+ARN_ID+"-"+USU_ID+"-"+ArrayListadoPendientes.get(p).getLocal_doc_id()+".pdf";
+                String pdfFile = pdfPath + ArrayListadoPendientes.get(p).getLocal_doc_id() + "__";
+                pdfFile += ARN_NOMBRE + " - ";
+                pdfFile += ArrayListadoPendientes.get(p).getCliente() + " - ";
+                pdfFile += ArrayListadoPendientes.get(p).getObra() + " - ";
+                pdfFile += ArrayListadoPendientes.get(p).getEquipo() + ".pdf";
+                Log.d("PDFFILE", pdfFile);
 
                 File file = new File(pdfFile);
                 Intent target = new Intent(Intent.ACTION_VIEW);
-                target.setDataAndType(Uri.fromFile(file),"application/pdf");
+                target.setDataAndType(Uri.fromFile(file), "application/pdf");
                 target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(target);
             }
