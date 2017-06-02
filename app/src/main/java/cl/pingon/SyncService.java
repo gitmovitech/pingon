@@ -17,8 +17,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
+import net.gotev.uploadservice.ServerResponse;
+import net.gotev.uploadservice.UploadInfo;
 import net.gotev.uploadservice.UploadNotificationConfig;
 import net.gotev.uploadservice.UploadService;
+import net.gotev.uploadservice.UploadStatusDelegate;
 import net.gotev.uploadservice.okhttp.OkHttpStack;
 
 import org.json.JSONArray;
@@ -101,18 +104,6 @@ public class SyncService extends Service {
         },0,60000);
     }
 
-    private void uploadMultipart(String url, String filepath, String filename) {
-        try {
-            new MultipartUploadRequest(context, url)
-                    // starting from 3.1+, you can also use content:// URI string instead of absolute file
-                    .addFileToUpload(filepath, filename)
-                    .setNotificationConfig(new UploadNotificationConfig())
-                    .setMaxRetries(5)
-                    .startUpload();
-        } catch (Exception exc) {
-            Log.e("AndroidUploadService", exc.getMessage(), exc);
-        }
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -273,10 +264,60 @@ public class SyncService extends Service {
                 params.put(TblRegistroDefinition.Entry.DOC_ID, DOC_ID);
                 params.put(TblRegistroDefinition.Entry.FRM_ID, cr.getInt(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.FRM_ID)));
                 params.put(TblRegistroDefinition.Entry.REG_TIPO, cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)));
+
                 if(cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).contains("foto")){
-                    Log.d("UPLOADING", "IMAGE");
-                    uploadImage(cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)), cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
+                    uploadImage(cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)), cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)), new UploadStatusDelegate() {
+                        @Override
+                        public void onProgress(Context context, UploadInfo uploadInfo) {
+
+                        }
+
+                        @Override
+                        public void onError(Context context, UploadInfo uploadInfo, Exception exception) {
+
+                        }
+
+                        @Override
+                        public void onCompleted(Context context, UploadInfo uploadInfo, ServerResponse serverResponse) {
+                            registroPosition++;
+                            builder.setProgress(cr.getCount(), registroPosition, false);
+                            startForeground(1, builder.build());
+                            subirRegistro(cr, sync_registros, registroPosition, DOC_ID, local_doc_id);
+                        }
+
+                        @Override
+                        public void onCancelled(Context context, UploadInfo uploadInfo) {
+
+                        }
+                    });
+
+                } else if(cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).contains("video")){
+                    uploadMultipart(getResources().getString(R.string.url_sync_upload_file), cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)), new UploadStatusDelegate() {
+                        @Override
+                        public void onProgress(Context context, UploadInfo uploadInfo) {
+
+                        }
+
+                        @Override
+                        public void onError(Context context, UploadInfo uploadInfo, Exception exception) {
+
+                        }
+
+                        @Override
+                        public void onCompleted(Context context, UploadInfo uploadInfo, ServerResponse serverResponse) {
+                            registroPosition++;
+                            builder.setProgress(cr.getCount(), registroPosition, false);
+                            startForeground(1, builder.build());
+                            subirRegistro(cr, sync_registros, registroPosition, DOC_ID, local_doc_id);
+                        }
+
+                        @Override
+                        public void onCancelled(Context context, UploadInfo uploadInfo) {
+
+                        }
+                    });
                 } else {
+
                     params.put(TblRegistroDefinition.Entry.REG_VALOR, cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
 
                     REST.post(getResources().getString(R.string.url_sync_registros), params, new Response.Listener<JSONObject>() {
@@ -318,7 +359,7 @@ public class SyncService extends Service {
 
         } else {
             //RollbackDataSent();
-            setSentDocumentAndRegisters(local_doc_id);
+            //setSentDocumentAndRegisters(local_doc_id);
             cr.close();
             stopForeground(true);
         }
@@ -337,6 +378,10 @@ public class SyncService extends Service {
         Documento.update(local_doc_id, values);
     }
 
+
+    /**
+     * Deshace inserciones cuando un error ocurre
+     */
     private void RollbackDataSent(){
         Log.d("DOC_ID CREADO", ":"+ RollbackDocIdInserted);
         Log.d("REGISTROS CREADOS", RollbackRegisteredIds.toString());
@@ -366,18 +411,54 @@ public class SyncService extends Service {
         }
     }
 
+
+    /**
+     * Imagen a base64
+     * @param path
+     * @return
+     */
     private String imagefileToBase64(String path){
         DrawSign sign = new DrawSign();
         return sign.base64FromFile(path);
     }
 
-    private void uploadImage(String name, String path){
+
+    /**
+     * Subir imagen
+     * @param name
+     * @param path
+     * @param UploadStatusDelegate
+     */
+    private void uploadImage(String name, String path, UploadStatusDelegate UploadStatusDelegate){
         String base64file = imagefileToBase64(path);
         String[] namearr = name.split("/");
         builder.setContentText("Subiendo imagen \""+namearr[namearr.length-1]+"\" ("+Math.round(base64file.length()/1024)+" KB).");
         builder.setProgress(0, 0, true);
         startForeground(1, builder.build());
-        uploadMultipart(getResources().getString(R.string.url_sync_upload_file), path, "test.jpg");
+        uploadMultipart(getResources().getString(R.string.url_sync_upload_file), path, UploadStatusDelegate);
+    }
+
+
+    /**
+     * Carga de archivos al servidor
+     * @param url
+     * @param filepath
+     * @param UploadStatusDelegate
+     */
+    private void uploadMultipart(String url, String filepath, UploadStatusDelegate UploadStatusDelegate) {
+        UploadNotificationConfig upconfig = new UploadNotificationConfig();
+        upconfig.setTitle(getResources().getString(R.string.loader_files));
+        upconfig.setAutoClearOnSuccess(true);
+        try {
+            MultipartUploadRequest fup = new MultipartUploadRequest(context, url);
+            fup.addFileToUpload(filepath, "file");
+            fup.setNotificationConfig(upconfig);
+            fup.setMaxRetries(5);
+            fup.setDelegate(UploadStatusDelegate);
+            fup.startUpload();
+        } catch (Exception exc) {
+            Log.e("AndroidUploadService", exc.getMessage(), exc);
+        }
     }
 
     /**

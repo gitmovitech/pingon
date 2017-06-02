@@ -2,6 +2,7 @@
     <string name="app_name">Pingon</string>
     <string name="welcome_message">Sincronizando.\n Por favor espere ...</string>
     <string name="pdf_gen_message">Generando PDF.\n Por favor espere ...</string>
+    <string name="loader_files">Pingon Cargador de archivos</string>
     <string name="title_activity_login">Inicio de sesión</string>
 
     <!-- Strings related to login -->
