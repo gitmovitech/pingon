@@ -124,7 +124,7 @@ public class SyncService extends Service {
 
             builder = new NotificationCompat.Builder(getApplicationContext())
                     .setSmallIcon(R.drawable.sync)
-                    .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.icon))
+                    .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.pingon))
                     .setContentTitle("Sincronización")
                     .setContentText("Preparando información para enviar");
             builder.setProgress(0,0, true);
@@ -177,7 +177,7 @@ public class SyncService extends Service {
         builder.setContentText(subtitulo);
         startForeground(1, builder.build());
         try {
-            Thread.sleep(1000);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -266,7 +266,7 @@ public class SyncService extends Service {
                 params.put(TblRegistroDefinition.Entry.REG_TIPO, cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)));
 
                 if(cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).contains("foto")){
-                    uploadImage(cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)), cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)), new UploadStatusDelegate() {
+                    uploadMultipart(getResources().getString(R.string.url_sync_upload_file),cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)), new UploadStatusDelegate() {
                         @Override
                         public void onProgress(Context context, UploadInfo uploadInfo) {
 
@@ -289,7 +289,7 @@ public class SyncService extends Service {
                         public void onCancelled(Context context, UploadInfo uploadInfo) {
 
                         }
-                    });
+                    }, DOC_ID);
 
                 } else if(cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).contains("video")){
                     uploadMultipart(getResources().getString(R.string.url_sync_upload_file), cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)), new UploadStatusDelegate() {
@@ -315,7 +315,7 @@ public class SyncService extends Service {
                         public void onCancelled(Context context, UploadInfo uploadInfo) {
 
                         }
-                    });
+                    }, DOC_ID);
                 } else {
 
                     params.put(TblRegistroDefinition.Entry.REG_VALOR, cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
@@ -358,8 +358,10 @@ public class SyncService extends Service {
 
 
         } else {
+            //Todo, enviar PDF
             //RollbackDataSent();
             //setSentDocumentAndRegisters(local_doc_id);
+            Processing = 0;
             cr.close();
             stopForeground(true);
         }
@@ -424,33 +426,18 @@ public class SyncService extends Service {
 
 
     /**
-     * Subir imagen
-     * @param name
-     * @param path
-     * @param UploadStatusDelegate
-     */
-    private void uploadImage(String name, String path, UploadStatusDelegate UploadStatusDelegate){
-        String base64file = imagefileToBase64(path);
-        String[] namearr = name.split("/");
-        builder.setContentText("Subiendo imagen \""+namearr[namearr.length-1]+"\" ("+Math.round(base64file.length()/1024)+" KB).");
-        builder.setProgress(0, 0, true);
-        startForeground(1, builder.build());
-        uploadMultipart(getResources().getString(R.string.url_sync_upload_file), path, UploadStatusDelegate);
-    }
-
-
-    /**
      * Carga de archivos al servidor
      * @param url
      * @param filepath
      * @param UploadStatusDelegate
      */
-    private void uploadMultipart(String url, String filepath, UploadStatusDelegate UploadStatusDelegate) {
+    private void uploadMultipart(String url, String filepath, UploadStatusDelegate UploadStatusDelegate, Integer doc_id) {
         UploadNotificationConfig upconfig = new UploadNotificationConfig();
         upconfig.setTitle(getResources().getString(R.string.loader_files));
         upconfig.setAutoClearOnSuccess(true);
         try {
             MultipartUploadRequest fup = new MultipartUploadRequest(context, url);
+            fup.addParameter("doc_id", String.valueOf(doc_id));
             fup.addFileToUpload(filepath, "file");
             fup.setNotificationConfig(upconfig);
             fup.setMaxRetries(5);
