@@ -24,25 +24,15 @@ import net.gotev.uploadservice.UploadService;
 import net.gotev.uploadservice.UploadStatusDelegate;
 import net.gotev.uploadservice.okhttp.OkHttpStack;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Array;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import cl.pingon.Libraries.DrawSign;
-import cl.pingon.Libraries.FileTransfer;
 import cl.pingon.Libraries.RESTService;
+import cl.pingon.Model.ModelDocumentos;
 import cl.pingon.SQLite.TblDocumentoDefinition;
 import cl.pingon.SQLite.TblDocumentoHelper;
 import cl.pingon.SQLite.TblFormulariosDefinition;
@@ -54,7 +44,6 @@ import cl.pingon.Sync.SyncRegistros;
 
 public class SyncService extends Service {
 
-    TblDocumentoHelper Documentos;
     Integer Processing = 0;
     SharedPreferences session;
     NotificationCompat.Builder builder;
@@ -71,6 +60,8 @@ public class SyncService extends Service {
     TblDocumentoHelper Documento;
     TblFormulariosHelper Formularios;
 
+    Thread thread;
+
     public SyncService() {
 
     }
@@ -78,30 +69,78 @@ public class SyncService extends Service {
     @Override
     public void onCreate() {
 
-        UploadService.NAMESPACE = BuildConfig.APPLICATION_ID;
-        UploadService.HTTP_STACK = new OkHttpStack();
+        thread = new Thread() {
+            public void run() {
 
-        RollbackRegisteredIds = new ArrayList<>();
-        RollbackDocIdInserted = 0;
+                UploadService.NAMESPACE = BuildConfig.APPLICATION_ID;
+                UploadService.HTTP_STACK = new OkHttpStack();
 
-        REST = new RESTService(getApplicationContext());
+                context = getApplicationContext();
 
-        session = getSharedPreferences("session", this.MODE_PRIVATE);
-        ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
+                RollbackRegisteredIds = new ArrayList<>();
+                RollbackDocIdInserted = 0;
 
-        context = this;
+                REST = new RESTService(getApplicationContext());
 
-        Documento = new TblDocumentoHelper(this);
-        Formularios = new TblFormulariosHelper(this);
+                session = getSharedPreferences("session", context.MODE_PRIVATE);
+                ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
 
-        new Timer().scheduleAtFixedRate(new TimerTask(){
-            @Override
-            public void run(){
-                if(Processing == 0){
-                    Sync();
-                }
+                Documento = new TblDocumentoHelper(context);
+                Formularios = new TblFormulariosHelper(context);
+
+                new Timer().scheduleAtFixedRate(new TimerTask(){
+                    @Override
+                    public void run(){
+                        if(Processing == 0){
+                            Processing = 1;
+                            ArrayList<ModelDocumentos> Documentos = getAllSyncDocumentos();
+                            if(Documentos.size() > 0){
+
+                            } else {
+                                Processing = 0;
+                            }
+                        }
+                    }
+                } ,0 ,60000);
             }
-        },0,60000);
+        };
+        thread.start();
+
+    }
+
+    /**
+     * Obtiene documentos de la base de datos por sincronizar y los guarda en un array
+     * @return
+     */
+    private ArrayList<ModelDocumentos> getAllSyncDocumentos(){
+        TblDocumentoHelper Documentos = new TblDocumentoHelper(context);
+        Cursor c = Documentos.getAllSync();
+        ArrayList<ModelDocumentos> ArrayDocumentos = new ArrayList<>();
+        ModelDocumentos Item;
+
+        if(c.getCount() > 0){
+            while (c.moveToNext()){
+                Item = new ModelDocumentos();
+                Item.setID(c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.ID)));
+                Item.setUSU_ID(c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.USU_ID)));
+                Item.setFRM_ID(c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.FRM_ID)));
+                Item.setDOC_FECHA_CREACION(c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_FECHA_CREACION)));
+                Item.setDOC_FECHA_MODIFICACION(c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_FECHA_MODIFICACION)));
+                Item.setDOC_EXT_EQUIPO(c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO)));
+                Item.setDOC_EXT_MARCA_EQUIPO(c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_MARCA_EQUIPO)));
+                Item.setDOC_EXT_NUMERO_SERIE(c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE)));
+                Item.setDOC_EXT_NOMBRE_CLIENTE(c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE)));
+                Item.setDOC_EXT_OBRA(c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_OBRA)));
+                Item.setDOC_EXT_ID_CLIENTE(c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE)));
+                Item.setDOC_EXT_ID_PROYECTO(c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO)));
+                ArrayDocumentos.add(Item);
+            }
+        } else {
+            Processing = 0;
+        }
+        c.close();
+
+        return ArrayDocumentos;
     }
 
 
@@ -118,8 +157,7 @@ public class SyncService extends Service {
      */
     private void Sync(){
         Processing = 1;
-        Documentos = new TblDocumentoHelper(this);
-        Cursor c = Documentos.getAllSync();
+        Cursor c = Documento.getAllSync();
         if(c.getCount() > 0){
 
             builder = new NotificationCompat.Builder(getApplicationContext())
@@ -131,22 +169,22 @@ public class SyncService extends Service {
             startForeground(1, builder.build());
 
             try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            if(detectInternet()){
+                thread.sleep(1000);
+                //Todo mejorar esto si hay multiples documentos
                 while(c.moveToNext()){
                     startSync(c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.ID)));
                 }
-            } else {
+            } catch (InterruptedException e) {
+                e.printStackTrace();
                 Processing = 0;
+                c.close();
             }
+
         } else {
             Processing = 0;
+            c.close();
         }
-        c.close();
+
     }
 
     /**
@@ -176,13 +214,16 @@ public class SyncService extends Service {
         builder.setContentTitle(titulo);
         builder.setContentText(subtitulo);
         startForeground(1, builder.build());
+
         try {
-            Thread.sleep(100);
+            thread.sleep(100);
+            if(Processing > 0) {
+                subirDocumento(local_doc_id);
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
+            Processing = 0;
         }
-
-        subirDocumento(local_doc_id);
 
     }
 
@@ -192,32 +233,43 @@ public class SyncService extends Service {
      */
     private void subirDocumento(final Integer local_doc_id){
 
-        TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
-        String url_documentos = getResources().getString(R.string.url_sync_documentos);
-        SyncDocumentos sync_documentos = new SyncDocumentos(this, url_documentos, local_doc_id);
-        sync_documentos.addToken(session.getString("token", ""));
-        sync_documentos.AddData(Documentos.getById(local_doc_id));
-        sync_documentos.Post(new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    if (response.getString("ok").contains("1")) {
-                        JSONObject JSONResponse = response.getJSONObject("response");
-                        final Integer DOC_ID = JSONResponse.getInt("id");
-                        RollbackDocIdInserted = DOC_ID;
-                        subirRegistros(DOC_ID, local_doc_id);
-                    }
-                } catch (Exception e){}
+        if(detectInternet()){
 
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("ERROR VOLLEY", error.toString());
-                stopForeground(true);
-                Processing = 0;
-            }
-        });
+            TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
+            String url_documentos = getResources().getString(R.string.url_sync_documentos);
+            SyncDocumentos sync_documentos = new SyncDocumentos(this, url_documentos, local_doc_id);
+            sync_documentos.addToken(session.getString("token", ""));
+            sync_documentos.AddData(Documentos.getById(local_doc_id));
+            sync_documentos.Post(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        if (response.getString("ok").contains("1")) {
+                            JSONObject JSONResponse = response.getJSONObject("response");
+                            final Integer DOC_ID = JSONResponse.getInt("id");
+                            RollbackDocIdInserted = DOC_ID;
+                            subirRegistros(DOC_ID, local_doc_id);
+                        }
+                    } catch (Exception e){
+                        stopForeground(true);
+                        Processing = 0;
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("ERROR VOLLEY", error.toString());
+                    stopForeground(true);
+                    Processing = 0;
+                }
+            });
+
+        } else {
+            stopForeground(true);
+            Processing = 0;
+        }
+
     }
 
     /**
@@ -227,20 +279,29 @@ public class SyncService extends Service {
      */
     private void subirRegistros(Integer DOC_ID, Integer local_doc_id){
 
-        String url_registros = getResources().getString(R.string.url_sync_registros);
-        SyncRegistros sync_registros = new SyncRegistros(getApplicationContext(), url_registros, local_doc_id, DOC_ID);
-        sync_registros.addToken(session.getString("token", ""));
+        if(detectInternet()) {
 
-        TblRegistroHelper Registros = new TblRegistroHelper(getApplicationContext());
-        final Cursor cr = Registros.getSyncByLocalDocId(local_doc_id);
-        final Integer contador = 0;
-        if(cr.getCount() > 0){
-            builder.setProgress(cr.getCount(),contador, false);
-            startForeground(1, builder.build());
-            subirRegistro(cr, sync_registros, 0, DOC_ID, local_doc_id);
+            String url_registros = getResources().getString(R.string.url_sync_registros);
+            SyncRegistros sync_registros = new SyncRegistros(getApplicationContext(), url_registros, local_doc_id, DOC_ID);
+            sync_registros.addToken(session.getString("token", ""));
+
+            TblRegistroHelper Registros = new TblRegistroHelper(getApplicationContext());
+            final Cursor cr = Registros.getSyncByLocalDocId(local_doc_id);
+            final Integer contador = 0;
+            if (cr.getCount() > 0) {
+                builder.setProgress(cr.getCount(), contador, false);
+                startForeground(1, builder.build());
+                subirRegistro(cr, sync_registros, 0, DOC_ID, local_doc_id);
+            } else {
+                stopForeground(true);
+                cr.close();
+                Processing = 0;
+            }
+
         } else {
             stopForeground(true);
-            cr.close();
+            Processing = 0;
+            //Todo rollback
         }
 
     }
@@ -415,17 +476,6 @@ public class SyncService extends Service {
 
 
     /**
-     * Imagen a base64
-     * @param path
-     * @return
-     */
-    private String imagefileToBase64(String path){
-        DrawSign sign = new DrawSign();
-        return sign.base64FromFile(path);
-    }
-
-
-    /**
      * Carga de archivos al servidor
      * @param url
      * @param filepath
@@ -439,12 +489,16 @@ public class SyncService extends Service {
             MultipartUploadRequest fup = new MultipartUploadRequest(context, url);
             fup.addParameter("doc_id", String.valueOf(doc_id));
             fup.addFileToUpload(filepath, "file");
+            fup.addParameter("token", session.getString("token", ""));
             fup.setNotificationConfig(upconfig);
             fup.setMaxRetries(5);
             fup.setDelegate(UploadStatusDelegate);
             fup.startUpload();
         } catch (Exception exc) {
             Log.e("AndroidUploadService", exc.getMessage(), exc);
+            //Todo rollback
+            Processing = 0;
+            stopForeground(true);
         }
     }
 
@@ -458,6 +512,7 @@ public class SyncService extends Service {
         if(activeNetwork != null){
             return activeNetwork.isConnected();
         } else{
+            Processing = 0;
             return false;
         }
     }
