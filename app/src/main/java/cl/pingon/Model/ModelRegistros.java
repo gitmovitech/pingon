@@ -7,6 +7,7 @@ public class ModelRegistros {
     Integer CAM_ID;
     Integer FRM_ID;
     Integer REG_ID;
+    Integer CHK_ID;
     String REG_TIPO;
     String REG_VALOR;
     String SEND_STATUS;
@@ -14,6 +15,14 @@ public class ModelRegistros {
 
     public ModelRegistros(){
 
+    }
+
+    public Integer getCHK_ID() {
+        return CHK_ID;
+    }
+
+    public void setCHK_ID(Integer CHK_ID) {
+        this.CHK_ID = CHK_ID;
     }
 
     public void setDOC_ID(Integer DOC_ID) {

@@ -24,6 +24,7 @@ import net.gotev.uploadservice.UploadService;
 import net.gotev.uploadservice.UploadStatusDelegate;
 import net.gotev.uploadservice.okhttp.OkHttpStack;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,6 +34,7 @@ import java.util.TimerTask;
 
 import cl.pingon.Libraries.RESTService;
 import cl.pingon.Model.ModelDocumentos;
+import cl.pingon.Model.ModelRegistros;
 import cl.pingon.SQLite.TblDocumentoDefinition;
 import cl.pingon.SQLite.TblDocumentoHelper;
 import cl.pingon.SQLite.TblFormulariosDefinition;
@@ -40,6 +42,7 @@ import cl.pingon.SQLite.TblFormulariosHelper;
 import cl.pingon.SQLite.TblRegistroDefinition;
 import cl.pingon.SQLite.TblRegistroHelper;
 import cl.pingon.Sync.SyncDocumentos;
+import cl.pingon.Sync.SyncDocumentosRegistros;
 import cl.pingon.Sync.SyncRegistros;
 
 public class SyncService extends Service {
@@ -91,13 +94,35 @@ public class SyncService extends Service {
                 new Timer().scheduleAtFixedRate(new TimerTask(){
                     @Override
                     public void run(){
-                        if(Processing == 0){
-                            Processing = 1;
-                            ArrayList<ModelDocumentos> Documentos = getAllSyncDocumentos();
-                            if(Documentos.size() > 0){
+                        if(Processing == 0) {
 
+                            Processing = 1;
+
+                            //Notificacion por pantalla de proceso
+                            builder = new NotificationCompat.Builder(getApplicationContext())
+                                    .setSmallIcon(R.drawable.sync)
+                                    .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.pingon))
+                                    .setContentTitle("Sincronizando")
+                                    .setContentText("Cargando documentos y registros");
+                            builder.setProgress(0,0, true);
+                            startForeground(1, builder.build());
+
+                            //Obtener documentos de base de datos y guardar en arraylist
+                            ArrayList<ModelDocumentos> Documentos = getAllSyncDocumentos();
+                            ArrayList<ModelRegistros> Registros = new ArrayList<>();
+                            if(Documentos.size() > 0){
+                                for(int x = 0; x < Documentos.size(); x++){
+                                    Registros = getAllSyncRegistros(Registros, Documentos.get(x).getID());
+                                }
+                                if(Registros.size() > 0) {
+                                    subirDocumentosRegistros(Documentos, Registros);
+                                } else {
+                                    Processing = 0;
+                                    stopForeground(true);
+                                }
                             } else {
                                 Processing = 0;
+                                stopForeground(true);
                             }
                         }
                     }
@@ -108,8 +133,122 @@ public class SyncService extends Service {
 
     }
 
+    private void subirDocumentosRegistros(ArrayList<ModelDocumentos> Documentos, ArrayList<ModelRegistros> Registros){
+
+        Integer local_doc_id;
+        JSONObject JSONRegistros;
+        JSONArray JSONArrayRegistros;
+        JSONObject JSONDocumentos;
+        JSONArray JSONArrayDocumentos = new JSONArray();
+
+        for(int d = 0; d < Documentos.size(); d++){
+            local_doc_id = Documentos.get(d).getID();
+            JSONArrayRegistros = new JSONArray();
+            for(int r = 0; r < Registros.size(); r++){
+                if(Registros.get(r).getLOCAL_DOC_ID().equals(local_doc_id)) {
+                    JSONRegistros = new JSONObject();
+                    try {
+                        JSONRegistros.put(TblRegistroDefinition.Entry.REG_ID, Registros.get(r).getREG_ID());
+                        JSONRegistros.put(TblRegistroDefinition.Entry.LOCAL_DOC_ID, Registros.get(r).getLOCAL_DOC_ID());
+                        JSONRegistros.put(TblRegistroDefinition.Entry.CAM_ID, Registros.get(r).getCAM_ID());
+                        JSONRegistros.put(TblRegistroDefinition.Entry.FRM_ID, Registros.get(r).getFRM_ID());
+                        JSONRegistros.put(TblRegistroDefinition.Entry.CHK_ID, Registros.get(r).getCHK_ID());
+                        JSONRegistros.put(TblRegistroDefinition.Entry.REG_VALOR, Registros.get(r).getREG_VALOR());
+                        JSONArrayRegistros.put(JSONRegistros);
+                    } catch (JSONException e) {
+                        Processing = 0;
+                        stopForeground(true);
+                    }
+                }
+            }
+
+            JSONDocumentos = new JSONObject();
+            try {
+                JSONDocumentos.put(TblDocumentoDefinition.Entry.ID, local_doc_id);
+                JSONDocumentos.put(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO, Documentos.get(d).getDOC_EXT_EQUIPO());
+                JSONDocumentos.put(TblDocumentoDefinition.Entry.USU_ID, Documentos.get(d).getUSU_ID());
+                JSONDocumentos.put(TblDocumentoDefinition.Entry.FRM_ID, Documentos.get(d).getFRM_ID());
+                JSONDocumentos.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE, Documentos.get(d).getDOC_EXT_ID_CLIENTE());
+                JSONDocumentos.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO, Documentos.get(d).getDOC_EXT_ID_PROYECTO());
+                JSONDocumentos.put(TblDocumentoDefinition.Entry.DOC_EXT_MARCA_EQUIPO, Documentos.get(d).getDOC_EXT_MARCA_EQUIPO());
+                JSONDocumentos.put(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE, Documentos.get(d).getDOC_EXT_NOMBRE_CLIENTE());
+                JSONDocumentos.put(TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE, Documentos.get(d).getDOC_EXT_NUMERO_SERIE());
+                JSONDocumentos.put(TblDocumentoDefinition.Entry.DOC_EXT_OBRA, Documentos.get(d).getDOC_EXT_OBRA());
+                JSONDocumentos.put(TblDocumentoDefinition.Entry.DOC_FECHA_CREACION, Documentos.get(d).getDOC_FECHA_CREACION());
+                JSONDocumentos.put(TblDocumentoDefinition.Entry.DOC_FECHA_MODIFICACION, Documentos.get(d).getDOC_FECHA_MODIFICACION());
+                JSONDocumentos.put("REGISTROS", JSONArrayRegistros);
+                JSONArrayDocumentos.put(JSONDocumentos);
+            } catch(JSONException e){
+                Processing = 0;
+                stopForeground(true);
+            }
+        }
+
+        if(detectInternet()){
+
+            String url_documentos = getResources().getString(R.string.url_sync_upload_data);
+            SyncDocumentosRegistros DocumentosRegistros = new SyncDocumentosRegistros(context, url_documentos);
+            DocumentosRegistros.addToken(session.getString("token", ""));
+            DocumentosRegistros.addData(JSONArrayDocumentos);
+            DocumentosRegistros.post(new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try{
+                        if(response.getString("ok").contains("1")){
+                            //Todo guardar respuesta en base de datos y cambiar status
+                        }
+                    } catch (JSONException e){
+                        Processing = 0;
+                        stopForeground(true);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Processing = 0;
+                    stopForeground(true);
+                }
+            });
+        } else {
+            Processing = 0;
+            stopForeground(true);
+        }
+
+    }
+
     /**
-     * Obtiene documentos de la base de datos por sincronizar y los guarda en un array
+     * Obtiene registros asociados a los local_id y se guardan en un arraylist
+     * @param local_doc_id
+     * @return
+     */
+    private ArrayList<ModelRegistros> getAllSyncRegistros(ArrayList<ModelRegistros> ArrayRegistros, Integer local_doc_id){
+        TblRegistroHelper Registros = new TblRegistroHelper(context);
+        Cursor c = Registros.getByLocalDocId(local_doc_id, "SYNC");
+        ModelRegistros Item;
+
+        if(c.getCount() > 0){
+            while(c.moveToNext()){
+                Item = new ModelRegistros();
+                Item.setREG_ID(c.getInt(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.ID)));
+                Item.setLOCAL_DOC_ID(c.getInt(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.LOCAL_DOC_ID)));
+                Item.setCAM_ID(c.getInt(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID)));
+                Item.setFRM_ID(c.getInt(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.FRM_ID)));
+                Item.setCHK_ID(c.getInt(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CHK_ID)));
+                Item.setREG_TIPO(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)));
+                Item.setREG_VALOR(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
+                Item.setSEND_STATUS(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.SEND_STATUS)));
+                ArrayRegistros.add(Item);
+            }
+        } else {
+            Processing = 0;
+        }
+        c.close();
+
+        return ArrayRegistros;
+    }
+
+    /**
+     * Obtiene documentos de la base de datos por sincronizar y los guarda en un arraylist
      * @return
      */
     private ArrayList<ModelDocumentos> getAllSyncDocumentos(){
@@ -152,125 +291,6 @@ public class SyncService extends Service {
     @Override
     public void onDestroy() {}
 
-    /**
-     * Proceso de sincronizacion iniciado
-     */
-    private void Sync(){
-        Processing = 1;
-        Cursor c = Documento.getAllSync();
-        if(c.getCount() > 0){
-
-            builder = new NotificationCompat.Builder(getApplicationContext())
-                    .setSmallIcon(R.drawable.sync)
-                    .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.pingon))
-                    .setContentTitle("Sincronización")
-                    .setContentText("Preparando información para enviar");
-            builder.setProgress(0,0, true);
-            startForeground(1, builder.build());
-
-            try {
-                thread.sleep(1000);
-                //Todo mejorar esto si hay multiples documentos
-                while(c.moveToNext()){
-                    startSync(c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.ID)));
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                Processing = 0;
-                c.close();
-            }
-
-        } else {
-            Processing = 0;
-            c.close();
-        }
-
-    }
-
-    /**
-     * Sincronizacion por cada documento encontrado en la base de datos
-     * @param local_doc_id
-     */
-    private void startSync(Integer local_doc_id){
-        Cursor cd = Documento.getById(local_doc_id);
-        cd.moveToFirst();
-        FMR_ID = cd.getInt(cd.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.FRM_ID));
-
-        Cursor cf = Formularios.getByArnIdFrmId(ARN_ID, FMR_ID);
-        cf.moveToFirst();
-
-        titulo = cf.getString(cf.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
-        titulo += " / ";
-        titulo += cf.getString(cf.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
-
-        subtitulo = cd.getString(cd.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE));
-        subtitulo += " / ";
-        subtitulo +=  cd.getString(cd.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_OBRA));
-
-        cd.close();
-        cf.close();
-
-
-        builder.setContentTitle(titulo);
-        builder.setContentText(subtitulo);
-        startForeground(1, builder.build());
-
-        try {
-            thread.sleep(100);
-            if(Processing > 0) {
-                subirDocumento(local_doc_id);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            Processing = 0;
-        }
-
-    }
-
-    /**
-     * Subida al servidor de un documento
-     * @param local_doc_id
-     */
-    private void subirDocumento(final Integer local_doc_id){
-
-        if(detectInternet()){
-
-            TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
-            String url_documentos = getResources().getString(R.string.url_sync_documentos);
-            SyncDocumentos sync_documentos = new SyncDocumentos(this, url_documentos, local_doc_id);
-            sync_documentos.addToken(session.getString("token", ""));
-            sync_documentos.AddData(Documentos.getById(local_doc_id));
-            sync_documentos.Post(new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        if (response.getString("ok").contains("1")) {
-                            JSONObject JSONResponse = response.getJSONObject("response");
-                            final Integer DOC_ID = JSONResponse.getInt("id");
-                            RollbackDocIdInserted = DOC_ID;
-                            subirRegistros(DOC_ID, local_doc_id);
-                        }
-                    } catch (Exception e){
-                        stopForeground(true);
-                        Processing = 0;
-                    }
-
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.d("ERROR VOLLEY", error.toString());
-                    stopForeground(true);
-                    Processing = 0;
-                }
-            });
-
-        } else {
-            stopForeground(true);
-            Processing = 0;
-        }
-
-    }
 
     /**
      * Recopilación de registros para sincronizar con el servidor
