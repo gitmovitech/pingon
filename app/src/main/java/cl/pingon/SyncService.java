@@ -37,11 +37,9 @@ import cl.pingon.Model.ModelDocumentos;
 import cl.pingon.Model.ModelRegistros;
 import cl.pingon.SQLite.TblDocumentoDefinition;
 import cl.pingon.SQLite.TblDocumentoHelper;
-import cl.pingon.SQLite.TblFormulariosDefinition;
 import cl.pingon.SQLite.TblFormulariosHelper;
 import cl.pingon.SQLite.TblRegistroDefinition;
 import cl.pingon.SQLite.TblRegistroHelper;
-import cl.pingon.Sync.SyncDocumentos;
 import cl.pingon.Sync.SyncDocumentosRegistros;
 import cl.pingon.Sync.SyncRegistros;
 
@@ -133,13 +131,19 @@ public class SyncService extends Service {
 
     }
 
+    /**
+     * Obtiene informacion de documentos y registros, insertando y recuperando doc_id para insertar cada registro.
+     * @param Documentos
+     * @param Registros
+     */
     private void subirDocumentosRegistros(ArrayList<ModelDocumentos> Documentos, ArrayList<ModelRegistros> Registros){
 
         Integer local_doc_id;
         JSONObject JSONRegistros;
         JSONArray JSONArrayRegistros;
         JSONObject JSONDocumentos;
-        JSONArray JSONArrayDocumentos = new JSONArray();
+        final ArrayList<ModelRegistros> Uploads = new ArrayList<>();
+        final JSONArray JSONArrayDocumentos = new JSONArray();
 
         for(int d = 0; d < Documentos.size(); d++){
             local_doc_id = Documentos.get(d).getID();
@@ -153,6 +157,11 @@ public class SyncService extends Service {
                         JSONRegistros.put(TblRegistroDefinition.Entry.CAM_ID, Registros.get(r).getCAM_ID());
                         JSONRegistros.put(TblRegistroDefinition.Entry.FRM_ID, Registros.get(r).getFRM_ID());
                         JSONRegistros.put(TblRegistroDefinition.Entry.CHK_ID, Registros.get(r).getCHK_ID());
+                        if(Registros.get(r).getREG_TIPO().contains("foto") || Registros.get(r).getREG_TIPO().contains("video")){
+                            String[] arr = Registros.get(r).getREG_VALOR().split("/");
+                            Registros.get(r).setREG_VALOR(arr[arr.length-1]);
+                            Uploads.add(Registros.get(r));
+                        }
                         JSONRegistros.put(TblRegistroDefinition.Entry.REG_VALOR, Registros.get(r).getREG_VALOR());
                         JSONArrayRegistros.put(JSONRegistros);
                     } catch (JSONException e) {
@@ -194,8 +203,17 @@ public class SyncService extends Service {
                 @Override
                 public void onResponse(JSONObject response) {
                     try{
+
                         if(response.getString("ok").contains("1")){
-                            //Todo guardar respuesta en base de datos y cambiar status
+                            UploadFiles(response.getJSONArray("docs_id"), Uploads, 0, new Callback(){
+                                @Override
+                                public void success(){
+                                    Log.d("WENA", "NATYLLA");
+                                }
+                            });
+                        } else {
+                            Processing = 0;
+                            stopForeground(true);
                         }
                     } catch (JSONException e){
                         Processing = 0;
@@ -214,6 +232,39 @@ public class SyncService extends Service {
             stopForeground(true);
         }
 
+    }
+
+    private void UploadFiles(JSONArray docs_id, ArrayList<ModelRegistros> Uploads, int i, Callback Callback){
+        try{
+            //Log.d("UPLOAD FILES", Uploads.get(i).getREG_VALOR());
+            //TODO revisar si el guardado de imagenes deberia estar en una subcarpeta para evitar problemas de nombres
+            getDocId(Uploads.get(i), docs_id, 0);
+            //UploadFiles(docs_id, Uploads, i+1, UploadFilesCallback);
+        } catch (Exception e){
+            Callback.success();
+        }
+    }
+
+    private void getDocId(ModelRegistros registro, JSONArray docs_id, int i){
+        try{
+            JSONObject data = (JSONObject) docs_id.get(i);
+            if(data.getString("local_doc_id").contains(registro.getLOCAL_DOC_ID().toString())){
+                Log.d("DOC_ID",  data.getString("doc_id"));
+                //TODO Nuevo DOC_ID desde la base de datos del servidor, ocupar para reubicar imagen
+            }
+            getDocId(registro, docs_id, i +1);
+        } catch (Exception e){
+
+        }
+    }
+
+    /**
+     * Clase para poder utilizar un callback
+     */
+    public class Callback{
+        public void success(){
+            Log.d("CALLBACK", "UPLOADFILES");
+        }
     }
 
     /**
