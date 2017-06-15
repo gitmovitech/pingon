@@ -11,5 +11,6 @@ public class TblFormulariosDefinition {
         public static final String ARN_NOMBRE = "ARN_NOMBRE";
         public static final String FRM_ID = "FRM_ID";
         public static final String FRM_NOMBRE = "FRM_NOMBRE";
+        public static final String FRM_DECLARACION = "FRM_DECLARACION";
     }
 }

@@ -33,6 +33,7 @@ public class SyncFormularios {
     Integer ARN_ID;
     Integer FRM_ID;
     String ARN_NOMBRE;
+    String FRM_DECLARACION;
     String FRM_NOMBRE;
 
     public SyncFormularios(MainActivity MainActivity, String url){
@@ -67,6 +68,7 @@ public class SyncFormularios {
                                         FRM_ID = Cursor.getInt(Cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_ID));
                                         ARN_NOMBRE = Cursor.getString(Cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
                                         FRM_NOMBRE = Cursor.getString(Cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
+                                        FRM_DECLARACION = Cursor.getString(Cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_DECLARACION));
 
                                         if(FRM_ID == item.getInt(TblFormulariosDefinition.Entry.FRM_ID)){
                                             addItem = false;
@@ -81,6 +83,9 @@ public class SyncFormularios {
                                             if(FRM_NOMBRE != item.getString(TblFormulariosDefinition.Entry.FRM_NOMBRE)){
                                                 values.put(TblFormulariosDefinition.Entry.FRM_NOMBRE, item.getString(TblFormulariosDefinition.Entry.FRM_NOMBRE));
                                             }
+                                            if(FRM_DECLARACION != item.getString(TblFormulariosDefinition.Entry.FRM_DECLARACION)){
+                                                values.put(TblFormulariosDefinition.Entry.FRM_DECLARACION, item.getString(TblFormulariosDefinition.Entry.FRM_DECLARACION));
+                                            }
                                             HelperSQLite.update(FRM_ID, values);
                                             break;
                                         }
@@ -91,6 +96,7 @@ public class SyncFormularios {
                                         values.put(TblFormulariosDefinition.Entry.FRM_ID, item.getInt(TblFormulariosDefinition.Entry.FRM_ID));
                                         values.put(TblFormulariosDefinition.Entry.ARN_NOMBRE, item.getString(TblFormulariosDefinition.Entry.ARN_NOMBRE));
                                         values.put(TblFormulariosDefinition.Entry.FRM_NOMBRE, item.getString(TblFormulariosDefinition.Entry.FRM_NOMBRE));
+                                        values.put(TblFormulariosDefinition.Entry.FRM_DECLARACION, item.getString(TblFormulariosDefinition.Entry.FRM_DECLARACION));
                                         HelperSQLite.insert(values);
                                     }
                                 }
