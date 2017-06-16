@@ -131,7 +131,7 @@ public class TblChecklistHelper extends SQLiteOpenHelper {
                 "FRM_ID = ?",
                 new String[]{
                         String.valueOf(FRM_ID)
-        },null, null, TblChecklistDefinition.Entry.CHK_ID+","+TblChecklistDefinition.Entry.CAM_POSICION+" ASC");
+        },null, null, TblChecklistDefinition.Entry.CHK_NOMBRE+","+TblChecklistDefinition.Entry.CAM_POSICION+" ASC");
         return cursor;
     }
 
