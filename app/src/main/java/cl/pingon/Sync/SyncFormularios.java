@@ -35,8 +35,10 @@ public class SyncFormularios {
     String ARN_NOMBRE;
     String FRM_DECLARACION;
     String FRM_NOMBRE;
+    private int intentos;
 
     public SyncFormularios(MainActivity MainActivity, String url){
+        this.intentos = 0;
         this.MainActivity = MainActivity;
         this.url = url;
 
@@ -126,7 +128,18 @@ public class SyncFormularios {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (FORMULARIOS). Si el problema persiste por favor contáctenos.");
+                if (intentos >= 3) {
+                    intentos = 0;
+                    MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (FORMULARIOS). Si el problema persiste por favor contáctenos.");                } else {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    intentos++;
+                    Sync();
+                }
+
             }
         }, headers);
 

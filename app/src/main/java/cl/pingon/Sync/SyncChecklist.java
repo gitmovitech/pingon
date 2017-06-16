@@ -3,6 +3,7 @@ package cl.pingon.Sync;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -45,8 +46,10 @@ public class SyncChecklist {
     String CAM_MANDATORIO;
     String CAM_VAL_DEFECTO;
     String CAM_PLACE_HOLDER;
+    private int intentos;
 
     public SyncChecklist(MainActivity MainActivity, String url){
+        this.intentos = 0;
         this.MainActivity = MainActivity;
         this.url = url;
 
@@ -55,6 +58,7 @@ public class SyncChecklist {
     }
 
     public void Sync(){
+        this.intentos++;
         Cursor = HelperSQLite.getAll();
         HashMap<String, String> headers = new HashMap<>();
         REST.get(url, new Response.Listener<JSONObject>() {
@@ -176,7 +180,19 @@ public class SyncChecklist {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (CHECKLIST). Si el problema persiste por favor contáctenos.");
+                Log.d("ERROR SyncChecklist", error.toString());
+                if (intentos >= 3) {
+                    intentos = 0;
+                    MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (CHECKLIST). Si el problema persiste por favor contáctenos.");
+                } else {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    intentos++;
+                    Sync();
+                }
             }
         }, headers);
 

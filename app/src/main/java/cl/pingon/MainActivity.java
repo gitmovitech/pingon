@@ -37,6 +37,7 @@ import cl.pingon.SQLite.TblEmpProjectsDefinition;
 import cl.pingon.SQLite.TblEmpProjectsHelper;
 import cl.pingon.SQLite.TblFormulariosHelper;
 import cl.pingon.Sync.SyncChecklist;
+import cl.pingon.Sync.SyncCompany;
 import cl.pingon.Sync.SyncFormularios;
 import cl.pingon.Sync.SyncListOptions;
 import cl.pingon.Sync.SyncProjects;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     String ChecklistUrl;
     String ListOptionsUrl;
     String FormulariosUrl;
+    String CompanyUrl;
     String ProjectsUrl;
 
     @Override
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         FormulariosUrl = getResources().getString(R.string.url_sync_formularios).toString()+"/"+session.getString("token","");
         ChecklistUrl = getResources().getString(R.string.url_sync_checklist).toString()+"/"+session.getString("token","");
         ListOptionsUrl = getResources().getString(R.string.url_sync_list_options).toString()+"/"+session.getString("token","");
+        CompanyUrl = getResources().getString(R.string.url_sync_emp_company).toString()+"/"+session.getString("token","");
         ProjectsUrl = getResources().getString(R.string.url_sync_emp_projects).toString()+"/"+session.getString("token","");
 
 
@@ -90,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
             if(detectInternet()){
 
-                SyncEmpCompany();
+                SyncCompany Company = new SyncCompany(this, this, CompanyUrl);
+                Company.Sync();
 
                 SyncProjects Projects = new SyncProjects(this, this, ProjectsUrl);
                 Projects.Sync();
@@ -143,88 +147,7 @@ public class MainActivity extends AppCompatActivity {
      * SINCRONIZACION DE CLIENTES
      */
     private void SyncEmpCompany(){
-        EmpCompany = new TblEmpCompanyHelper(this);
-        final Cursor CursorEmpCompany = EmpCompany.getAll();
-        HashMap<String, String> headers = new HashMap<>();
-        String url = getResources().getString(R.string.url_sync_emp_company).toString()+"/"+session.getString("token","");
 
-        REST.get(url, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                final JSONObject ResponseEmpCompany = response;
-                SyncEmpCompanyThread = new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            if(ResponseEmpCompany.getInt("ok") == 1){
-
-                                JSONArray data = (JSONArray) ResponseEmpCompany.get("data");
-                                JSONObject item;
-                                Integer ID = null;
-                                String NAME = null;
-                                String RUT = null;
-                                Boolean addItem;
-                                ContentValues values;
-
-                                for(int i = 0;i < data.length(); i++){
-                                    item = (JSONObject) data.get(i);
-                                    addItem = true;
-                                    while(CursorEmpCompany.moveToNext()) {
-                                        ID = CursorEmpCompany.getInt(CursorEmpCompany.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.ID));
-                                        NAME = CursorEmpCompany.getString(CursorEmpCompany.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.NAME));
-                                        RUT = CursorEmpCompany.getString(CursorEmpCompany.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.RUT));
-                                        if(ID == item.getInt(TblEmpCompanyDefinition.Entry.ID)){
-                                            addItem = false;
-
-                                            values = new ContentValues();
-                                            if(NAME != item.getString(TblEmpCompanyDefinition.Entry.NAME)){
-                                                values.put(TblEmpCompanyDefinition.Entry.NAME, item.getString(TblEmpCompanyDefinition.Entry.NAME));
-                                            }
-                                            if(RUT != item.getString(TblEmpCompanyDefinition.Entry.RUT)){
-                                                values.put(TblEmpCompanyDefinition.Entry.RUT, item.getString(TblEmpCompanyDefinition.Entry.RUT));
-                                            }
-                                            EmpCompany.update(ID, values);
-                                            break;
-                                        }
-                                    }
-                                    if(addItem){
-                                        values = new ContentValues();
-                                        values.put(TblEmpCompanyDefinition.Entry.ID, item.getInt(TblEmpCompanyDefinition.Entry.ID));
-                                        values.put(TblEmpCompanyDefinition.Entry.NAME, item.getString(TblEmpCompanyDefinition.Entry.NAME));
-                                        values.put(TblEmpCompanyDefinition.Entry.RUT, item.getString(TblEmpCompanyDefinition.Entry.RUT));
-                                        EmpCompany.insert(values);
-                                    }
-                                }
-                                CursorEmpCompany.close();
-                                SyncReady();
-
-                                    /*Cursor cursor = EmpCompany.getAll();
-                                    while(cursor.moveToNext()) {
-                                        ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.ID));
-                                        NAME = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.NAME));
-                                        RUT = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.RUT));
-                                        Log.d("ID", ID.toString());
-                                        Log.d("NAME", NAME.toString());
-                                        Log.d("RUT", RUT.toString());
-                                        Log.d("----------", "--------------");
-                                    }*/
-                            } else {
-                                CheckErrorToExit(CursorEmpCompany, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            CheckErrorToExit(CursorEmpCompany, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
-                        }
-                    }
-                });
-                SyncEmpCompanyThread.start();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("ERROR SyncEmpCompany", error.toString());
-                CheckErrorToExit(CursorEmpCompany, "Ha habido un error de sincronización con el servidor (EMP COMPANY). Si el problema persiste por favor contáctenos.");
-            }
-        }, headers);
 
     }
 

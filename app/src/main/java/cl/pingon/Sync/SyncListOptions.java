@@ -36,8 +36,10 @@ public class SyncListOptions {
     Integer CAM_ID;
     String OPC_VALOR;
     String OPC_NOMBRE;
+    private int intentos;
 
     public SyncListOptions(MainActivity MainActivity, String url){
+        this.intentos = 0;
         this.MainActivity = MainActivity;
         this.url = url;
 
@@ -46,6 +48,7 @@ public class SyncListOptions {
     }
 
     public void Sync() {
+        this.intentos++;
         Cursor = HelperSQLite.getAll();
         HashMap<String, String> headers = new HashMap<>();
         REST.get(url, new Response.Listener<JSONObject>() {
@@ -127,8 +130,19 @@ public class SyncListOptions {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("ERROR VOLLEY", error.toString());
-                MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (OPTIONS). Si el problema persiste por favor contáctenos.");
+                Log.d("ERROR SyncListOptions", error.toString());
+                if (intentos >= 3) {
+                    intentos = 0;
+                    MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (OPTIONS). Si el problema persiste por favor contáctenos.");
+                } else {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    intentos++;
+                    Sync();
+                }
             }
         }, headers);
     }
