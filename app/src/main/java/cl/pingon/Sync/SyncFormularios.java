@@ -74,6 +74,7 @@ public class SyncFormularios {
                                         FRM_NOMBRE = Cursor.getString(Cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
                                         FRM_DECLARACION = Cursor.getString(Cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_DECLARACION));
 
+
                                         if(FRM_ID == item.getInt(TblFormulariosDefinition.Entry.FRM_ID)){
                                             addItem = false;
 
@@ -90,6 +91,7 @@ public class SyncFormularios {
                                             if(FRM_DECLARACION != item.getString(TblFormulariosDefinition.Entry.FRM_DECLARACION)){
                                                 values.put(TblFormulariosDefinition.Entry.FRM_DECLARACION, item.getString(TblFormulariosDefinition.Entry.FRM_DECLARACION));
                                             }
+                                            Log.d("VALUES",values.toString());
                                             HelperSQLite.update(FRM_ID, values);
                                             break;
                                         }
@@ -116,8 +118,8 @@ public class SyncFormularios {
                                 /*Cursor = HelperSQLite.getAll();
                                 while(Cursor.moveToNext()) {
                                     FRM_ID = Cursor.getInt(Cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_ID));
-                                    FRM_NOMBRE = Cursor.getString(Cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
-                                    Log.d(String.valueOf(FRM_ID), FRM_NOMBRE);
+                                    FRM_DECLARACION = Cursor.getString(Cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_DECLARACION));
+                                    Log.d(String.valueOf(FRM_ID), FRM_DECLARACION);
                                     Log.d("----------", "--------------");
                                 }*/
                             } else {

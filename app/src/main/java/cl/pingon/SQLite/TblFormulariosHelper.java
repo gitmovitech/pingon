@@ -43,7 +43,7 @@ public class TblFormulariosHelper extends SQLiteOpenHelper {
 
     public void update(Integer id, ContentValues values){
         SQLiteDatabase db = getReadableDatabase();
-        String where = TblFormulariosDefinition.Entry.ARN_ID + " = "+ id;
+        String where = TblFormulariosDefinition.Entry.FRM_ID + " = "+ id;
         db.update(TblFormulariosDefinition.Entry.TABLE_NAME, values, where, null);
     }
 

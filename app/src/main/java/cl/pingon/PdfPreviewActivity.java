@@ -236,6 +236,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
             TblFormulariosHelper Formularios = new TblFormulariosHelper(getApplicationContext());
             Cursor cursor = Formularios.getByArnId(ARN_ID);
             cursor.moveToFirst();
+            String FRM_DECLARACION = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_DECLARACION));
             String ARN_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
             cursor.close();
 
@@ -320,6 +321,14 @@ public class PdfPreviewActivity extends AppCompatActivity {
                 }
             }
             pdf.add(tabla);
+
+            /**
+             * Declaracion
+             */
+            tabla = pdf.createTable(1);
+            tabla.addCell(pdf.addCell(FRM_DECLARACION));
+            pdf.add(tabla);
+
             pdf.close();
 
             openPDF();
