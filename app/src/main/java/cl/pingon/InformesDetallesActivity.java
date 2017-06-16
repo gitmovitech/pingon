@@ -442,7 +442,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
 
     /**
-     * OBTENER TODOS LOS ITEMS DEL CHECKLIST POR RM_ID Y CHK_ID
+     * OBTENER TODOS LOS ITEMS DEL CHECKLIST POR FRM_ID Y CHK_ID
      *  ------------------------------------------------------------------------------------------------------------
      */
     private int CAM_ID;

@@ -115,16 +115,21 @@ public class InformesTabsActivity extends AppCompatActivity {
         if(ARN_NOMBRE == null && FRM_NOMBRE == null){
             TblFormulariosHelper Formularios = new TblFormulariosHelper(this);
             Cursor CursorFormularios = Formularios.getByArnId(ARN_ID);
-            while(CursorFormularios.moveToNext()){
-                ARN_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
-                FRM_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
-                IntentDetalle.putExtra("FRM_NOMBRE", FRM_NOMBRE);
+            while(CursorFormularios.moveToNext()) {
+                if(FRM_ID == CursorFormularios.getInt(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_ID))){
+                    ARN_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
+                    FRM_NOMBRE = CursorFormularios.getString(CursorFormularios.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
+                    IntentDetalle.putExtra("FRM_NOMBRE", FRM_NOMBRE);
+                }
             }
             CursorFormularios.close();
         }
-
-        this.setTitle(ARN_NOMBRE);
         getSupportActionBar().setSubtitle(FRM_NOMBRE);
+        this.setTitle(ARN_NOMBRE);
+
+
+
+
 
         Listado.setAdapter(list);
 
