@@ -1,8 +1,6 @@
 package cl.pingon;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,30 +14,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-
-import cl.pingon.Libraries.NetworkUtils;
 import cl.pingon.Libraries.RESTService;
-import cl.pingon.SQLite.TblEmpBrandsDefinition;
-import cl.pingon.SQLite.TblEmpBrandsHelper;
-import cl.pingon.SQLite.TblEmpCompanyDefinition;
-import cl.pingon.SQLite.TblEmpCompanyHelper;
-import cl.pingon.SQLite.TblEmpProductsDefinition;
-import cl.pingon.SQLite.TblEmpProductsHelper;
-import cl.pingon.SQLite.TblEmpProjectsDefinition;
-import cl.pingon.SQLite.TblEmpProjectsHelper;
-import cl.pingon.SQLite.TblFormulariosHelper;
-import cl.pingon.Sync.SyncChecklist;
 import cl.pingon.Sync.SyncCompany;
-import cl.pingon.Sync.SyncFormularios;
-import cl.pingon.Sync.SyncListOptions;
 import cl.pingon.Sync.SyncProjects;
 
 
@@ -47,24 +23,20 @@ public class MainActivity extends AppCompatActivity {
 
     Intent IntentBuzon;
     public static Activity activity;
+    public MainActivity mainactivity;
     SharedPreferences session;
     RESTService REST;
     AlertDialog.Builder alert;
 
-    TblEmpCompanyHelper EmpCompany;
-    TblEmpBrandsHelper EmpBrands;
-    TblEmpProductsHelper EmpProducts;
-
     int Syncronized = 0;
-    private Thread SyncEmpCompanyThread;
-    private Thread SyncEmpBrandsThread;
-    private Thread SyncEmpProductsThread;
 
     String ChecklistUrl;
     String ListOptionsUrl;
     String FormulariosUrl;
     String CompanyUrl;
     String ProjectsUrl;
+    String ProductsUrl;
+    String BrandsUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         activity = this;
+        mainactivity = this;
         alert = new AlertDialog.Builder(this);
 
         IntentBuzon = new Intent(this, BuzonActivity.class);
@@ -87,20 +60,34 @@ public class MainActivity extends AppCompatActivity {
         ListOptionsUrl = getResources().getString(R.string.url_sync_list_options).toString()+"/"+session.getString("token","");
         CompanyUrl = getResources().getString(R.string.url_sync_emp_company).toString()+"/"+session.getString("token","");
         ProjectsUrl = getResources().getString(R.string.url_sync_emp_projects).toString()+"/"+session.getString("token","");
-
+        ProductsUrl = getResources().getString(R.string.url_sync_emp_products).toString()+"/"+session.getString("token","");
+        BrandsUrl = getResources().getString(R.string.url_sync_emp_brands).toString()+"/"+session.getString("token","");
 
         if(session.getString("token","") != "") {
 
             if(detectInternet()){
 
-                SyncCompany Company = new SyncCompany(this, this, CompanyUrl);
-                Company.Sync();
+                SyncCompany Company = new SyncCompany(getApplicationContext(), mainactivity, CompanyUrl);
+                Company.Sync(new CallbackSync(){
+                    @Override
+                    public void success() {
+                        SyncProjects Projects = new SyncProjects(getApplicationContext(), mainactivity, ProjectsUrl);
+                        Projects.Sync(new CallbackSync(){
+                            @Override
+                            public void success() {
 
-                SyncProjects Projects = new SyncProjects(this, this, ProjectsUrl);
-                Projects.Sync();
+                            }
+                        });
+                    }
+                });
 
-                SyncEmpBrands();
-                SyncEmpProducts();
+                /*
+
+                SyncBrands Brands = new SyncBrands(this, this, BrandsUrl);
+                Brands.Sync();
+
+                SyncProducts Products = new SyncProducts(this, this, ProductsUrl);
+                Products.Sync();
 
                 SyncFormularios Formularios = new SyncFormularios(this, FormulariosUrl);
                 Formularios.Sync();
@@ -109,13 +96,22 @@ public class MainActivity extends AppCompatActivity {
                 Checklist.Sync();
 
                 SyncListOptions ListOptions = new SyncListOptions(this, ListOptionsUrl);
-                ListOptions.Sync();
+                ListOptions.Sync();*/
 
             } else {
                 Message(getResources().getString(R.string.no_internet), getResources().getString(R.string.first_time_no_internet));
                 finish();
             }
 
+        }
+    }
+
+    public class CallbackSync{
+        public void success(){
+            Log.d("CALLBACK", "SUCCESS");
+        }
+        public void error(){
+            finish();
         }
     }
 
@@ -141,192 +137,6 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
     }
-
-
-    /**
-     * SINCRONIZACION DE CLIENTES
-     */
-    private void SyncEmpCompany(){
-
-
-    }
-
-    /**
-     * SINCRONIZACION DE MARCAS
-     */
-    private void SyncEmpBrands(){
-        EmpBrands = new TblEmpBrandsHelper(this);
-        final Cursor CursorEmpBrands = EmpBrands.getAll();
-        HashMap<String, String> headers = new HashMap<>();
-        String url = getResources().getString(R.string.url_sync_emp_brands).toString()+"/"+session.getString("token","");
-
-        REST.get(url, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                final JSONObject ResponseEmpBrands = response;
-                SyncEmpBrandsThread = new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            try {
-                                if(ResponseEmpBrands.getInt("ok") == 1){
-
-                                    JSONArray data = (JSONArray) ResponseEmpBrands.get("data");
-                                    JSONObject item;
-                                    Integer ID = null;
-                                    String NAME = null;
-                                    Integer PROJECT_ID = null;
-                                    Boolean addItem;
-                                    ContentValues values;
-
-                                    for(int i = 0;i < data.length(); i++){
-                                        item = (JSONObject) data.get(i);
-                                        addItem = true;
-                                        while(CursorEmpBrands.moveToNext()) {
-                                            ID = CursorEmpBrands.getInt(CursorEmpBrands.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.ID));
-                                            NAME = CursorEmpBrands.getString(CursorEmpBrands.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.NAME));
-                                            PROJECT_ID = CursorEmpBrands.getInt(CursorEmpBrands.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.PROJECT_ID));
-                                            if(ID == item.getInt(TblEmpBrandsDefinition.Entry.ID)){
-                                                addItem = false;
-
-                                                values = new ContentValues();
-                                                if(NAME != item.getString(TblEmpBrandsDefinition.Entry.NAME)){
-                                                    values.put(TblEmpBrandsDefinition.Entry.NAME, item.getString(TblEmpBrandsDefinition.Entry.NAME));
-                                                }
-                                                if(PROJECT_ID != item.getInt(TblEmpBrandsDefinition.Entry.PROJECT_ID)){
-                                                    values.put(TblEmpBrandsDefinition.Entry.PROJECT_ID, item.getInt(TblEmpBrandsDefinition.Entry.PROJECT_ID));
-                                                }
-                                                EmpBrands.update(ID, values);
-                                                break;
-                                            }
-                                        }
-                                        if(addItem){
-                                            values = new ContentValues();
-                                            values.put(TblEmpBrandsDefinition.Entry.ID, item.getInt(TblEmpBrandsDefinition.Entry.ID));
-                                            values.put(TblEmpBrandsDefinition.Entry.NAME, item.getString(TblEmpBrandsDefinition.Entry.NAME));
-                                            values.put(TblEmpBrandsDefinition.Entry.PROJECT_ID, item.getInt(TblEmpBrandsDefinition.Entry.PROJECT_ID));
-                                            EmpBrands.insert(values);
-                                        }
-                                    }
-                                    CursorEmpBrands.close();
-                                    SyncReady();
-                                } else {
-                                    CheckErrorToExit(CursorEmpBrands, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                CheckErrorToExit(CursorEmpBrands, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
-                            }
-                        } catch (Exception e) {}
-                    }
-                });
-                SyncEmpBrandsThread.start();
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("ERROR VOLLEY", error.toString());
-                CheckErrorToExit(CursorEmpBrands, "Ha habido un error de sincronización con el servidor (EMP BRANDS). Si el problema persiste por favor contáctenos.");
-            }
-        }, headers);
-
-    }
-
-    /**
-     * SINCRONIZACION DE PRODUCTOS
-     */
-    private void SyncEmpProducts(){
-        EmpProducts = new TblEmpProductsHelper(this);
-        final Cursor CursorEmpProducts = EmpProducts.getAll();
-        HashMap<String, String> headers = new HashMap<>();
-        String url = getResources().getString(R.string.url_sync_emp_products).toString()+"/"+session.getString("token","");
-
-        REST.get(url, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                final JSONObject ResponseEmpProducts = response;
-                SyncEmpProductsThread = new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            try {
-                                if(ResponseEmpProducts.getInt("ok") == 1){
-
-                                    JSONArray data = (JSONArray) ResponseEmpProducts.get("data");
-                                    JSONObject item;
-                                    Integer ID = null;
-                                    String NAME = null;
-                                    String CODE = null;
-                                    String YEAR = null;
-                                    Integer BRAND_ID = null;
-                                    Boolean addItem;
-                                    ContentValues values;
-
-                                    for(int i = 0;i < data.length(); i++){
-                                        item = (JSONObject) data.get(i);
-                                        addItem = true;
-                                        while(CursorEmpProducts.moveToNext()) {
-                                            ID = CursorEmpProducts.getInt(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.ID));
-                                            NAME = CursorEmpProducts.getString(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.NAME));
-                                            CODE = CursorEmpProducts.getString(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.CODE));
-                                            YEAR = CursorEmpProducts.getString(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.YEAR));
-                                            BRAND_ID = CursorEmpProducts.getInt(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.BRAND_ID));
-                                            if(ID == item.getInt(TblEmpProjectsDefinition.Entry.ID)){
-                                                addItem = false;
-
-                                                values = new ContentValues();
-                                                if(NAME != item.getString(TblEmpProductsDefinition.Entry.NAME)){
-                                                    values.put(TblEmpProductsDefinition.Entry.NAME, item.getString(TblEmpProductsDefinition.Entry.NAME));
-                                                }
-                                                if(CODE != item.getString(TblEmpProductsDefinition.Entry.CODE)){
-                                                    values.put(TblEmpProductsDefinition.Entry.CODE, item.getString(TblEmpProductsDefinition.Entry.CODE));
-                                                }
-                                                if(YEAR != item.getString(TblEmpProductsDefinition.Entry.YEAR)){
-                                                    values.put(TblEmpProductsDefinition.Entry.YEAR, item.getString(TblEmpProductsDefinition.Entry.YEAR));
-                                                }
-                                                if(BRAND_ID != item.getInt(TblEmpProductsDefinition.Entry.BRAND_ID)){
-                                                    values.put(TblEmpProductsDefinition.Entry.BRAND_ID, item.getInt(TblEmpProductsDefinition.Entry.BRAND_ID));
-                                                }
-                                                EmpProducts.update(ID, values);
-                                                break;
-                                            }
-                                        }
-                                        if(addItem){
-                                            values = new ContentValues();
-                                            values.put(TblEmpProductsDefinition.Entry.ID, item.getInt(TblEmpProductsDefinition.Entry.ID));
-                                            values.put(TblEmpProductsDefinition.Entry.NAME, item.getString(TblEmpProductsDefinition.Entry.NAME));
-                                            values.put(TblEmpProductsDefinition.Entry.CODE, item.getString(TblEmpProductsDefinition.Entry.CODE));
-                                            values.put(TblEmpProductsDefinition.Entry.YEAR, item.getString(TblEmpProductsDefinition.Entry.YEAR));
-                                            values.put(TblEmpProductsDefinition.Entry.BRAND_ID, item.getInt(TblEmpProductsDefinition.Entry.BRAND_ID));
-                                            EmpProducts.insert(values);
-                                        }
-                                    }
-                                    CursorEmpProducts.close();
-                                    SyncReady();
-
-                                } else {
-                                    CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
-                            }
-                        } catch (Exception e) {}
-                    }
-                });
-                SyncEmpProductsThread.start();
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("ERROR VOLLEY", error.toString());
-                CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (PRODUCTS). Si el problema persiste por favor contáctenos.");
-            }
-        }, headers);
-
-    }
-
-
 
 
     public void CheckErrorToExit(Cursor CursorSync, String message){

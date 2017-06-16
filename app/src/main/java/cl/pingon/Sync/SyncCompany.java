@@ -15,10 +15,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 import cl.pingon.Libraries.RESTService;
-import cl.pingon.R;
+import cl.pingon.MainActivity;
 import cl.pingon.SQLite.TblEmpCompanyDefinition;
 import cl.pingon.SQLite.TblEmpCompanyHelper;
-import cl.pingon.SQLite.TblEmpProjectsHelper;
 
 public class SyncCompany {
 
@@ -38,18 +37,20 @@ public class SyncCompany {
         this.MainActivity = activity;
     }
 
-    public void Sync(){
+    public void Sync(final cl.pingon.MainActivity.CallbackSync cb){
         this.intentos++;
-        EmpCompany = new TblEmpCompanyHelper(context);
-        final Cursor CursorEmpCompany = EmpCompany.getAll();
-        HashMap<String, String> headers = new HashMap<>();
 
-        REST.get(url, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                final JSONObject ResponseEmpCompany = response;
-                SyncEmpCompanyThread = new Thread(new Runnable() {
-                    public void run() {
+        SyncEmpCompanyThread = new Thread(new Runnable() {
+            public void run() {
+
+                EmpCompany = new TblEmpCompanyHelper(context);
+                final Cursor CursorEmpCompany = EmpCompany.getAll();
+                HashMap<String, String> headers = new HashMap<>();
+
+                REST.get(url, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        final JSONObject ResponseEmpCompany = response;
                         try {
                             if(ResponseEmpCompany.getInt("ok") == 1){
 
@@ -91,46 +92,50 @@ public class SyncCompany {
                                     }
                                 }
                                 CursorEmpCompany.close();
-                                MainActivity.SyncReady();
+                                cb.success();
 
-                                    /*Cursor cursor = EmpCompany.getAll();
-                                    while(cursor.moveToNext()) {
-                                        ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.ID));
-                                        NAME = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.NAME));
-                                        RUT = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.RUT));
-                                        Log.d("ID", ID.toString());
-                                        Log.d("NAME", NAME.toString());
-                                        Log.d("RUT", RUT.toString());
-                                        Log.d("----------", "--------------");
-                                    }*/
+                                Cursor cursor = EmpCompany.getAll();
+                                Log.d("CANTIDAD COMPANY", String.valueOf(cursor.getCount()));
+                                /*while(cursor.moveToNext()) {
+                                    ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.ID));
+                                    NAME = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.NAME));
+                                    RUT = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.RUT));
+                                    Log.d("ID", ID.toString());
+                                    Log.d("NAME", NAME.toString());
+                                    Log.d("RUT", RUT.toString());
+                                    Log.d("----------", "--------------");
+                                }*/
                             } else {
                                 MainActivity.CheckErrorToExit(CursorEmpCompany, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
+                                cb.error();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                             MainActivity.CheckErrorToExit(CursorEmpCompany, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
+                            cb.error();
                         }
                     }
-                });
-                SyncEmpCompanyThread.start();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("ERROR SyncEmpCompany", error.toString());
-                if (intentos >= 3) {
-                    intentos = 0;
-                    MainActivity.CheckErrorToExit(CursorEmpCompany, "Ha habido un error de sincronización con el servidor (EMP COMPANY). Si el problema persiste por favor contáctenos.");
-                } else {
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("ERROR SyncEmpCompany", error.toString());
+                        if (intentos >= 3) {
+                            intentos = 0;
+                            MainActivity.CheckErrorToExit(CursorEmpCompany, "Ha habido un error de sincronización con el servidor (EMP COMPANY). Si el problema persiste por favor contáctenos.");
+                            cb.error();
+                        } else {
+                            try {
+                                Thread.sleep(3000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            intentos++;
+                            Sync(cb);
+                        }
                     }
-                    intentos++;
-                    Sync();
-                }
+                }, headers);
             }
-        }, headers);
+        });
+        SyncEmpCompanyThread.start();
     }
 }

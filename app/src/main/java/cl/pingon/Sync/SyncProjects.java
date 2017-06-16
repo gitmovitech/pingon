@@ -39,7 +39,7 @@ public class SyncProjects {
         this.MainActivity = activity;
     }
 
-    public void Sync(){
+    public void Sync(final cl.pingon.MainActivity.CallbackSync cb){
         this.intentos ++;
         EmpProjects = new TblEmpProjectsHelper(context);
         final Cursor CursorEmpProjects = EmpProjects.getAll();
@@ -105,14 +105,19 @@ public class SyncProjects {
                                     }
                                 }
                                 CursorEmpProjects.close();
-                                MainActivity.SyncReady();
+                                cb.success();
+
+                                Cursor cursor = EmpProjects.getAll();
+                                Log.d("CANTIDAD PROJECTS", String.valueOf(cursor.getCount()));
 
                             } else {
                                 MainActivity.CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
+                                cb.error();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                             MainActivity.CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
+                            cb.error();
                         }
                     }
                 });
@@ -127,6 +132,7 @@ public class SyncProjects {
                 if (intentos >= 3) {
                     intentos = 0;
                     MainActivity.CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (EMP PROJECTS). Si el problema persiste por favor contáctenos.");
+                    cb.error();
                 } else {
                     try {
                         Thread.sleep(3000);
@@ -134,7 +140,7 @@ public class SyncProjects {
                         e.printStackTrace();
                     }
                     intentos++;
-                    Sync();
+                    Sync(cb);
                 }
             }
         }, headers);
