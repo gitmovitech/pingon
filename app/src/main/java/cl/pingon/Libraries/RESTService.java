@@ -35,6 +35,7 @@ public class RESTService {
      * @param cabeceras
      */
     public void get(String uri, Response.Listener<JSONObject> jsonListener,Response.ErrorListener errorListener,final HashMap<String, String> cabeceras) {
+        Log.d("URL SYNC", uri);
         JsonObjectRequest peticion = new JsonObjectRequest(uri,null,jsonListener,errorListener) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {

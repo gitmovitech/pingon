@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -86,23 +88,44 @@ public class MainActivity extends AppCompatActivity {
 
         if(session.getString("token","") != "") {
 
-            SyncEmpCompany();
+            if(detectInternet()){
 
-            SyncProjects Projects = new SyncProjects(this, this, ProjectsUrl);
-            Projects.Sync();
+                SyncEmpCompany();
 
-            SyncEmpBrands();
-            SyncEmpProducts();
+                SyncProjects Projects = new SyncProjects(this, this, ProjectsUrl);
+                Projects.Sync();
 
-            SyncFormularios Formularios = new SyncFormularios(this, FormulariosUrl);
-            Formularios.Sync();
+                SyncEmpBrands();
+                SyncEmpProducts();
 
-            SyncChecklist Checklist = new SyncChecklist(this, ChecklistUrl);
-            Checklist.Sync();
+                SyncFormularios Formularios = new SyncFormularios(this, FormulariosUrl);
+                Formularios.Sync();
 
-            SyncListOptions ListOptions = new SyncListOptions(this, ListOptionsUrl);
-            ListOptions.Sync();
+                SyncChecklist Checklist = new SyncChecklist(this, ChecklistUrl);
+                Checklist.Sync();
 
+                SyncListOptions ListOptions = new SyncListOptions(this, ListOptionsUrl);
+                ListOptions.Sync();
+
+            } else {
+                Message(getResources().getString(R.string.no_internet), getResources().getString(R.string.first_time_no_internet));
+                finish();
+            }
+
+        }
+    }
+
+    /**
+     * DETECCIÓN DE CONEXIÓN A INTERNET
+     * @return
+     */
+    private boolean detectInternet(){
+        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if(activeNetwork != null){
+            return activeNetwork.isConnected();
+        } else{
+            return false;
         }
     }
 
@@ -198,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.d("ERROR SyncEmpCompany", error.toString());
                 CheckErrorToExit(CursorEmpCompany, "Ha habido un error de sincronización con el servidor (EMP COMPANY). Si el problema persiste por favor contáctenos.");
             }
         }, headers);
@@ -278,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.d("ERROR VOLLEY", error.toString());
                 CheckErrorToExit(CursorEmpBrands, "Ha habido un error de sincronización con el servidor (EMP BRANDS). Si el problema persiste por favor contáctenos.");
             }
         }, headers);
@@ -371,6 +396,7 @@ public class MainActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.d("ERROR VOLLEY", error.toString());
                 CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (PRODUCTS). Si el problema persiste por favor contáctenos.");
             }
         }, headers);
@@ -382,20 +408,24 @@ public class MainActivity extends AppCompatActivity {
 
     public void CheckErrorToExit(Cursor CursorSync, String message){
         if(CursorSync.getCount() == 0){
-            alert.setTitle("Error de sincronización");
-            alert.setMessage(message);
-            alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                    System.exit(0);
-                    finish();
-                }
-            });
-            alert.create();
-            alert.show();
+            Message("Error de sincronización", message);
         } else {
             SyncReady();
         }
+    }
+
+    private void Message(String title, String message){
+        alert.setTitle(title);
+        alert.setMessage(message);
+        alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                System.exit(0);
+                finish();
+            }
+        });
+        alert.create();
+        alert.show();
     }
 
 }

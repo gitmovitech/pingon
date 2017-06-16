@@ -11,8 +11,6 @@
     <string name="action_sign_in">Iniciar sesión</string>
     <string name="title_activity_nuevo_formulario">NuevoFormularioActivity</string>
     <string name="title_activity_informe_detalles">InformeDetalles</string>
-    <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
 
     <string name="login_message">Por favor inicie sesión con sus credenciales de acceso para continuar:</string>
 
@@ -31,6 +29,12 @@
     <string name="change_password">Cambiar contraseña</string>
     <string name="change_email">Actualizar email</string>
     <string name="change_sign">Actualizar firma</string>
+
+    <string name="no_internet">Sin conexión</string>
+    <string name="first_time_no_internet">
+        No se ha podido detectar una conexión a Internet.
+        Cuando inicia la aplicación por primera vez es necesario para poder sincronizar la base de datos.
+    </string>
 
     <string name="url_signin">http://104.154.36.61:2234/signin</string>
     <string name="url_sync_area_negocio">http://104.154.36.61:2234/area-negocio</string>

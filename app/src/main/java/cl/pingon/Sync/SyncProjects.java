@@ -29,8 +29,10 @@ public class SyncProjects {
     private TblEmpProjectsHelper EmpProjects;
     private Thread SyncEmpProjectsThread;
     private cl.pingon.MainActivity MainActivity;
+    private int intentos;
 
     public SyncProjects(Context context, cl.pingon.MainActivity activity, String url){
+        this.intentos = 0;
         this.url = url;
         this.context = context;
         REST = new RESTService(context);
@@ -38,6 +40,7 @@ public class SyncProjects {
     }
 
     public void Sync(){
+        this.intentos ++;
         EmpProjects = new TblEmpProjectsHelper(context);
         final Cursor CursorEmpProjects = EmpProjects.getAll();
         HashMap<String, String> headers = new HashMap<>();
@@ -120,7 +123,19 @@ public class SyncProjects {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                MainActivity.CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (EMP PROJECTS). Si el problema persiste por favor contáctenos.");
+                Log.d("ERROR SyncProjects", error.toString());
+                if (intentos >= 3) {
+                    intentos = 0;
+                    MainActivity.CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (EMP PROJECTS). Si el problema persiste por favor contáctenos.");
+                } else {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    intentos++;
+                    Sync();
+                }
             }
         }, headers);
     }
