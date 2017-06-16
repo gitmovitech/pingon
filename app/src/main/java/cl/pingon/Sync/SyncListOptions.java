@@ -1,6 +1,7 @@
 package cl.pingon.Sync;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.android.volley.Response;
@@ -47,7 +48,7 @@ public class SyncListOptions {
         HelperSQLite = new TblListOptionsHelper(MainActivity.getApplicationContext());
     }
 
-    public void Sync() {
+    public void Sync(final cl.pingon.MainActivity.CallbackSync cb) {
         this.intentos++;
         Cursor = HelperSQLite.getAll();
         HashMap<String, String> headers = new HashMap<>();
@@ -106,7 +107,12 @@ public class SyncListOptions {
                                 }
                                 Cursor.close();
 
-                                MainActivity.SyncReady();
+                                cb.success();
+
+                                android.database.Cursor cursor = HelperSQLite.getAll();
+                                Log.d("CANTIDAD LISTOPTIONS", String.valueOf(cursor.getCount()));
+                                cursor.close();
+                                HelperSQLite.close();
 
                                 /*Cursor = HelperSQLite.getAll();
                                 while(Cursor.moveToNext()) {
@@ -117,10 +123,12 @@ public class SyncListOptions {
                                 }*/
                             } else {
                                 MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
+                                cb.error();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                             MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
+                            cb.error();
                         }
 
                     }
@@ -134,6 +142,7 @@ public class SyncListOptions {
                 if (intentos >= 3) {
                     intentos = 0;
                     MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (OPTIONS). Si el problema persiste por favor contáctenos.");
+                    cb.error();
                 } else {
                     try {
                         Thread.sleep(3000);
@@ -141,7 +150,7 @@ public class SyncListOptions {
                         e.printStackTrace();
                     }
                     intentos++;
-                    Sync();
+                    Sync(cb);
                 }
             }
         }, headers);

@@ -1,6 +1,8 @@
 package cl.pingon.Sync;
 
 import android.content.ContentValues;
+import android.database.Cursor;
+import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -46,7 +48,7 @@ public class SyncFormularios {
         HelperSQLite = new TblFormulariosHelper(MainActivity.getApplicationContext());
     }
 
-    public void Sync(){
+    public void Sync(final cl.pingon.MainActivity.CallbackSync cb){
         Cursor = HelperSQLite.getAll();
         HashMap<String, String> headers = new HashMap<>();
         REST.get(url, new Response.Listener<JSONObject>() {
@@ -104,7 +106,12 @@ public class SyncFormularios {
                                 }
                                 Cursor.close();
 
-                                MainActivity.SyncReady();
+                                cb.success();
+
+                                Cursor cursor = HelperSQLite.getAll();
+                                Log.d("CANTIDAD FORMULARIOS", String.valueOf(cursor.getCount()));
+                                cursor.close();
+                                HelperSQLite.close();
 
                                 /*Cursor = HelperSQLite.getAll();
                                 while(Cursor.moveToNext()) {
@@ -115,10 +122,12 @@ public class SyncFormularios {
                                 }*/
                             } else {
                                 MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
+                                cb.error();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                             MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
+                            cb.error();
                         }
 
                     }
@@ -128,16 +137,19 @@ public class SyncFormularios {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.d("ERROR SyncFormularios", error.toString());
                 if (intentos >= 3) {
                     intentos = 0;
-                    MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (FORMULARIOS). Si el problema persiste por favor contáctenos.");                } else {
+                    MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (FORMULARIOS). Si el problema persiste por favor contáctenos.");
+                    cb.error();
+                } else {
                     try {
-                        Thread.sleep(3000);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     intentos++;
-                    Sync();
+                    Sync(cb);
                 }
 
             }

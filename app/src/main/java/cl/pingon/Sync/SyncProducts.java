@@ -39,7 +39,7 @@ public class SyncProducts {
         this.MainActivity = activity;
     }
 
-    public void Sync() {
+    public void Sync(final cl.pingon.MainActivity.CallbackSync cb) {
         this.intentos++;
         EmpProducts = new TblEmpProductsHelper(context);
         final Cursor CursorEmpProducts = EmpProducts.getAll();
@@ -52,69 +52,74 @@ public class SyncProducts {
                 SyncEmpProductsThread = new Thread(new Runnable() {
                     public void run() {
                         try {
-                            try {
-                                if(ResponseEmpProducts.getInt("ok") == 1){
+                            if(ResponseEmpProducts.getInt("ok") == 1){
 
-                                    JSONArray data = (JSONArray) ResponseEmpProducts.get("data");
-                                    JSONObject item;
-                                    Integer ID = null;
-                                    String NAME = null;
-                                    String CODE = null;
-                                    String YEAR = null;
-                                    Integer BRAND_ID = null;
-                                    Boolean addItem;
-                                    ContentValues values;
+                                JSONArray data = (JSONArray) ResponseEmpProducts.get("data");
+                                JSONObject item;
+                                Integer ID = null;
+                                String NAME = null;
+                                String CODE = null;
+                                String YEAR = null;
+                                Integer BRAND_ID = null;
+                                Boolean addItem;
+                                ContentValues values;
 
-                                    for(int i = 0;i < data.length(); i++){
-                                        item = (JSONObject) data.get(i);
-                                        addItem = true;
-                                        while(CursorEmpProducts.moveToNext()) {
-                                            ID = CursorEmpProducts.getInt(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.ID));
-                                            NAME = CursorEmpProducts.getString(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.NAME));
-                                            CODE = CursorEmpProducts.getString(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.CODE));
-                                            YEAR = CursorEmpProducts.getString(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.YEAR));
-                                            BRAND_ID = CursorEmpProducts.getInt(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.BRAND_ID));
-                                            if(ID == item.getInt(TblEmpProjectsDefinition.Entry.ID)){
-                                                addItem = false;
+                                for(int i = 0;i < data.length(); i++){
+                                    item = (JSONObject) data.get(i);
+                                    addItem = true;
+                                    while(CursorEmpProducts.moveToNext()) {
+                                        ID = CursorEmpProducts.getInt(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.ID));
+                                        NAME = CursorEmpProducts.getString(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.NAME));
+                                        CODE = CursorEmpProducts.getString(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.CODE));
+                                        YEAR = CursorEmpProducts.getString(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.YEAR));
+                                        BRAND_ID = CursorEmpProducts.getInt(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.BRAND_ID));
+                                        if(ID == item.getInt(TblEmpProjectsDefinition.Entry.ID)){
+                                            addItem = false;
 
-                                                values = new ContentValues();
-                                                if(NAME != item.getString(TblEmpProductsDefinition.Entry.NAME)){
-                                                    values.put(TblEmpProductsDefinition.Entry.NAME, item.getString(TblEmpProductsDefinition.Entry.NAME));
-                                                }
-                                                if(CODE != item.getString(TblEmpProductsDefinition.Entry.CODE)){
-                                                    values.put(TblEmpProductsDefinition.Entry.CODE, item.getString(TblEmpProductsDefinition.Entry.CODE));
-                                                }
-                                                if(YEAR != item.getString(TblEmpProductsDefinition.Entry.YEAR)){
-                                                    values.put(TblEmpProductsDefinition.Entry.YEAR, item.getString(TblEmpProductsDefinition.Entry.YEAR));
-                                                }
-                                                if(BRAND_ID != item.getInt(TblEmpProductsDefinition.Entry.BRAND_ID)){
-                                                    values.put(TblEmpProductsDefinition.Entry.BRAND_ID, item.getInt(TblEmpProductsDefinition.Entry.BRAND_ID));
-                                                }
-                                                EmpProducts.update(ID, values);
-                                                break;
-                                            }
-                                        }
-                                        if(addItem){
                                             values = new ContentValues();
-                                            values.put(TblEmpProductsDefinition.Entry.ID, item.getInt(TblEmpProductsDefinition.Entry.ID));
-                                            values.put(TblEmpProductsDefinition.Entry.NAME, item.getString(TblEmpProductsDefinition.Entry.NAME));
-                                            values.put(TblEmpProductsDefinition.Entry.CODE, item.getString(TblEmpProductsDefinition.Entry.CODE));
-                                            values.put(TblEmpProductsDefinition.Entry.YEAR, item.getString(TblEmpProductsDefinition.Entry.YEAR));
-                                            values.put(TblEmpProductsDefinition.Entry.BRAND_ID, item.getInt(TblEmpProductsDefinition.Entry.BRAND_ID));
-                                            EmpProducts.insert(values);
+                                            if(NAME != item.getString(TblEmpProductsDefinition.Entry.NAME)){
+                                                values.put(TblEmpProductsDefinition.Entry.NAME, item.getString(TblEmpProductsDefinition.Entry.NAME));
+                                            }
+                                            if(CODE != item.getString(TblEmpProductsDefinition.Entry.CODE)){
+                                                values.put(TblEmpProductsDefinition.Entry.CODE, item.getString(TblEmpProductsDefinition.Entry.CODE));
+                                            }
+                                            if(YEAR != item.getString(TblEmpProductsDefinition.Entry.YEAR)){
+                                                values.put(TblEmpProductsDefinition.Entry.YEAR, item.getString(TblEmpProductsDefinition.Entry.YEAR));
+                                            }
+                                            if(BRAND_ID != item.getInt(TblEmpProductsDefinition.Entry.BRAND_ID)){
+                                                values.put(TblEmpProductsDefinition.Entry.BRAND_ID, item.getInt(TblEmpProductsDefinition.Entry.BRAND_ID));
+                                            }
+                                            EmpProducts.update(ID, values);
+                                            break;
                                         }
                                     }
-                                    CursorEmpProducts.close();
-                                    MainActivity.SyncReady();
-
-                                } else {
-                                    MainActivity.CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
+                                    if(addItem){
+                                        values = new ContentValues();
+                                        values.put(TblEmpProductsDefinition.Entry.ID, item.getInt(TblEmpProductsDefinition.Entry.ID));
+                                        values.put(TblEmpProductsDefinition.Entry.NAME, item.getString(TblEmpProductsDefinition.Entry.NAME));
+                                        values.put(TblEmpProductsDefinition.Entry.CODE, item.getString(TblEmpProductsDefinition.Entry.CODE));
+                                        values.put(TblEmpProductsDefinition.Entry.YEAR, item.getString(TblEmpProductsDefinition.Entry.YEAR));
+                                        values.put(TblEmpProductsDefinition.Entry.BRAND_ID, item.getInt(TblEmpProductsDefinition.Entry.BRAND_ID));
+                                        EmpProducts.insert(values);
+                                    }
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                MainActivity.CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
+                                CursorEmpProducts.close();
+                                cb.success();
+
+                                Cursor cursor = EmpProducts.getAll();
+                                Log.d("CANTIDAD PRODUCTS", String.valueOf(cursor.getCount()));
+                                cursor.close();
+                                EmpProducts.close();
+
+                            } else {
+                                MainActivity.CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
+                                cb.error();
                             }
-                        } catch (Exception e) {}
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            MainActivity.CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
+                            cb.error();
+                        }
                     }
                 });
                 SyncEmpProductsThread.start();
@@ -126,7 +131,8 @@ public class SyncProducts {
                 Log.d("ERROR SyncEmpCompany", error.toString());
                 if (intentos >= 3) {
                     intentos = 0;
-                     MainActivity.CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (PRODUCTS). Si el problema persiste por favor contáctenos.");
+                    MainActivity.CheckErrorToExit(CursorEmpProducts, "Ha habido un error de sincronización con el servidor (PRODUCTS). Si el problema persiste por favor contáctenos.");
+                    cb.error();
                 } else {
                     try {
                         Thread.sleep(3000);
@@ -134,7 +140,7 @@ public class SyncProducts {
                         e.printStackTrace();
                     }
                     intentos++;
-                    Sync();
+                    Sync(cb);
                 }
             }
         }, headers);

@@ -15,7 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import cl.pingon.Libraries.RESTService;
+import cl.pingon.Sync.SyncBrands;
+import cl.pingon.Sync.SyncChecklist;
 import cl.pingon.Sync.SyncCompany;
+import cl.pingon.Sync.SyncFormularios;
+import cl.pingon.Sync.SyncListOptions;
+import cl.pingon.Sync.SyncProducts;
 import cl.pingon.Sync.SyncProjects;
 
 
@@ -27,8 +32,6 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences session;
     RESTService REST;
     AlertDialog.Builder alert;
-
-    int Syncronized = 0;
 
     String ChecklistUrl;
     String ListOptionsUrl;
@@ -75,28 +78,41 @@ public class MainActivity extends AppCompatActivity {
                         Projects.Sync(new CallbackSync(){
                             @Override
                             public void success() {
-
+                                SyncBrands Brands = new SyncBrands(getApplicationContext(), mainactivity, BrandsUrl);
+                                Brands.Sync(new CallbackSync(){
+                                    @Override
+                                    public void success() {
+                                        SyncProducts Products = new SyncProducts(getApplicationContext(), mainactivity, ProductsUrl);
+                                        Products.Sync(new CallbackSync(){
+                                            @Override
+                                            public void success() {
+                                                SyncFormularios Formularios = new SyncFormularios(mainactivity, FormulariosUrl);
+                                                Formularios.Sync(new CallbackSync(){
+                                                    @Override
+                                                    public void success() {
+                                                        SyncChecklist Checklist = new SyncChecklist(mainactivity, ChecklistUrl);
+                                                        Checklist.Sync(new CallbackSync(){
+                                                            @Override
+                                                            public void success() {
+                                                                SyncListOptions ListOptions = new SyncListOptions(mainactivity, ListOptionsUrl);
+                                                                ListOptions.Sync(new CallbackSync(){
+                                                                    @Override
+                                                                    public void success() {
+                                                                        SyncReady();
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
                             }
                         });
                     }
                 });
-
-                /*
-
-                SyncBrands Brands = new SyncBrands(this, this, BrandsUrl);
-                Brands.Sync();
-
-                SyncProducts Products = new SyncProducts(this, this, ProductsUrl);
-                Products.Sync();
-
-                SyncFormularios Formularios = new SyncFormularios(this, FormulariosUrl);
-                Formularios.Sync();
-
-                SyncChecklist Checklist = new SyncChecklist(this, ChecklistUrl);
-                Checklist.Sync();
-
-                SyncListOptions ListOptions = new SyncListOptions(this, ListOptionsUrl);
-                ListOptions.Sync();*/
 
             } else {
                 Message(getResources().getString(R.string.no_internet), getResources().getString(R.string.first_time_no_internet));
@@ -131,11 +147,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void SyncReady(){
-        Syncronized++;
-        if(Syncronized >= 7){
-            startActivity(IntentBuzon);
-            finish();
-        }
+        startActivity(IntentBuzon);
+        finish();
     }
 
 

@@ -36,7 +36,7 @@ public class SyncBrands {
         this.MainActivity = activity;
     }
 
-    public void Sync(){
+    public void Sync(final cl.pingon.MainActivity.CallbackSync cb){
         this.intentos++;
         EmpBrands = new TblEmpBrandsHelper(context);
         final Cursor CursorEmpBrands = EmpBrands.getAll();
@@ -49,56 +49,61 @@ public class SyncBrands {
                 SyncEmpBrandsThread = new Thread(new Runnable() {
                     public void run() {
                         try {
-                            try {
-                                if(ResponseEmpBrands.getInt("ok") == 1){
+                            if(ResponseEmpBrands.getInt("ok") == 1){
 
-                                    JSONArray data = (JSONArray) ResponseEmpBrands.get("data");
-                                    JSONObject item;
-                                    Integer ID = null;
-                                    String NAME = null;
-                                    Integer PROJECT_ID = null;
-                                    Boolean addItem;
-                                    ContentValues values;
+                                JSONArray data = (JSONArray) ResponseEmpBrands.get("data");
+                                JSONObject item;
+                                Integer ID = null;
+                                String NAME = null;
+                                Integer PROJECT_ID = null;
+                                Boolean addItem;
+                                ContentValues values;
 
-                                    for(int i = 0;i < data.length(); i++){
-                                        item = (JSONObject) data.get(i);
-                                        addItem = true;
-                                        while(CursorEmpBrands.moveToNext()) {
-                                            ID = CursorEmpBrands.getInt(CursorEmpBrands.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.ID));
-                                            NAME = CursorEmpBrands.getString(CursorEmpBrands.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.NAME));
-                                            PROJECT_ID = CursorEmpBrands.getInt(CursorEmpBrands.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.PROJECT_ID));
-                                            if(ID == item.getInt(TblEmpBrandsDefinition.Entry.ID)){
-                                                addItem = false;
+                                for(int i = 0;i < data.length(); i++){
+                                    item = (JSONObject) data.get(i);
+                                    addItem = true;
+                                    while(CursorEmpBrands.moveToNext()) {
+                                        ID = CursorEmpBrands.getInt(CursorEmpBrands.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.ID));
+                                        NAME = CursorEmpBrands.getString(CursorEmpBrands.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.NAME));
+                                        PROJECT_ID = CursorEmpBrands.getInt(CursorEmpBrands.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.PROJECT_ID));
+                                        if(ID == item.getInt(TblEmpBrandsDefinition.Entry.ID)){
+                                            addItem = false;
 
-                                                values = new ContentValues();
-                                                if(NAME != item.getString(TblEmpBrandsDefinition.Entry.NAME)){
-                                                    values.put(TblEmpBrandsDefinition.Entry.NAME, item.getString(TblEmpBrandsDefinition.Entry.NAME));
-                                                }
-                                                if(PROJECT_ID != item.getInt(TblEmpBrandsDefinition.Entry.PROJECT_ID)){
-                                                    values.put(TblEmpBrandsDefinition.Entry.PROJECT_ID, item.getInt(TblEmpBrandsDefinition.Entry.PROJECT_ID));
-                                                }
-                                                EmpBrands.update(ID, values);
-                                                break;
-                                            }
-                                        }
-                                        if(addItem){
                                             values = new ContentValues();
-                                            values.put(TblEmpBrandsDefinition.Entry.ID, item.getInt(TblEmpBrandsDefinition.Entry.ID));
-                                            values.put(TblEmpBrandsDefinition.Entry.NAME, item.getString(TblEmpBrandsDefinition.Entry.NAME));
-                                            values.put(TblEmpBrandsDefinition.Entry.PROJECT_ID, item.getInt(TblEmpBrandsDefinition.Entry.PROJECT_ID));
-                                            EmpBrands.insert(values);
+                                            if(NAME != item.getString(TblEmpBrandsDefinition.Entry.NAME)){
+                                                values.put(TblEmpBrandsDefinition.Entry.NAME, item.getString(TblEmpBrandsDefinition.Entry.NAME));
+                                            }
+                                            if(PROJECT_ID != item.getInt(TblEmpBrandsDefinition.Entry.PROJECT_ID)){
+                                                values.put(TblEmpBrandsDefinition.Entry.PROJECT_ID, item.getInt(TblEmpBrandsDefinition.Entry.PROJECT_ID));
+                                            }
+                                            EmpBrands.update(ID, values);
+                                            break;
                                         }
                                     }
-                                    CursorEmpBrands.close();
-                                    MainActivity.SyncReady();
-                                } else {
-                                    MainActivity.CheckErrorToExit(CursorEmpBrands, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
+                                    if(addItem){
+                                        values = new ContentValues();
+                                        values.put(TblEmpBrandsDefinition.Entry.ID, item.getInt(TblEmpBrandsDefinition.Entry.ID));
+                                        values.put(TblEmpBrandsDefinition.Entry.NAME, item.getString(TblEmpBrandsDefinition.Entry.NAME));
+                                        values.put(TblEmpBrandsDefinition.Entry.PROJECT_ID, item.getInt(TblEmpBrandsDefinition.Entry.PROJECT_ID));
+                                        EmpBrands.insert(values);
+                                    }
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                MainActivity.CheckErrorToExit(CursorEmpBrands, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
+                                CursorEmpBrands.close();
+                                cb.success();
+
+                                Cursor cursor = EmpBrands.getAll();
+                                Log.d("CANTIDAD BRANDS", String.valueOf(cursor.getCount()));
+                                cursor.close();
+                                EmpBrands.close();
+                            } else {
+                                MainActivity.CheckErrorToExit(CursorEmpBrands, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
+                                cb.error();
                             }
-                        } catch (Exception e) {}
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            MainActivity.CheckErrorToExit(CursorEmpBrands, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
+                            cb.error();
+                        }
                     }
                 });
                 SyncEmpBrandsThread.start();
@@ -111,14 +116,15 @@ public class SyncBrands {
                 if (intentos >= 3) {
                     intentos = 0;
                     MainActivity.CheckErrorToExit(CursorEmpBrands, "Ha habido un error de sincronización con el servidor (EMP BRANDS). Si el problema persiste por favor contáctenos.");
+                    cb.error();
                 } else {
                     try {
-                        Thread.sleep(3000);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     intentos++;
-                    Sync();
+                    Sync(cb);
                 }
             }
         }, headers);
