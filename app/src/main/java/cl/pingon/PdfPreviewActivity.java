@@ -46,6 +46,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -57,6 +58,8 @@ import cl.pingon.SQLite.TblChecklistDefinition;
 import cl.pingon.SQLite.TblChecklistHelper;
 import cl.pingon.SQLite.TblDocumentoDefinition;
 import cl.pingon.SQLite.TblDocumentoHelper;
+import cl.pingon.SQLite.TblEmpCompanyDefinition;
+import cl.pingon.SQLite.TblEmpCompanyHelper;
 import cl.pingon.SQLite.TblEmpProjectsDefinition;
 import cl.pingon.SQLite.TblEmpProjectsHelper;
 import cl.pingon.SQLite.TblFormulariosDefinition;
@@ -74,6 +77,10 @@ public class PdfPreviewActivity extends AppCompatActivity {
     private int LOCAL_DOC_ID;
     ArrayList<ModelKeyPairs> header = new ArrayList<>();
     private String android_id;
+    String DOC_EXT_OBRA;
+    String DOC_EXT_NOMBRE_CLIENTE;
+    String RUT_CLIENTE;
+    String COMUNA_OBRA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,6 +151,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
         TblRegistroHelper Registro = new TblRegistroHelper(this);
         TblChecklistHelper Checklist = new TblChecklistHelper(this);
         TblFormulariosHelper Formularios = new TblFormulariosHelper(this);
+        TblEmpCompanyHelper Clientes = new TblEmpCompanyHelper(this);
         TblEmpProjectsHelper Projectos = new TblEmpProjectsHelper(this);
 
         ArrayList<ModelKeyPairs> registro = new ArrayList<>();
@@ -156,6 +164,15 @@ public class PdfPreviewActivity extends AppCompatActivity {
             Integer FRM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.FRM_ID));
             String DOC_FECHA_CREACION = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_FECHA_CREACION));
             Integer DOC_EXT_ID_CLIENTE = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE));
+            DOC_EXT_OBRA = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_OBRA));
+            DOC_EXT_NOMBRE_CLIENTE = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE));
+
+            cursor.close();
+
+
+            cursor = Clientes.getById(String.valueOf(DOC_EXT_ID_CLIENTE));
+            cursor.moveToFirst();
+            RUT_CLIENTE = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.RUT));
             cursor.close();
 
 
@@ -165,6 +182,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
             header.add(new ModelKeyPairs("Nombre del formulario",FRM_NOMBRE,"texto"));
             cursor.close();
             header.add(new ModelKeyPairs("Remitente",USU_NAME,"texto"));
+
 
             String[] nombre_array = FRM_NOMBRE.split(" ");
             String numero_referencia = "";
@@ -176,6 +194,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
 
             cursor = Projectos.getByCompanyId(DOC_EXT_ID_CLIENTE);
             cursor.moveToFirst();
+            COMUNA_OBRA = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ADDRESS));
             String coords = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COORDINATES));
             if(coords != null){
                 if(!coords.isEmpty()){
@@ -325,9 +344,22 @@ public class PdfPreviewActivity extends AppCompatActivity {
             /**
              * Declaracion
              */
-            tabla = pdf.createTable(1);
-            tabla.addCell(pdf.addCell(FRM_DECLARACION));
-            pdf.add(tabla);
+
+            pdf.add(Chunk.NEWLINE);
+            pdf.add(Chunk.NEWLINE);
+
+            //FECHA
+            Date fecha = new Date();
+            SimpleDateFormat ft = new SimpleDateFormat ("dd/MM/yyyy");
+            FRM_DECLARACION = FRM_DECLARACION.replace("[fecha]", ft.format(fecha));
+            //OBRA
+            FRM_DECLARACION = FRM_DECLARACION.replace("[obra]", DOC_EXT_OBRA);
+            FRM_DECLARACION = FRM_DECLARACION.replace("[nombre_cliente]", DOC_EXT_NOMBRE_CLIENTE);
+            FRM_DECLARACION = FRM_DECLARACION.replace("[rut_cliente]", RUT_CLIENTE);
+            FRM_DECLARACION = FRM_DECLARACION.replace("[comuna_obra]", COMUNA_OBRA);
+
+            p = new Paragraph(FRM_DECLARACION);
+            pdf.add(p);
 
             pdf.close();
 

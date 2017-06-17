@@ -91,7 +91,6 @@ public class SyncFormularios {
                                             if(FRM_DECLARACION != item.getString(TblFormulariosDefinition.Entry.FRM_DECLARACION)){
                                                 values.put(TblFormulariosDefinition.Entry.FRM_DECLARACION, item.getString(TblFormulariosDefinition.Entry.FRM_DECLARACION));
                                             }
-                                            Log.d("VALUES",values.toString());
                                             HelperSQLite.update(FRM_ID, values);
                                             break;
                                         }
