@@ -248,6 +248,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     } catch(Exception e){}
                     break;
                 case "hora":
+                case "hora_entrada":
+                case "hora_salida":
                     try {
                         WidgetView = data.get(x).getView();
                         EditText = (EditText) WidgetView.findViewById(R.id.hora_input);
@@ -271,6 +273,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         }
                     } catch(Exception e){}
                     break;
+                case "hora_colacion":
                 case "binario":
                     try {
                         int checked = 1;
@@ -299,6 +302,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 case "numero_entero":
                 case "moneda":
                 case "sistema":
+                case "hora_total_diaria":
                     try {
                         WidgetView = data.get(x).getView();
                         EditText = (EditText) WidgetView.findViewById(R.id.numero_input);

@@ -40,6 +40,10 @@ public class FieldsSistema {
             NumeroInput.setText(Fields.getCAM_VAL_DEFECTO());
         }
 
+        //TODO probar campo sistema
+
+        //TODO crear listener para calculo de horas
+
         try {
             Fields.setView(view);
         } catch (Exception e){

@@ -4,8 +4,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-//TODO Chequear esto para detectar conexion wifi http://stackoverflow.com/questions/25678216/android-internet-connectivity-change-listener
-
 public class NetworkUtils {
     public static int TYPE_WIFI = 1;
     public static int TYPE_MOBILE = 2;
