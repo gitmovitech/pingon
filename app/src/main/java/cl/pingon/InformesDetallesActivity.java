@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import cl.pingon.Adapter.AdapterChecklist;
 import cl.pingon.Libraries.DrawSign;
 import cl.pingon.Libraries.ImageUtils;
+import cl.pingon.Libraries.Rut;
 import cl.pingon.Libraries.TimerUtils;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.SQLite.TblChecklistDefinition;
@@ -203,6 +204,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         }
                     } catch (Exception e){}
                     break;
+                case "rut_responsable":
                 case "texto":
                 case "responsable":
                     try {
@@ -211,6 +213,14 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         if (data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()) {
                             MessageErrors += MessageCount + " - El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n\n";
                             MessageCount++;
+                        } else if(data.get(x).getCAM_TIPO().contains("rut_responsable")){
+                            EditText.setText(Rut.formatear(EditText.getText().toString()));
+                            if(!Rut.validar(EditText.getText().toString())){
+                                MessageErrors += MessageCount + " - El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" no es un RUT válido.\n\n";
+                                MessageCount++;
+                            } else {
+                                data.get(x).setValue(EditText.getText().toString());
+                            }
                         } else {
                             data.get(x).setValue(EditText.getText().toString());
                         }

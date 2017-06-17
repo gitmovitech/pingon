@@ -15,7 +15,7 @@ public class FieldsText {
 
     View view;
 
-    public FieldsText(LayoutInflater Inflater, ModelChecklistFields Fields, int RowItemIndex, String type){
+    public FieldsText(LayoutInflater Inflater, ModelChecklistFields Fields, int RowItemIndex){
         this.view = Inflater.inflate(R.layout.item_texto, null);
 
         TextInputLayout TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
