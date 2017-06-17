@@ -204,6 +204,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     } catch (Exception e){}
                     break;
                 case "texto":
+                case "responsable":
                     try {
                         WidgetView = data.get(x).getView();
                         EditText = (EditText) WidgetView.findViewById(R.id.texto_input);
