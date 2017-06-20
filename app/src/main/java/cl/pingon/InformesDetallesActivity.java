@@ -111,7 +111,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
          */
         ArrayChecklist = completeValuesOnChecklist(ArrayChecklist, getIntent().getIntExtra("LOCAL_DOC_ID",0),getIntent().getIntExtra("FRM_ID", 0));
 
-        AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this){};
+        AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this, getIntent().getIntExtra("FRM_ID",0)){};
         ListViewInformesDetalles.setAdapter(AdapterChecklist);
 
         RequestWriteExternalPerms();

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,13 +50,15 @@ public abstract class AdapterChecklist extends BaseAdapter {
     InformesDetallesActivity InformesDetallesActivity;
     ArrayList<ModelImage> ImageItems;
     Intent IntentSign;
+    Integer FRM_ID;
 
     int Timer = 1000;
 
-    public AdapterChecklist(Context context, ArrayList<ModelChecklistFields> ChecklistFields, InformesDetallesActivity InformesDetallesActivity){
+    public AdapterChecklist(Context context, ArrayList<ModelChecklistFields> ChecklistFields, InformesDetallesActivity InformesDetallesActivity, Integer FRM_ID){
         this.ChecklistFields = ChecklistFields;
         this.context = context;
         this.InformesDetallesActivity = InformesDetallesActivity;
+        this.FRM_ID = FRM_ID;
         ImageItems = new ArrayList<ModelImage>();
         IntentSign = new Intent(context, SignDrawActivity.class);
     }
@@ -135,8 +138,9 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     ViewReturn = FieldsNumeroEntero.getView();
                     break;
                 case "hora_total_diaria":
+                case "hora_total_semanal":
                 case "sistema":
-                    FieldsSistema FieldsSistema = new FieldsSistema(Inflater, ChecklistFields.get(contador), ChecklistFields);
+                    FieldsSistema FieldsSistema = new FieldsSistema(Inflater, ChecklistFields.get(contador), FRM_ID, context);
                     ViewReturn = FieldsSistema.getView();
                     break;
                 case "moneda":

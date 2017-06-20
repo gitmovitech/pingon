@@ -1,6 +1,8 @@
 package cl.pingon.Fields;
 
 
+import android.content.Context;
+import android.database.Cursor;
 import android.support.design.widget.TextInputLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,13 +14,15 @@ import java.util.ArrayList;
 
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.R;
+import cl.pingon.SQLite.TblRegistroDefinition;
+import cl.pingon.SQLite.TblRegistroHelper;
 
 public class FieldsSistema{
 
     View view;
     EditText NumeroInput;
 
-    public FieldsSistema(LayoutInflater Inflater, ModelChecklistFields Fields, ArrayList<ModelChecklistFields> ArrayFields){
+    public FieldsSistema(LayoutInflater Inflater, ModelChecklistFields Fields, Integer FRM_ID, Context context){
 
         this.view = Inflater.inflate(R.layout.item_numero, null);
         TextInputLayout TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
@@ -39,6 +43,34 @@ public class FieldsSistema{
          */
         if(!Fields.getCAM_VAL_DEFECTO().isEmpty()){
             NumeroInput.setText(Fields.getCAM_VAL_DEFECTO());
+        }
+
+        /**
+         * CALCULO SEMANAL DE HORAS
+         */
+        if(Fields.getCAM_TIPO().contains("hora_total_semanal")){
+            TblRegistroHelper Registros = new TblRegistroHelper(context);
+            Cursor c = Registros.getByFrmId(FRM_ID);
+
+            int horas = 0;
+            int minutos = 0;
+            String hora_string = "";
+            String[] hora_arr;
+
+            while(c.moveToNext()){
+                if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).contains("hora_total_diaria")){
+                    if(!c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)).isEmpty()){
+                        hora_string = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
+                        hora_arr = hora_string.split(":");
+                        horas += Integer.parseInt(hora_arr[0]);
+                        minutos += Integer.parseInt(hora_arr[1]);
+                    }
+                }
+            }
+            c.close();
+            Registros.close();
+
+            NumeroInput.setText(horas+":"+minutos);
         }
 
         //TODO probar campo sistema
