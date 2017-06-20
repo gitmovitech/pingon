@@ -39,6 +39,7 @@ public class FieldsFecha {
         }
         Button Button = (Button) view.findViewById(R.id.button_fecha);
         final EditText EditTextFecha = (EditText) view.findViewById(R.id.fecha_input);
+        EditTextFecha.setFocusable(false);
         Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

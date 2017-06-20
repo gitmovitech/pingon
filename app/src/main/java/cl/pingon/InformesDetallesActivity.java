@@ -19,6 +19,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -253,6 +254,15 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     try {
                         WidgetView = data.get(x).getView();
                         EditText = (EditText) WidgetView.findViewById(R.id.hora_input);
+                        if(data.get(x).getCAM_TIPO().contains("hora_entrada")){
+                            EditText.setOnKeyListener(new View.OnKeyListener() {
+                                @Override
+                                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                                    Log.d("KEYLISTENER", ":"+keyCode);
+                                    return false;
+                                }
+                            });
+                        }
                         if (data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()) {
                             MessageErrors += MessageCount + " - El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n\n";
                             MessageCount++;

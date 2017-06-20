@@ -34,6 +34,7 @@ public class FieldsHora {
         }
         Button Button = (Button) view.findViewById(R.id.button_hora);
         final EditText EditTextHora = (EditText) view.findViewById(R.id.hora_input);
+        EditTextHora.setFocusable(false);
         Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
