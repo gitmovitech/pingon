@@ -3,23 +3,29 @@ package cl.pingon.Fields;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.support.design.widget.TextInputLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
+import cl.pingon.Libraries.CalculateHours;
+import cl.pingon.Libraries.DateUtils;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.R;
 
 public class FieldsHora {
     View view;
 
-    public FieldsHora(final Context context, LayoutInflater Inflater, ModelChecklistFields Fields){
+    public FieldsHora(final Context context, LayoutInflater Inflater, final ModelChecklistFields Fields, final ArrayList<ModelChecklistFields> ChecklistFields){
 
         this.view = Inflater.inflate(R.layout.item_hora, null);
         TextInputLayout TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
@@ -35,6 +41,22 @@ public class FieldsHora {
         Button Button = (Button) view.findViewById(R.id.button_hora);
         final EditText EditTextHora = (EditText) view.findViewById(R.id.hora_input);
         EditTextHora.setFocusable(false);
+        EditTextHora.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                new CalculateHours(ChecklistFields);
+            }
+        });
         Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

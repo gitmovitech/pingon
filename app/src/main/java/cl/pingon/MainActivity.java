@@ -14,6 +14,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import java.util.Date;
+
 import cl.pingon.Libraries.RESTService;
 import cl.pingon.Sync.SyncBrands;
 import cl.pingon.Sync.SyncChecklist;
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
+
 
         activity = this;
         mainactivity = this;

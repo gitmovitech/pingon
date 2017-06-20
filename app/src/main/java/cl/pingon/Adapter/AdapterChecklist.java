@@ -124,7 +124,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
                 case "hora":
                 case "hora_entrada":
                 case "hora_salida":
-                    FieldsHora FieldsHora = new FieldsHora(context, Inflater, ChecklistFields.get(contador));
+                    FieldsHora FieldsHora = new FieldsHora(context, Inflater, ChecklistFields.get(contador), ChecklistFields);
                     ViewReturn = FieldsHora.getView();
                     break;
                 case "foto":
@@ -145,7 +145,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     break;
                 case "binario":
                 case "hora_colacion":
-                    FieldsBinario FieldsBinario = new FieldsBinario(Inflater, ChecklistFields.get(contador));
+                    FieldsBinario FieldsBinario = new FieldsBinario(Inflater, ChecklistFields.get(contador), ChecklistFields);
                     ViewReturn = FieldsBinario.getView();
                     break;
                 case "lista":

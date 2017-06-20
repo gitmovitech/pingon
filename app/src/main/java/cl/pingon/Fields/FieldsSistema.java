@@ -13,15 +13,16 @@ import java.util.ArrayList;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.R;
 
-public class FieldsSistema {
+public class FieldsSistema{
 
     View view;
+    EditText NumeroInput;
 
     public FieldsSistema(LayoutInflater Inflater, ModelChecklistFields Fields, ArrayList<ModelChecklistFields> ArrayFields){
 
         this.view = Inflater.inflate(R.layout.item_numero, null);
         TextInputLayout TextoInputLayout = (TextInputLayout) view.findViewById(R.id.texto_input_layout);
-        EditText NumeroInput = (EditText) view.findViewById(R.id.numero_input);
+        NumeroInput = (EditText) view.findViewById(R.id.numero_input);
         try {
             if(Fields.getCAM_MANDATORIO().contains("S")){
                 TextView label = (TextView) view.findViewById(R.id.label_obligatorio);
@@ -42,8 +43,6 @@ public class FieldsSistema {
 
         //TODO probar campo sistema
 
-        //TODO crear listener para calculo de horas
-
         try {
             Fields.setView(view);
         } catch (Exception e){
@@ -55,4 +54,5 @@ public class FieldsSistema {
     public View getView(){
         return this.view;
     }
+
 }

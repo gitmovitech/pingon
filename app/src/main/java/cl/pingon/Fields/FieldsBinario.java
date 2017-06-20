@@ -6,6 +6,9 @@ import android.view.View;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
+import cl.pingon.Libraries.CalculateHours;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.R;
 
@@ -13,7 +16,7 @@ public class FieldsBinario {
 
     View view;
 
-    public FieldsBinario(LayoutInflater Inflater, ModelChecklistFields Fields){
+    public FieldsBinario(LayoutInflater Inflater, ModelChecklistFields Fields, final ArrayList<ModelChecklistFields> ChecklistFields){
 
         this.view = Inflater.inflate(R.layout.item_radio, null);
         TextView TextViewTitle = (TextView) view.findViewById(R.id.radio_label);
@@ -41,6 +44,18 @@ public class FieldsBinario {
                 rb1.setChecked(false);
                 rb2.setChecked(true);
             }
+            rb1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new CalculateHours(ChecklistFields);
+                }
+            });
+            rb2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new CalculateHours(ChecklistFields);
+                }
+            });
         }
 
         try {
