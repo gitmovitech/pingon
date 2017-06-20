@@ -97,6 +97,7 @@ public class SyncCompany {
                                 Cursor cursor = EmpCompany.getAll();
                                 Log.d("CANTIDAD COMPANY", String.valueOf(cursor.getCount()));
                                 cursor.close();
+                                EmpCompany.close();
                                 /*while(cursor.moveToNext()) {
                                     ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.ID));
                                     NAME = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.NAME));

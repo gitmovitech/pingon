@@ -110,6 +110,7 @@ public class SyncProjects {
                                 Cursor cursor = EmpProjects.getAll();
                                 Log.d("CANTIDAD PROJECTS", String.valueOf(cursor.getCount()));
                                 cursor.close();
+                                EmpProjects.close();
 
                             } else {
                                 MainActivity.CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
