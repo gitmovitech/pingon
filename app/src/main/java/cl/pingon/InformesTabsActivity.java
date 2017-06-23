@@ -123,6 +123,7 @@ public class InformesTabsActivity extends AppCompatActivity {
                 }
             }
             CursorFormularios.close();
+            Formularios.close();
         }
         getSupportActionBar().setSubtitle(FRM_NOMBRE);
         this.setTitle(ARN_NOMBRE);
