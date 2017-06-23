@@ -59,14 +59,16 @@ public class SyncChecklist {
 
     public void Sync(final cl.pingon.MainActivity.CallbackSync cb){
         this.intentos++;
-        Cursor = HelperSQLite.getAll();
-        HashMap<String, String> headers = new HashMap<>();
-        REST.get(url, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                RESTResponse = response;
-                SyncThread = new Thread(new Runnable() {
-                    public void run() {
+
+        SyncThread = new Thread(new Runnable() {
+            public void run() {
+
+                Cursor = HelperSQLite.getAll();
+                HashMap<String, String> headers = new HashMap<>();
+                REST.get(url, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        RESTResponse = response;
 
                         try {
                             if(RESTResponse.getInt("ok") == 1){
@@ -181,29 +183,33 @@ public class SyncChecklist {
                             cb.error();
                         }
 
+
                     }
-                });
-                SyncThread.start();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("ERROR SyncChecklist", error.toString());
-                if (intentos >= 3) {
-                    intentos = 0;
-                    MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (CHECKLIST). Si el problema persiste por favor contáctenos.");
-                    cb.error();
-                } else {
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("ERROR SyncChecklist", error.toString());
+                        if (intentos >= 3) {
+                            intentos = 0;
+                            MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (CHECKLIST). Si el problema persiste por favor contáctenos.");
+                            cb.error();
+                        } else {
+                            try {
+                                Thread.sleep(3000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            intentos++;
+                            Sync(cb);
+                        }
                     }
-                    intentos++;
-                    Sync(cb);
-                }
+                }, headers);
+
             }
-        }, headers);
+        });
+        SyncThread.start();
+
+
 
     }
 
