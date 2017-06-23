@@ -313,6 +313,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             ArrayListModelEmpProjects.add(Index, ItemEmpProjects);
             ListadoArrayListModelEmpProject.add(Index, RowValueName);
         }
+        cursor.close();
     }
 
 
@@ -340,12 +341,12 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             RowValueId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.ID));
             RowValueName = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.NAME));
             RowValueProjectId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.PROJECT_ID));
-            Log.d("CURSOR", RowValueName);
             ItemEmpBrands = new ModelEmpBrands(RowValueId, RowValueName, RowValueProjectId);
 
             ArrayListModelEmpBrands.add(Index, ItemEmpBrands);
             ListadoArrayListModelEmpBrand.add(Index, RowValueName);
         }
+        cursor.close();
     }
 
 
@@ -379,7 +380,6 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             RowValueCode = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.CODE));
             RowValueYear = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.YEAR));
             RowValueBrandId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.BRAND_ID));
-            Log.d("CURSOR", RowValueName);
             ItemEmpProducts = new ModelEmpProducts(RowValueId, RowValueName, RowValueCode, RowValueYear, RowValueBrandId);
 
             ArrayListModelEmpProducts.add(Index, ItemEmpProducts);
@@ -387,6 +387,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             ListadoArrayListModelEmpProduct.add(Index, RowValueName);
             ListadoArrayListModelEmpSerie.add(Index, RowValueCode);
         }
+        cursor.close();
     }
 
 
@@ -400,6 +401,10 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
+        EmpProduct.close();
+        EmpCompany.close();
+        EmpBrand.close();
+        EmpProject.close();
     }
 
 }
