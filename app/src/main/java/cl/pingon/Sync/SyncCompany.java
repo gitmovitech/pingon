@@ -25,7 +25,7 @@ public class SyncCompany {
     private String url;
     private Context context;
     private TblEmpCompanyHelper EmpCompany;
-    private Thread SyncEmpCompanyThread;
+    private Thread SyncThread;
     private cl.pingon.MainActivity MainActivity;
     private int intentos;
 
@@ -40,7 +40,7 @@ public class SyncCompany {
     public void Sync(final cl.pingon.MainActivity.CallbackSync cb){
         this.intentos++;
 
-        SyncEmpCompanyThread = new Thread(new Runnable() {
+        SyncThread = new Thread(new Runnable() {
             public void run() {
 
                 EmpCompany = new TblEmpCompanyHelper(context);
@@ -138,6 +138,6 @@ public class SyncCompany {
                 }, headers);
             }
         });
-        SyncEmpCompanyThread.start();
+        SyncThread.start();
     }
 }

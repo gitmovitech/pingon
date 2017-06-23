@@ -27,7 +27,7 @@ public class SyncProjects {
     private String url;
     private Context context;
     private TblEmpProjectsHelper EmpProjects;
-    private Thread SyncEmpProjectsThread;
+    private Thread SyncThread;
     private cl.pingon.MainActivity MainActivity;
     private int intentos;
 
@@ -41,17 +41,19 @@ public class SyncProjects {
 
     public void Sync(final cl.pingon.MainActivity.CallbackSync cb){
         this.intentos ++;
-        EmpProjects = new TblEmpProjectsHelper(context);
-        final Cursor CursorEmpProjects = EmpProjects.getAll();
-        HashMap<String, String> headers = new HashMap<>();
 
-        REST.get(url, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
+        SyncThread = new Thread(new Runnable() {
+            public void run() {
 
-                final JSONObject ResponseEmpProjects = response;
-                SyncEmpProjectsThread = new Thread(new Runnable() {
-                    public void run() {
+                EmpProjects = new TblEmpProjectsHelper(context);
+                final Cursor CursorEmpProjects = EmpProjects.getAll();
+                HashMap<String, String> headers = new HashMap<>();
+
+                REST.get(url, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        final JSONObject ResponseEmpProjects = response;
                         try {
                             if(ResponseEmpProjects.getInt("ok") == 1){
 
@@ -121,31 +123,32 @@ public class SyncProjects {
                             MainActivity.CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
                             cb.error();
                         }
-                    }
-                });
-                SyncEmpProjectsThread.start();
 
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("ERROR SyncProjects", error.toString());
+                        if (intentos >= 3) {
+                            intentos = 0;
+                            MainActivity.CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (EMP PROJECTS). Si el problema persiste por favor contáctenos.");
+                            cb.error();
+                        } else {
+                            try {
+                                Thread.sleep(3000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            intentos++;
+                            Sync(cb);
+                        }
+                    }
+                }, headers);
 
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("ERROR SyncProjects", error.toString());
-                if (intentos >= 3) {
-                    intentos = 0;
-                    MainActivity.CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (EMP PROJECTS). Si el problema persiste por favor contáctenos.");
-                    cb.error();
-                } else {
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    intentos++;
-                    Sync(cb);
-                }
-            }
-        }, headers);
+        });
+        SyncThread.start();
+
     }
 
 }
