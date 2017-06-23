@@ -78,29 +78,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         ArrayList<ModelChecklistFields> ArrayChecklist;
         ListViewInformesDetalles = (ListView) findViewById(R.id.ListViewInformesDetalles);
-        /**
-         * SOLUCION PROBLEMA SCROLL EN EL LISTVIEW
-         */
-        /*ListViewInformesDetalles.setOnTouchListener(new ListView.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                try {
-                    int action = event.getAction();
-                    switch (action) {
-                        case MotionEvent.ACTION_DOWN:
-                            v.getParent().requestDisallowInterceptTouchEvent(true);
-                            break;
-
-                        case MotionEvent.ACTION_UP:
-                            v.getParent().requestDisallowInterceptTouchEvent(false);
-                            break;
-                    }
-                    v.getParent().requestDisallowInterceptTouchEvent(false);
-                    v.onTouchEvent(event);
-                } catch (Exception e){}
-                return true;
-            }
-        });*/
+        
 
         /**
          * CARGAR LOS CHECKLIST
