@@ -78,7 +78,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         ArrayList<ModelChecklistFields> ArrayChecklist;
         ListViewInformesDetalles = (ListView) findViewById(R.id.ListViewInformesDetalles);
-        
+
 
         /**
          * CARGAR LOS CHECKLIST
@@ -388,12 +388,14 @@ public class InformesDetallesActivity extends AppCompatActivity {
             }
 
         }
+        Registros.close();
 
         if(changeDocumentStatus == 1){
             TblDocumentoHelper Documentos = new TblDocumentoHelper(this);
             values = new ContentValues();
             values.put(TblDocumentoDefinition.Entry.SEND_STATUS, "DRAFT");
             Documentos.update(getIntent().getIntExtra("LOCAL_DOC_ID", 0), values);
+            Documentos.close();
         }
 
 
@@ -436,6 +438,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
             }
             c.close();
         }
+        Registros.close();
 
         return ArrayChecklist;
     }
@@ -482,6 +485,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
             ));
         }
         c.close();
+        Checklist.close();
 
         return ArrayChecklist;
     }
@@ -664,6 +668,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     c.getString(c.getColumnIndexOrThrow("SEND_STATUS")));
         }
         c.close();
+        Registros.close();
     }
 
 

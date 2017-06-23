@@ -294,6 +294,7 @@ public class SyncService extends Service {
             Processing = 0;
         }
         c.close();
+        Registros.close();
 
         return ArrayRegistros;
     }
@@ -329,6 +330,7 @@ public class SyncService extends Service {
             Processing = 0;
         }
         c.close();
+        Documentos.close();
 
         return ArrayDocumentos;
     }
