@@ -19,7 +19,7 @@ public class TblChecklistHelper extends SQLiteOpenHelper {
         String query = "CREATE TABLE "+ TblChecklistDefinition.Entry.TABLE_NAME;
         query += " ("+TblChecklistDefinition.Entry.FRM_ID+" INTEGER NOT NULL,";
         query += TblChecklistDefinition.Entry.CHK_ID+" INTEGER NOT NULL,";
-        query += TblChecklistDefinition.Entry.CAM_ID+" INTEGER NOT NULL,";
+        query += TblChecklistDefinition.Entry.CAM_ID+" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,";
         query += TblChecklistDefinition.Entry.CAM_POSICION+" INTEGER NOT NULL,";
         query += TblChecklistDefinition.Entry.CUSTOM_LIST+" INTEGER NOT NULL,";
         query += TblChecklistDefinition.Entry.ACTIVO+" INTEGER NOT NULL,";
