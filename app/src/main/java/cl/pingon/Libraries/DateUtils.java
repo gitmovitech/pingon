@@ -1,36 +1,31 @@
 package cl.pingon.Libraries;
 
-import android.util.Log;
-
-import java.util.Date;
-
 public class DateUtils {
 
     public DateUtils(){
 
     }
 
+    private int ObtenerMinutos(String hora){
+        String[] arr = hora.split(":");
+        int minutos = Integer.parseInt(arr[0]) * 60;
+        minutos += Integer.parseInt(arr[1]);
+        return minutos;
+    }
+
     public String HoursDiference(String hora_entrada, String hora_salida, Boolean hora_colacion){
 
-        String[] hora_entrada_arr = hora_entrada.split(":");
-        String[] hora_salida_arr = hora_salida.split(":");
+        int minutos_entrada = ObtenerMinutos(hora_entrada);
+        int minutos_salida = ObtenerMinutos(hora_salida);
+        int minutos_diferencia = minutos_salida - minutos_entrada;
+        int horas_diferencia = (int) Math.floor(minutos_diferencia/60);
+        minutos_diferencia = minutos_diferencia % 60;
 
-        Date date_entrada = new Date();
-        Date date_salida = new Date();
-
-        date_entrada.setHours(Integer.parseInt(hora_entrada_arr[0]));
-        date_entrada.setMinutes(Integer.parseInt(hora_entrada_arr[01]));
-
-        date_salida.setHours(Integer.parseInt(hora_salida_arr[0]));
-        date_salida.setMinutes(Integer.parseInt(hora_salida_arr[01]));
-
-        long cantidad_horas = date_entrada.getTime() - date_salida.getTime();
-        Date horas = new Date();
-        horas.setTime(cantidad_horas);
-        if(hora_colacion){
-            return (23-horas.getHours()-1)+":"+horas.getMinutes();
+        if(hora_colacion) {
+            return (horas_diferencia-1)+":"+minutos_diferencia;
         } else {
-            return (23-horas.getHours())+":"+horas.getMinutes();
+            return horas_diferencia+":"+minutos_diferencia;
         }
     }
+
 }
