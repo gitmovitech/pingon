@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import cl.pingon.Libraries.DateUtils;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.R;
 import cl.pingon.SQLite.TblRegistroDefinition;
@@ -62,6 +63,7 @@ public class FieldsSistema{
                     if(!c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)).isEmpty()){
                         hora_string = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
                         hora_arr = hora_string.split(":");
+                        Log.d("HORA FIELD", hora_string);
                         horas += Integer.parseInt(hora_arr[0]);
                         minutos += Integer.parseInt(hora_arr[1]);
                     }
@@ -69,8 +71,10 @@ public class FieldsSistema{
             }
             c.close();
             Registros.close();
+            Log.d("HORA FIELD", horas+":"+minutos);
 
-            NumeroInput.setText(horas+":"+minutos);
+            DateUtils dateutils = new DateUtils();
+            NumeroInput.setText(dateutils.AproximarHora(horas+":"+minutos));
         }
 
         //TODO probar campo sistema
