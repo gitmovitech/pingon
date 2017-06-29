@@ -26,6 +26,7 @@ public class SyncChecklist {
     RESTService REST;
     ContentValues values;
     Boolean addItem;
+    Boolean removeItem;
     JSONArray data;
     JSONObject item;
     Thread SyncThread;
@@ -156,11 +157,30 @@ public class SyncChecklist {
                                     Cursor.close();
                                 }
 
+                                Cursor = HelperSQLite.getAll();
+                                while(Cursor.moveToNext()){
+                                    removeItem = true;
+                                    CAM_ID = Cursor.getInt(Cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_ID));
+
+                                    for(int i = 0;i < data.length(); i++){
+                                        item = (JSONObject) data.get(i);
+                                        if(item.getInt(TblChecklistDefinition.Entry.CAM_ID) == CAM_ID){
+                                            removeItem = false;
+                                            break;
+                                        }
+                                    }
+                                    if(removeItem){
+                                        HelperSQLite.deleteByCamId(CAM_ID);
+                                    }
+                                }
+                                Cursor.close();
+                                HelperSQLite.close();
+
                                 cb.success();
 
-                                Cursor cursor = HelperSQLite.getAll();
-                                Log.d("CANTIDAD CHECKLIST", String.valueOf(cursor.getCount()));
-                                cursor.close();
+                                Cursor = HelperSQLite.getAll();
+                                Log.d("CANTIDAD CHECKLIST", String.valueOf(Cursor.getCount()));
+                                Cursor.close();
                                 HelperSQLite.close();
 
 

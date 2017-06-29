@@ -156,4 +156,10 @@ public class TblChecklistHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public void deleteByCamId(Integer id){
+        SQLiteDatabase db = getReadableDatabase();
+        String where = TblChecklistDefinition.Entry.CAM_ID + " = ?";
+        db.delete(TblChecklistDefinition.Entry.TABLE_NAME, where, new String[]{String.valueOf(id)});
+    }
+
 }
