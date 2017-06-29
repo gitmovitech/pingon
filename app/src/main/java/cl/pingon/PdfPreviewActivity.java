@@ -333,7 +333,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
                         videofile = registros.get(i).getValue().split("/");
 
                         tabla.addCell(pdf.addCell(registros.get(i).getKey()));
-                        tabla.addCell(pdf.addCell(getResources().getString(R.string.url_download)+"/video/"+android_id+"/"+LOCAL_DOC_ID+"/"+videofile[videofile.length-1]));
+                        tabla.addCell(pdf.addCell(getResources().getString(R.string.url_download)+"?ai="+android_id+"&f="+videofile[videofile.length-1]));
 
                     } else {
                         tabla.addCell(pdf.addCell(registros.get(i).getKey()));

@@ -530,7 +530,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
     public void dispatchTakeVideoIntent(int index, int FRM_ID) {
         RowItemIndex = index;
-        LastVideoFilename = VideoName+FRM_ID+RowItemIndex+".mp4";
+        LastVideoFilename = VideoName+FRM_ID+"-"+RowItemIndex+".mp4";
         takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
         takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(LastVideoFilename)));
         if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
