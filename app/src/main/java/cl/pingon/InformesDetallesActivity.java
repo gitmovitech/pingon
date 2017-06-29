@@ -291,6 +291,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 case "moneda":
                 case "sistema":
                 case "hora_total_diaria":
+                case "hora_total_semanal":
+                case "hora_total_semanal_extra":
                     try {
                         WidgetView = data.get(x).getView();
                         EditText = (EditText) WidgetView.findViewById(R.id.numero_input);
