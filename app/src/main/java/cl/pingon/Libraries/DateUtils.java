@@ -13,17 +13,22 @@ public class DateUtils {
         return minutos;
     }
 
+    public String format(String hora){
+        String[] arr = hora.split(":");
+        return String.format("%02d",Integer.valueOf(arr[0]))+":"+String.format("%02d",Integer.valueOf(arr[1]));
+    }
+
     public String MinutosHora(int minutos){
         int horas_diferencia = (int) Math.floor(minutos/60);
         int minutos_diferencia = minutos % 60;
-        return horas_diferencia+":"+minutos_diferencia;
+        return format(horas_diferencia+":"+minutos_diferencia);
     }
 
     public String AproximarHora(String hora){
         int minutos = ObtenerMinutos(hora);
         int horas_diferencia = (int) Math.floor(minutos/60);
         int minutos_diferencia = minutos % 60;
-        return horas_diferencia+":"+minutos_diferencia;
+        return format(horas_diferencia+":"+minutos_diferencia);
     }
 
     public String HoursDiference(String hora_entrada, String hora_salida, Boolean hora_colacion){
@@ -35,9 +40,9 @@ public class DateUtils {
         minutos_diferencia = minutos_diferencia % 60;
 
         if(hora_colacion) {
-            return (horas_diferencia-1)+":"+minutos_diferencia;
+            return format((horas_diferencia-1)+":"+minutos_diferencia);
         } else {
-            return horas_diferencia+":"+minutos_diferencia;
+            return format(horas_diferencia+":"+minutos_diferencia);
         }
     }
 
