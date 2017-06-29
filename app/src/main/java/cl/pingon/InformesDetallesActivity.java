@@ -504,6 +504,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
     int RowItemIndex = 0;
     int RowItemFrmId = 0;
     String LastImageFilename = "";
+    String LastVideoFilename = "";
     String ImageName = Environment.getExternalStorageDirectory() + "/Pingon/fotos/imagen-";
     String VideoName = Environment.getExternalStorageDirectory() + "/Pingon/videos/video-";
     String AudioName = Environment.getExternalStorageDirectory() + "/Pingon/audios/audio-";
@@ -527,10 +528,11 @@ public class InformesDetallesActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void dispatchTakeVideoIntent(int index) {
+    public void dispatchTakeVideoIntent(int index, int FRM_ID) {
         RowItemIndex = index;
+        LastVideoFilename = VideoName+FRM_ID+RowItemIndex+".mp4";
         takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(VideoName+RowItemIndex+".mp4")));
+        takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(LastVideoFilename)));
         if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
         }
@@ -632,11 +634,11 @@ public class InformesDetallesActivity extends AppCompatActivity {
         }
         //VIDEO
         if (requestCode == REQUEST_VIDEO_CAPTURE){
-            AdapterChecklist.setVideoURI(Uri.parse(VideoName+RowItemIndex+".mp4"));
+            AdapterChecklist.setVideoURI(Uri.parse(LastVideoFilename));
             AdapterChecklist.setLinearLayoutVideoVisibility();
             AdapterChecklist.setVideoViewItemVisibility();
             ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
-            Fields.setValue(VideoName+RowItemIndex+".mp4");
+            Fields.setValue(LastVideoFilename);
         }
         //FIRMA
         if(requestCode == 10){

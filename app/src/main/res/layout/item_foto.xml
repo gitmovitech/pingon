@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout android:padding="@dimen/activity_vertical_margin"
+<LinearLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,7 +19,7 @@
             android:visibility="gone"
             android:id="@+id/ImageViewFoto"
             android:layout_width="match_parent"
-            android:layout_margin="30dp"
+            android:layout_margin="3dp"
             android:scaleType="centerCrop"
             android:layout_height="wrap_content" />
 

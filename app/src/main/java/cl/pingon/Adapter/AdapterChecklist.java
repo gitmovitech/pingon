@@ -246,7 +246,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
         ButtonVideoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                InformesDetallesActivity.dispatchTakeVideoIntent(RowItemIndex);
+                InformesDetallesActivity.dispatchTakeVideoIntent(RowItemIndex, FRM_ID);
             }
         });
         Button ButtonVideoPlay = (Button) ItemVideoView.findViewById(R.id.ButtonVideoPlay);
