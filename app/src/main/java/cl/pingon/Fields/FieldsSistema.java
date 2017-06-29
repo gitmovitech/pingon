@@ -49,7 +49,7 @@ public class FieldsSistema{
         /**
          * CALCULO SEMANAL DE HORAS
          */
-        if(Fields.getCAM_TIPO().contains("hora_total_semanal")){
+        if(Fields.getCAM_TIPO().contains("hora_total_semanal") || Fields.getCAM_TIPO().contains("hora_total_semanal_extra")){
             TblRegistroHelper Registros = new TblRegistroHelper(context);
             Cursor c = Registros.getByFrmId(FRM_ID);
 
@@ -63,7 +63,6 @@ public class FieldsSistema{
                     if(!c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)).isEmpty()){
                         hora_string = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
                         hora_arr = hora_string.split(":");
-                        Log.d("HORA FIELD", hora_string);
                         horas += Integer.parseInt(hora_arr[0]);
                         minutos += Integer.parseInt(hora_arr[1]);
                     }
@@ -74,7 +73,19 @@ public class FieldsSistema{
             Log.d("HORA FIELD", horas+":"+minutos);
 
             DateUtils dateutils = new DateUtils();
-            NumeroInput.setText(dateutils.AproximarHora(horas+":"+minutos));
+            if(Fields.getCAM_TIPO().contains("hora_total_semanal")){
+                NumeroInput.setText(dateutils.AproximarHora(horas+":"+minutos));
+            }
+            if(Fields.getCAM_TIPO().contains("hora_total_semanal_extra")){
+                int minutos_extra = dateutils.ObtenerMinutos(horas+":"+minutos);
+                if(minutos_extra <= 2700){
+                    NumeroInput.setText("00:00");
+                } else {
+                    minutos_extra -= 2700;
+                    NumeroInput.setText(dateutils.MinutosHora(minutos_extra));
+                }
+
+            }
         }
 
         //TODO probar campo sistema

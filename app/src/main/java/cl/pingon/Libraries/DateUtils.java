@@ -6,11 +6,17 @@ public class DateUtils {
 
     }
 
-    private int ObtenerMinutos(String hora){
+    public int ObtenerMinutos(String hora){
         String[] arr = hora.split(":");
         int minutos = Integer.parseInt(arr[0]) * 60;
         minutos += Integer.parseInt(arr[1]);
         return minutos;
+    }
+
+    public String MinutosHora(int minutos){
+        int horas_diferencia = (int) Math.floor(minutos/60);
+        int minutos_diferencia = minutos % 60;
+        return horas_diferencia+":"+minutos_diferencia;
     }
 
     public String AproximarHora(String hora){

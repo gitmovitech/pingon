@@ -139,6 +139,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     break;
                 case "hora_total_diaria":
                 case "hora_total_semanal":
+                case "hora_total_semanal_extra":
                 case "sistema":
                     FieldsSistema FieldsSistema = new FieldsSistema(Inflater, ChecklistFields.get(contador), FRM_ID, context);
                     ViewReturn = FieldsSistema.getView();
