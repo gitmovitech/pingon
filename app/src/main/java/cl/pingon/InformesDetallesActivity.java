@@ -502,23 +502,28 @@ public class InformesDetallesActivity extends AppCompatActivity {
      *  ------------------------------------------------------------------------------------------------------------
      */
     int RowItemIndex = 0;
+    int RowItemFrmId = 0;
+    String LastImageFilename = "";
     String ImageName = Environment.getExternalStorageDirectory() + "/Pingon/fotos/imagen-";
     String VideoName = Environment.getExternalStorageDirectory() + "/Pingon/videos/video-";
     String AudioName = Environment.getExternalStorageDirectory() + "/Pingon/audios/audio-";
     Intent CameraIntent;
     Intent takeVideoIntent;
 
-    public void setCameraIntentAction(int index){
+    public void setCameraIntentAction(int index, int FRM_ID){
+        RowItemFrmId = FRM_ID;
+        String filename = ImageName+FRM_ID+"-"+RowItemIndex+".jpg";
+        LastImageFilename = filename;
         RowItemIndex = index;
         CameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        CameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(ImageName+RowItemIndex+".jpg")));
+        CameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(filename)));
         RequestCameraPerms();
     }
 
-    public void showPhoto(int index){
+    public void showPhoto(int index, int FRM_ID){
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(new File(ImageName+index+".jpg")), "image/*");
+        intent.setDataAndType(Uri.fromFile(new File(LastImageFilename)), "image/*");
         startActivity(intent);
     }
 
@@ -615,14 +620,15 @@ public class InformesDetallesActivity extends AppCompatActivity {
             ImageUtils img = new ImageUtils();
             Bitmap ImageBitmapDecoded = null;
             try {
-                ImageBitmapDecoded = img.ImageThumb(BitmapFactory.decodeFile(ImageName + RowItemIndex + ".jpg"));
+                ImageBitmapDecoded = img.ImageThumb(BitmapFactory.decodeFile(LastImageFilename));
+                AdapterChecklist.setImageButton(ImageBitmapDecoded, RowItemIndex);
+                ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
+                Fields.setValue(LastImageFilename);
             } catch (Exception E){
                 Log.e("IMAGENAME", ":"+ImageName);
                 Log.e("IMAGEINDEX", ":"+RowItemIndex);
+                Log.e("IMAGEFILENAME", ":"+LastImageFilename);
             }
-            AdapterChecklist.setImageButton(ImageBitmapDecoded, RowItemIndex);
-            ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
-            Fields.setValue(ImageName+RowItemIndex+".jpg");
         }
         //VIDEO
         if (requestCode == REQUEST_VIDEO_CAPTURE){

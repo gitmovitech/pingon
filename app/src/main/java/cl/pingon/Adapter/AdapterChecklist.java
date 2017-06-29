@@ -321,14 +321,14 @@ public abstract class AdapterChecklist extends BaseAdapter {
         ButtonFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                InformesDetallesActivity.setCameraIntentAction(RowItemIndex);
+                InformesDetallesActivity.setCameraIntentAction(RowItemIndex, FRM_ID);
             }
         });
         ImageButton ImageButtonFoto = (ImageButton) view.findViewById(R.id.ImageViewFoto);
         ImageButtonFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                InformesDetallesActivity.showPhoto(RowItemIndex);
+                InformesDetallesActivity.showPhoto(RowItemIndex, FRM_ID);
             }
         });
 
