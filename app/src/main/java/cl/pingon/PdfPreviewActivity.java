@@ -342,10 +342,8 @@ public class PdfPreviewActivity extends AppCompatActivity {
                 }
 
                 if(registros.get(i).getType().contains("rut_responsable")){
-                    Log.d("RUT", ":"+registros.get(i).getValue());
                     rut_responsable = registros.get(i).getValue();
                 } else if(registros.get(i).getType().contains("responsable")){
-                    Log.d("RESPONSABLE", ":"+registros.get(i).getValue());
                     responsable = registros.get(i).getValue();
                 }
             }
