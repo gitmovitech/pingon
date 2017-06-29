@@ -63,7 +63,6 @@ public class SyncChecklist {
         SyncThread = new Thread(new Runnable() {
             public void run() {
 
-                Cursor = HelperSQLite.getAll();
                 HashMap<String, String> headers = new HashMap<>();
                 REST.get(url, new Response.Listener<JSONObject>() {
                     @Override
@@ -76,9 +75,12 @@ public class SyncChecklist {
                                 data = (JSONArray) RESTResponse.get("data");
 
                                 for(int i = 0;i < data.length(); i++){
-                                    item = (JSONObject) data.get(i);
                                     addItem = true;
-                                    while(Cursor.moveToNext()) {
+                                    item = (JSONObject) data.get(i);
+                                    Cursor = HelperSQLite.getByCamId(item.getInt(TblChecklistDefinition.Entry.CAM_ID));
+                                    if(Cursor.getCount() > 0){
+                                        addItem = false;
+                                        Cursor.moveToFirst();
 
                                         CAM_ID = Cursor.getInt(Cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_ID));
                                         CHK_ID = Cursor.getInt(Cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_ID));
@@ -94,49 +96,45 @@ public class SyncChecklist {
                                         CAM_VAL_DEFECTO = Cursor.getString(Cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_VAL_DEFECTO));
                                         CAM_PLACE_HOLDER = Cursor.getString(Cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_PLACE_HOLDER));
 
-                                        if(CAM_ID == item.getInt(TblChecklistDefinition.Entry.CAM_ID)){
-                                            addItem = false;
 
-                                            values = new ContentValues();
-                                            if(CHK_ID != item.getInt(TblChecklistDefinition.Entry.CHK_ID)){
-                                                values.put(TblChecklistDefinition.Entry.CHK_ID, item.getInt(TblChecklistDefinition.Entry.CHK_ID));
-                                            }
-                                            if(FRM_ID != item.getInt(TblChecklistDefinition.Entry.FRM_ID)){
-                                                values.put(TblChecklistDefinition.Entry.FRM_ID, item.getInt(TblChecklistDefinition.Entry.FRM_ID));
-                                            }
-                                            if(CAM_POSICION != item.getInt(TblChecklistDefinition.Entry.CAM_POSICION)){
-                                                values.put(TblChecklistDefinition.Entry.CAM_POSICION, item.getInt(TblChecklistDefinition.Entry.CAM_POSICION));
-                                            }
-                                            if(CUSTOM_LIST != item.getInt(TblChecklistDefinition.Entry.CUSTOM_LIST)){
-                                                values.put(TblChecklistDefinition.Entry.CUSTOM_LIST, item.getInt(TblChecklistDefinition.Entry.CUSTOM_LIST));
-                                            }
-                                            if(ACTIVO != item.getInt(TblChecklistDefinition.Entry.ACTIVO)){
-                                                values.put(TblChecklistDefinition.Entry.ACTIVO, item.getInt(TblChecklistDefinition.Entry.ACTIVO));
-                                            }
-                                            if(CHK_NOMBRE != item.getString(TblChecklistDefinition.Entry.CHK_NOMBRE)){
-                                                values.put(TblChecklistDefinition.Entry.CHK_NOMBRE, item.getString(TblChecklistDefinition.Entry.CHK_NOMBRE));
-                                            }
-                                            if(CAM_NOMBRE_INTERNO != item.getString(TblChecklistDefinition.Entry.CAM_NOMBRE_INTERNO)){
-                                                values.put(TblChecklistDefinition.Entry.CAM_NOMBRE_INTERNO, item.getString(TblChecklistDefinition.Entry.CAM_NOMBRE_INTERNO));
-                                            }
-                                            if(CAM_NOMBRE_EXTERNO != item.getString(TblChecklistDefinition.Entry.CAM_NOMBRE_EXTERNO)){
-                                                values.put(TblChecklistDefinition.Entry.CAM_NOMBRE_EXTERNO, item.getString(TblChecklistDefinition.Entry.CAM_NOMBRE_EXTERNO));
-                                            }
-                                            if(CAM_TIPO != item.getString(TblChecklistDefinition.Entry.CAM_TIPO)){
-                                                values.put(TblChecklistDefinition.Entry.CAM_TIPO, item.getString(TblChecklistDefinition.Entry.CAM_TIPO));
-                                            }
-                                            if(CAM_MANDATORIO != item.getString(TblChecklistDefinition.Entry.CAM_MANDATORIO)){
-                                                values.put(TblChecklistDefinition.Entry.CAM_MANDATORIO, item.getString(TblChecklistDefinition.Entry.CAM_MANDATORIO));
-                                            }
-                                            if(CAM_VAL_DEFECTO != item.getString(TblChecklistDefinition.Entry.CAM_VAL_DEFECTO)){
-                                                values.put(TblChecklistDefinition.Entry.CAM_VAL_DEFECTO, item.getString(TblChecklistDefinition.Entry.CAM_VAL_DEFECTO));
-                                            }
-                                            if(CAM_PLACE_HOLDER != item.getString(TblChecklistDefinition.Entry.CAM_PLACE_HOLDER)){
-                                                values.put(TblChecklistDefinition.Entry.CAM_PLACE_HOLDER, item.getString(TblChecklistDefinition.Entry.CAM_PLACE_HOLDER));
-                                            }
-                                            HelperSQLite.update(CAM_ID, values);
-                                            break;
+                                        values = new ContentValues();
+                                        if(CHK_ID != item.getInt(TblChecklistDefinition.Entry.CHK_ID)){
+                                            values.put(TblChecklistDefinition.Entry.CHK_ID, item.getInt(TblChecklistDefinition.Entry.CHK_ID));
                                         }
+                                        if(FRM_ID != item.getInt(TblChecklistDefinition.Entry.FRM_ID)){
+                                            values.put(TblChecklistDefinition.Entry.FRM_ID, item.getInt(TblChecklistDefinition.Entry.FRM_ID));
+                                        }
+                                        if(CAM_POSICION != item.getInt(TblChecklistDefinition.Entry.CAM_POSICION)){
+                                            values.put(TblChecklistDefinition.Entry.CAM_POSICION, item.getInt(TblChecklistDefinition.Entry.CAM_POSICION));
+                                        }
+                                        if(CUSTOM_LIST != item.getInt(TblChecklistDefinition.Entry.CUSTOM_LIST)){
+                                            values.put(TblChecklistDefinition.Entry.CUSTOM_LIST, item.getInt(TblChecklistDefinition.Entry.CUSTOM_LIST));
+                                        }
+                                        if(ACTIVO != item.getInt(TblChecklistDefinition.Entry.ACTIVO)){
+                                            values.put(TblChecklistDefinition.Entry.ACTIVO, item.getInt(TblChecklistDefinition.Entry.ACTIVO));
+                                        }
+                                        if(CHK_NOMBRE != item.getString(TblChecklistDefinition.Entry.CHK_NOMBRE)){
+                                            values.put(TblChecklistDefinition.Entry.CHK_NOMBRE, item.getString(TblChecklistDefinition.Entry.CHK_NOMBRE));
+                                        }
+                                        if(CAM_NOMBRE_INTERNO != item.getString(TblChecklistDefinition.Entry.CAM_NOMBRE_INTERNO)){
+                                            values.put(TblChecklistDefinition.Entry.CAM_NOMBRE_INTERNO, item.getString(TblChecklistDefinition.Entry.CAM_NOMBRE_INTERNO));
+                                        }
+                                        if(CAM_NOMBRE_EXTERNO != item.getString(TblChecklistDefinition.Entry.CAM_NOMBRE_EXTERNO)){
+                                            values.put(TblChecklistDefinition.Entry.CAM_NOMBRE_EXTERNO, item.getString(TblChecklistDefinition.Entry.CAM_NOMBRE_EXTERNO));
+                                        }
+                                        if(CAM_TIPO != item.getString(TblChecklistDefinition.Entry.CAM_TIPO)){
+                                            values.put(TblChecklistDefinition.Entry.CAM_TIPO, item.getString(TblChecklistDefinition.Entry.CAM_TIPO));
+                                        }
+                                        if(CAM_MANDATORIO != item.getString(TblChecklistDefinition.Entry.CAM_MANDATORIO)){
+                                            values.put(TblChecklistDefinition.Entry.CAM_MANDATORIO, item.getString(TblChecklistDefinition.Entry.CAM_MANDATORIO));
+                                        }
+                                        if(CAM_VAL_DEFECTO != item.getString(TblChecklistDefinition.Entry.CAM_VAL_DEFECTO)){
+                                            values.put(TblChecklistDefinition.Entry.CAM_VAL_DEFECTO, item.getString(TblChecklistDefinition.Entry.CAM_VAL_DEFECTO));
+                                        }
+                                        if(CAM_PLACE_HOLDER != item.getString(TblChecklistDefinition.Entry.CAM_PLACE_HOLDER)){
+                                            values.put(TblChecklistDefinition.Entry.CAM_PLACE_HOLDER, item.getString(TblChecklistDefinition.Entry.CAM_PLACE_HOLDER));
+                                        }
+                                        HelperSQLite.update(CAM_ID, values);
                                     }
                                     if(addItem){
                                         values = new ContentValues();
@@ -155,8 +153,8 @@ public class SyncChecklist {
                                         values.put(TblChecklistDefinition.Entry.CAM_PLACE_HOLDER, item.getString(TblChecklistDefinition.Entry.CAM_PLACE_HOLDER));
                                         HelperSQLite.insert(values);
                                     }
+                                    Cursor.close();
                                 }
-                                Cursor.close();
 
                                 cb.success();
 

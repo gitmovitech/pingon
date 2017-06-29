@@ -70,6 +70,27 @@ public class TblChecklistHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public Cursor getByCamId(int CAM_ID){
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {
+                "FRM_ID",
+                "CHK_ID",
+                "CAM_ID",
+                "CAM_POSICION",
+                "CUSTOM_LIST",
+                "ACTIVO",
+                "CHK_NOMBRE",
+                "CAM_NOMBRE_INTERNO",
+                "CAM_NOMBRE_EXTERNO",
+                "CAM_TIPO",
+                "CAM_MANDATORIO",
+                "CAM_VAL_DEFECTO",
+                "CAM_PLACE_HOLDER"
+        };
+        Cursor cursor = db.query(TblChecklistDefinition.Entry.TABLE_NAME, projection, "CAM_ID = ?", new String[]{String.valueOf(CAM_ID)}, null, null, null);
+        return cursor;
+    }
+
     public Cursor getAllGroupByChkNombre(int FRM_ID){
         SQLiteDatabase db = getReadableDatabase();
         String[] projection = {
