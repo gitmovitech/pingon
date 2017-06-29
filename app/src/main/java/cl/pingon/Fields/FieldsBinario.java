@@ -33,9 +33,22 @@ public class FieldsBinario {
         /**
          * Autocompletar valor por defecto
          */
+        RadioButton rb1 = (RadioButton) this.view.findViewById(R.id.radio_si);
+        RadioButton rb2 = (RadioButton) this.view.findViewById(R.id.radio_no);
+        rb1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new CalculateHours(ChecklistFields);
+            }
+        });
+        rb2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new CalculateHours(ChecklistFields);
+            }
+        });
+
         if(!Fields.getCAM_VAL_DEFECTO().isEmpty()){
-            RadioButton rb1 = (RadioButton) this.view.findViewById(R.id.radio_si);
-            RadioButton rb2 = (RadioButton) this.view.findViewById(R.id.radio_no);
             if(Fields.getCAM_VAL_DEFECTO().contains("Si")){
                 rb1.setChecked(true);
                 rb2.setChecked(false);
@@ -44,18 +57,6 @@ public class FieldsBinario {
                 rb1.setChecked(false);
                 rb2.setChecked(true);
             }
-            rb1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    new CalculateHours(ChecklistFields);
-                }
-            });
-            rb2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    new CalculateHours(ChecklistFields);
-                }
-            });
         }
 
         try {
