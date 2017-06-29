@@ -248,6 +248,8 @@ public class PdfPreviewActivity extends AppCompatActivity {
         try {
 
             String[] videofile;
+            String responsable = "";
+            String rut_responsable = "";
 
             /**
              * OBTENER NOMBRE DEL AREA DE NEGOCIO
@@ -338,6 +340,14 @@ public class PdfPreviewActivity extends AppCompatActivity {
                         tabla.addCell(pdf.addCell(registros.get(i).getValue()));
                     }
                 }
+
+                if(registros.get(i).getType().contains("rut_responsable")){
+                    Log.d("RUT", ":"+registros.get(i).getValue());
+                    rut_responsable = registros.get(i).getValue();
+                } else if(registros.get(i).getType().contains("responsable")){
+                    Log.d("RESPONSABLE", ":"+registros.get(i).getValue());
+                    responsable = registros.get(i).getValue();
+                }
             }
             pdf.add(tabla);
 
@@ -357,6 +367,8 @@ public class PdfPreviewActivity extends AppCompatActivity {
             FRM_DECLARACION = FRM_DECLARACION.replace("[nombre_cliente]", DOC_EXT_NOMBRE_CLIENTE);
             FRM_DECLARACION = FRM_DECLARACION.replace("[rut_cliente]", RUT_CLIENTE);
             FRM_DECLARACION = FRM_DECLARACION.replace("[comuna_obra]", COMUNA_OBRA);
+            FRM_DECLARACION = FRM_DECLARACION.replace("[responsable]", responsable);
+            FRM_DECLARACION = FRM_DECLARACION.replace("[rut]", rut_responsable);
 
             p = new Paragraph(FRM_DECLARACION);
             pdf.add(p);
