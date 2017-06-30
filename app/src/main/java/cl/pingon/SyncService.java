@@ -166,9 +166,7 @@ public class SyncService extends Service {
         prepararDocumento(c, JSONDocumentos, new Callback(){
             @Override
             public void success(){
-                c.close();
-                DBDocumentos.close();
-                cb.success();//todo, devolver documentos aqui o conectar con REST mejor
+                Log.d("DOCUMENTOS",JSONDocumentos.toString() );
             }
         });
     }
@@ -179,7 +177,7 @@ public class SyncService extends Service {
      * @param JSONDocumentos
      * @param cb
      */
-    private void prepararDocumento(final Cursor c, JSONArray JSONDocumentos, final Callback cb){
+    private void prepararDocumento(final Cursor c, final JSONArray JSONDocumentos, final Callback cb){
         final JSONObject JSONDocumento = new JSONObject();
         c.moveToNext();
 
@@ -210,7 +208,12 @@ public class SyncService extends Service {
             prepararRegistros(JSONDocumento, DOC_ID, new Callback(){
                 @Override
                 public void success(){
-                    Log.d("DOCUMENTO", JSONDocumento.toString());
+                    if(c.isLast()){
+                        JSONDocumentos.put(JSONDocumento);
+                        cb.success();
+                    } else {
+                        prepararDocumento(c, JSONDocumentos, cb);
+                    }
                 }
             });
         } catch (JSONException e){
