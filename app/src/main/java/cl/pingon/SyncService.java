@@ -61,6 +61,9 @@ public class SyncService extends Service {
     TblDocumentoHelper Documento;
     TblFormulariosHelper Formularios;
 
+    ArrayList<ModelDocumentos> Documentos;
+    ArrayList<ModelRegistros> Registros;
+
     Thread thread;
 
     public SyncService() {
@@ -105,23 +108,44 @@ public class SyncService extends Service {
                             builder.setProgress(0,0, true);
                             startForeground(1, builder.build());
 
-                            //Obtener documentos de base de datos y guardar en arraylist
-                            ArrayList<ModelDocumentos> Documentos = getAllSyncDocumentos();
-                            ArrayList<ModelRegistros> Registros = new ArrayList<>();
-                            if(Documentos.size() > 0){
-                                for(int x = 0; x < Documentos.size(); x++){
-                                    Registros = getAllSyncRegistros(Registros, Documentos.get(x).getID());
+                            prepararDocumentos(new Callback(){
+                                @Override
+                                public void success(){
+                                    Processing = 0;
+                                    stopForeground(true);
                                 }
+                            });
+
+                            //Obtener documentos de base de datos y guardar en arraylist
+                            /*Documentos = getAllSyncDocumentos();
+                            if(Documentos.size() > 0){
+                                sendDocument(Documentos, 0, new Callback(){
+                                    @Override
+                                    public void success(){
+                                        Processing = 0;
+                                        stopForeground(true);
+                                    }
+                                });
+                            } else {
+                                Processing = 0;
+                                stopForeground(true);
+                            }*/
+
+                            /*Registros = new ArrayList<>();
+                                getSyncRegistros(Documentos, 0, new Callback(){
+                                    @Override
+                                    public void success(){
+
+                                    }
+                                });
+                                /*
                                 if(Registros.size() > 0) {
                                     subirDocumentosRegistros(Documentos, Registros);
                                 } else {
                                     Processing = 0;
                                     stopForeground(true);
-                                }
-                            } else {
-                                Processing = 0;
-                                stopForeground(true);
-                            }
+                                }*
+                            */
                         }
                     }
                 } ,0 ,60000);
@@ -129,6 +153,169 @@ public class SyncService extends Service {
         };
         thread.start();
 
+    }
+
+    /**
+     * PREPARA LA INFORMACION DE TODOS LOS DOCUMENTOS EN FORMATO JSON PARA SER SINCRONIZADOS
+     * @param cb
+     */
+    private void prepararDocumentos(final Callback cb){
+        final TblDocumentoHelper DBDocumentos = new TblDocumentoHelper(context);
+        final Cursor c = DBDocumentos.getAllSync();
+        final JSONArray JSONDocumentos = new JSONArray();
+        prepararDocumento(c, JSONDocumentos, new Callback(){
+            @Override
+            public void success(){
+                c.close();
+                DBDocumentos.close();
+                cb.success();//todo, devolver documentos aqui o conectar con REST mejor
+            }
+        });
+    }
+
+    /**
+     * PREPARACION DE DOCUMENTO PARA SER SINCRONIZADO
+     * @param c
+     * @param JSONDocumentos
+     * @param cb
+     */
+    private void prepararDocumento(final Cursor c, JSONArray JSONDocumentos, final Callback cb){
+        final JSONObject JSONDocumento = new JSONObject();
+        c.moveToNext();
+
+        Integer DOC_ID = c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.ID));
+        Integer USU_ID = c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.USU_ID));
+        Integer FRM_ID = c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.FRM_ID));
+        String DOC_FECHA_CREACION = c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_FECHA_CREACION));
+        String DOC_EXT_NOMBRE_CLIENTE = c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE));
+        Integer DOC_EXT_ID_CLIENTE = c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE));
+        String DOC_EXT_MARCA_EQUIPO = c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_MARCA_EQUIPO));
+        String DOC_EXT_OBRA = c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_OBRA));
+        Integer DOC_EXT_ID_PROYECTO = c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO));
+        String DOC_EXT_EQUIPO = c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO));
+        String DOC_EXT_NUMERO_SERIE = c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE));
+
+        try{
+            JSONDocumento.put(TblDocumentoDefinition.Entry.USU_ID, USU_ID);
+            JSONDocumento.put(TblDocumentoDefinition.Entry.FRM_ID, FRM_ID);
+            JSONDocumento.put(TblDocumentoDefinition.Entry.DOC_FECHA_CREACION, DOC_FECHA_CREACION);
+            JSONDocumento.put(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE, DOC_EXT_NOMBRE_CLIENTE);
+            JSONDocumento.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE, DOC_EXT_ID_CLIENTE);
+            JSONDocumento.put(TblDocumentoDefinition.Entry.DOC_EXT_MARCA_EQUIPO, DOC_EXT_MARCA_EQUIPO);
+            JSONDocumento.put(TblDocumentoDefinition.Entry.DOC_EXT_OBRA, DOC_EXT_OBRA);
+            JSONDocumento.put(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO, DOC_EXT_ID_PROYECTO);
+            JSONDocumento.put(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO, DOC_EXT_EQUIPO);
+            JSONDocumento.put(TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE, DOC_EXT_NUMERO_SERIE);
+
+            prepararRegistros(JSONDocumento, DOC_ID, new Callback(){
+                @Override
+                public void success(){
+                    Log.d("DOCUMENTO", JSONDocumento.toString());
+                }
+            });
+        } catch (JSONException e){
+
+        }
+    }
+
+    private void prepararRegistros(final JSONObject JSONDocumento, Integer DOC_ID, final Callback cb){
+        final TblRegistroHelper DBRegistros = new TblRegistroHelper(getApplicationContext());
+        final Cursor c = DBRegistros.getByLocalDocId(DOC_ID, "SYNC");
+        final JSONArray JSONRegistros = new JSONArray();
+        prepararRegistro(c, JSONRegistros, new Callback(){
+            @Override
+            public void success(){
+                try {
+                    JSONDocumento.put("CAMPOS", JSONRegistros);
+                    c.close();
+                    DBRegistros.close();
+                    cb.success();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    /**
+     * RECORRE LOS REGISTROS DE LA BASE DE DATOS Y LOS PREPARA EN FORMATO JSON
+     * @param c
+     * @param JSONRegistros
+     * @param cb
+     */
+    private void prepararRegistro(Cursor c, JSONArray JSONRegistros, Callback cb){
+        JSONObject JSONRegistro = new JSONObject();
+        c.moveToNext();
+
+        Integer CAM_ID = c.getInt(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID));
+        String REG_TIPO = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO));
+        String REG_VALOR = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
+
+        if(REG_TIPO.contains("video") || REG_TIPO.contains("foto")){
+            String[] path = REG_VALOR.split("/");
+            REG_VALOR = path[path.length-1];
+        }
+
+        try{
+            JSONRegistro.put(TblRegistroDefinition.Entry.CAM_ID, CAM_ID);
+            JSONRegistro.put(TblRegistroDefinition.Entry.REG_TIPO, REG_TIPO);
+            JSONRegistro.put(TblRegistroDefinition.Entry.REG_VALOR, REG_VALOR);
+
+            JSONRegistros.put(JSONRegistro);
+
+            if(c.isLast()){
+                cb.success();
+            } else {
+                prepararRegistro(c, JSONRegistros, cb);
+            }
+
+        } catch (JSONException e){
+
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+    public void getSyncRegistros(ArrayList<ModelDocumentos> Documentos, int i, Callback cb){
+        try{
+            TblRegistroHelper TblRegistros = new TblRegistroHelper(context);
+            Cursor c = TblRegistros.getByLocalDocId(Documentos.get(i).getID(), "SYNC");
+            JSONObject item = new JSONObject();
+            ModelRegistros Item;
+
+            if(c.getCount() > 0){
+                while(c.moveToNext()){
+
+                    Item = new ModelRegistros();
+                    Item.setREG_ID(c.getInt(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.ID)));
+                    Item.setLOCAL_DOC_ID(c.getInt(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.LOCAL_DOC_ID)));
+                    Item.setCAM_ID(c.getInt(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID)));
+                    Item.setFRM_ID(c.getInt(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.FRM_ID)));
+                    Item.setCHK_ID(c.getInt(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CHK_ID)));
+                    Item.setREG_TIPO(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)));
+                    Item.setREG_VALOR(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
+                    Item.setSEND_STATUS(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.SEND_STATUS)));
+                    Registros.add(Item);
+                    Log.d("REGISTROS", Item.toString());
+                }
+            }
+
+            Processing = 0;
+            c.close();
+            TblRegistros.close();
+
+            getSyncRegistros(Documentos, i+1, cb);
+        } catch (Exception e){
+            cb.success();
+        }
     }
 
     /**

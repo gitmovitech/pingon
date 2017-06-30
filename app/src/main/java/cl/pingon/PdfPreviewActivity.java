@@ -260,6 +260,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
             String FRM_DECLARACION = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_DECLARACION));
             String ARN_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
             cursor.close();
+            Formularios.close();
 
             /**
              * OBTENER NOMBRE DEL CLIENTE
@@ -271,6 +272,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
             String NOMBRE_OBRA = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_OBRA));
             String NOMBRE_EQUIPO = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO));
             cursor.close();
+            Documentos.close();
 
             pdf = new PDF(this, LOCAL_DOC_ID+"__"+ARN_NOMBRE+" - "+NOMBRE_CLIENTE+" - "+NOMBRE_OBRA+" - "+NOMBRE_EQUIPO+".pdf");
             pdf.open();
@@ -333,7 +335,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
                         videofile = registros.get(i).getValue().split("/");
 
                         tabla.addCell(pdf.addCell(registros.get(i).getKey()));
-                        tabla.addCell(pdf.addCell(getResources().getString(R.string.url_download)+"?ai="+android_id+"&f="+videofile[videofile.length-1]));
+                        tabla.addCell(pdf.addCell(getResources().getString(R.string.url_download)+"?a="+android_id+"&v="+videofile[videofile.length-1]));
 
                     } else {
                         tabla.addCell(pdf.addCell(registros.get(i).getKey()));
