@@ -106,7 +106,6 @@ public class SyncService extends Service {
                                     .setContentTitle("Sincronizando")
                                     .setContentText("Cargando documentos y registros");
                             builder.setProgress(0,0, true);
-                            startForeground(1, builder.build());
 
                             prepararDocumentos(new Callback(){
                                 @Override
@@ -163,12 +162,19 @@ public class SyncService extends Service {
         final TblDocumentoHelper DBDocumentos = new TblDocumentoHelper(context);
         final Cursor c = DBDocumentos.getAllSync();
         final JSONArray JSONDocumentos = new JSONArray();
-        prepararDocumento(c, JSONDocumentos, new Callback(){
-            @Override
-            public void success(){
-                Log.d("DOCUMENTOS",JSONDocumentos.toString() );
-            }
-        });
+        if(c.getCount() > 0) {
+            startForeground(1, builder.build());
+            prepararDocumento(c, JSONDocumentos, new Callback() {
+                @Override
+                public void success() {
+                    Log.d("DOCUMENTOS", JSONDocumentos.toString());
+                }
+            });
+        } else {
+            c.close();
+            DBDocumentos.close();
+            cb.success();
+        }
     }
 
     /**

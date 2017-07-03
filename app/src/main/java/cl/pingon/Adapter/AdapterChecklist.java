@@ -161,7 +161,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     FieldsSliderbar FieldsSliderbar = new FieldsSliderbar(Inflater, ChecklistFields.get(contador));
                     ViewReturn = FieldsSliderbar.getView();
                     break;
-                case "video":
+                /*case "video":
                     ViewReturn = Video(Inflater, ChecklistFields.get(contador), contador);
                     break;
                 /*default:
