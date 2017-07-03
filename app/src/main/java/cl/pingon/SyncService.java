@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.telecom.Call;
 import android.util.Log;
 
 import com.android.volley.Response;
@@ -61,8 +62,12 @@ public class SyncService extends Service {
     TblDocumentoHelper Documento;
     TblFormulariosHelper Formularios;
 
-    ArrayList<ModelDocumentos> Documentos;
     ArrayList<ModelRegistros> Registros;
+    JSONArray JSONDocumentos = new JSONArray();
+
+    String url_documentos;
+
+    int current_doc_id;
 
     Thread thread;
 
@@ -72,6 +77,8 @@ public class SyncService extends Service {
 
     @Override
     public void onCreate() {
+
+        url_documentos = getResources().getString(R.string.url_sync_upload_data);
 
         thread = new Thread() {
             public void run() {
@@ -111,6 +118,12 @@ public class SyncService extends Service {
                                 @Override
                                 public void success(){
                                     Processing = 0;
+                                    subirArchivosDocumento(0, new Callback(){
+                                        @Override
+                                        public void success(){
+
+                                        }
+                                    });
                                     stopForeground(true);
                                 }
                             });
@@ -154,6 +167,63 @@ public class SyncService extends Service {
 
     }
 
+    private void subirArchivosDocumento(final int i, final Callback cb){
+        try{
+            Log.d("FINSIH", JSONDocumentos.get(i).toString());
+            subirArchivosRegistro(JSONDocumentos.get(i), 0, new Callback(){
+                @Override
+                public void success(){
+                    subirArchivosDocumento(i+1, cb);
+                }
+            });
+        } catch (Exception e){
+            cb.success();
+        }
+    }
+
+    private void subirArchivosRegistro(Object elementos, int c, Callback cb){
+
+        JSONObject items = (JSONObject) elementos;
+
+        try {
+            JSONArray campos = items.getJSONArray("CAMPOS");
+            buscarySubirArchivos(0, campos, new Callback(){
+                @Override
+                public void success(){
+
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void buscarySubirArchivos(int x, JSONArray campos, Callback cb){
+        try {
+            JSONObject item = (JSONObject) campos.get(x);
+            if(item.getString("REG_TIPO").contains("foto")){
+                subirArchivo(item.getString("REG_VALOR"), new Callback(){
+                    @Override
+                    public void success(){
+
+                    }
+                });
+            } else {
+                buscarySubirArchivos(x+1, campos, cb);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void subirArchivo(String file, Callback cb){
+        Log.d("ARCHIVO", file);
+
+    }
+
+
+
     /**
      * PREPARA LA INFORMACION DE TODOS LOS DOCUMENTOS EN FORMATO JSON PARA SER SINCRONIZADOS
      * @param cb
@@ -161,13 +231,12 @@ public class SyncService extends Service {
     private void prepararDocumentos(final Callback cb){
         final TblDocumentoHelper DBDocumentos = new TblDocumentoHelper(context);
         final Cursor c = DBDocumentos.getAllSync();
-        final JSONArray JSONDocumentos = new JSONArray();
         if(c.getCount() > 0) {
             startForeground(1, builder.build());
             prepararDocumento(c, JSONDocumentos, new Callback() {
                 @Override
                 public void success() {
-                    Log.d("DOCUMENTOS", JSONDocumentos.toString());
+                    cb.success();
                 }
             });
         } else {
@@ -260,10 +329,10 @@ public class SyncService extends Service {
         String REG_TIPO = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO));
         String REG_VALOR = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
 
-        if(REG_TIPO.contains("video") || REG_TIPO.contains("foto")){
+        /*if(REG_TIPO.contains("video") || REG_TIPO.contains("foto")){
             String[] path = REG_VALOR.split("/");
             REG_VALOR = path[path.length-1];
-        }
+        }*/
 
         try{
             JSONRegistro.put(TblRegistroDefinition.Entry.CAM_ID, CAM_ID);
@@ -709,39 +778,7 @@ public class SyncService extends Service {
         values.put(TblDocumentoDefinition.Entry.DOC_ID, RollbackDocIdInserted);
         Documento.update(local_doc_id, values);
     }
-
-
-    /**
-     * Deshace inserciones cuando un error ocurre
-     */
-    private void RollbackDataSent(){
-        Log.d("DOC_ID CREADO", ":"+ RollbackDocIdInserted);
-        Log.d("REGISTROS CREADOS", RollbackRegisteredIds.toString());
-        if(RollbackDocIdInserted > 0){
-            if(RollbackRegisteredIds.size() > 0){
-                JSONObject registros = new JSONObject();
-                try {
-                    registros.put("doc_id", RollbackDocIdInserted);
-                    registros.put("ids", RollbackRegisteredIds.toString());
-
-                    REST.post(getResources().getString(R.string.url_rollback_data_sent), registros, new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            //Si esta OK, no hay nada que hacer, solo estar feliz porque la wea funcionó xD
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            //SI hay error en el rollback nada se puede hacer por ahora (quizas otro procedimiento de sincronizacion en el futuro)
-                        }
-                    });
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+    
 
 
     /**
