@@ -244,6 +244,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
 
     }
     PDF pdf;
+    String pdfFilename;
     private void genPDF(final ArrayList<ModelKeyPairs> registros){
         try {
 
@@ -274,7 +275,8 @@ public class PdfPreviewActivity extends AppCompatActivity {
             cursor.close();
             Documentos.close();
 
-            pdf = new PDF(this, LOCAL_DOC_ID+"__"+ARN_NOMBRE+" - "+NOMBRE_CLIENTE+" - "+NOMBRE_OBRA+" - "+NOMBRE_EQUIPO+".pdf");
+            pdfFilename = LOCAL_DOC_ID+"__"+ARN_NOMBRE+" - "+NOMBRE_CLIENTE+" - "+NOMBRE_OBRA+" - "+NOMBRE_EQUIPO+".pdf";
+            pdf = new PDF(this, pdfFilename);
             pdf.open();
             pdf.addImage(R.drawable.pingon_pdf, 100, 80);
 

@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.telecom.Call;
@@ -38,6 +39,7 @@ import cl.pingon.Model.ModelDocumentos;
 import cl.pingon.Model.ModelRegistros;
 import cl.pingon.SQLite.TblDocumentoDefinition;
 import cl.pingon.SQLite.TblDocumentoHelper;
+import cl.pingon.SQLite.TblFormulariosDefinition;
 import cl.pingon.SQLite.TblFormulariosHelper;
 import cl.pingon.SQLite.TblRegistroDefinition;
 import cl.pingon.SQLite.TblRegistroHelper;
@@ -50,7 +52,7 @@ public class SyncService extends Service {
     SharedPreferences session;
     NotificationCompat.Builder builder;
     Integer ARN_ID;
-    Integer FMR_ID;
+    String ARN_NOMBRE;
     RESTService REST;
     String titulo;
     String subtitulo;
@@ -78,7 +80,7 @@ public class SyncService extends Service {
     @Override
     public void onCreate() {
 
-        url_documentos = getResources().getString(R.string.url_sync_upload_data);
+        url_documentos = getResources().getString(R.string.url_sync_documentos);
 
         thread = new Thread() {
             public void run() {
@@ -99,6 +101,11 @@ public class SyncService extends Service {
                 Documento = new TblDocumentoHelper(context);
                 Formularios = new TblFormulariosHelper(context);
 
+                Cursor cursor = Formularios.getByArnId(ARN_ID);
+                cursor.moveToFirst();
+                ARN_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
+                cursor.close();
+
                 new Timer().scheduleAtFixedRate(new TimerTask(){
                     @Override
                     public void run(){
@@ -117,14 +124,14 @@ public class SyncService extends Service {
                             prepararDocumentos(new Callback(){
                                 @Override
                                 public void success(){
-                                    Processing = 0;
                                     subirArchivosDocumento(0, new Callback(){
                                         @Override
                                         public void success(){
-
+                                            //TODO Cambiar de estado a sincronizado
+                                            Processing = 0;
+                                            stopForeground(true);
                                         }
                                     });
-                                    stopForeground(true);
                                 }
                             });
 
@@ -167,30 +174,104 @@ public class SyncService extends Service {
 
     }
 
+    private void subirPDF(JSONObject documento){
+        String pdfPath = Environment.getExternalStorageDirectory() + "/Pingon/pdfs/";
+        Log.d("PDF", documento.toString());
+        String LOCAL_DOC_ID = "";
+        String DOC_ID = "";
+        String NOMBRE_CLIENTE = "";
+        String NOMBRE_OBRA = "";
+        String NOMBRE_EQUIPO = "";
+        try{
+            DOC_ID = documento.get("DOC_ID").toString();
+            LOCAL_DOC_ID = documento.get("LOCAL_DOC_ID").toString();
+            NOMBRE_CLIENTE = documento.get("DOC_EXT_NOMBRE_CLIENTE").toString();
+            NOMBRE_OBRA = documento.get("DOC_EXT_OBRA").toString();
+            NOMBRE_EQUIPO = documento.get("DOC_EXT_EQUIPO").toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String filename = LOCAL_DOC_ID+"__"+ARN_NOMBRE+" - "+NOMBRE_CLIENTE+" - "+NOMBRE_OBRA+" - "+NOMBRE_EQUIPO+".pdf";
+        uploadMultipart(
+                getResources().getString(R.string.url_sync_upload_file),
+                pdfPath + filename,
+                new UploadStatusDelegate() {
+                    @Override
+                    public void onProgress(Context context, UploadInfo uploadInfo) {
+
+                    }
+
+                    @Override
+                    public void onError(Context context, UploadInfo uploadInfo, Exception exception) {
+
+                    }
+
+                    @Override
+                    public void onCompleted(Context context, UploadInfo uploadInfo, ServerResponse serverResponse) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(Context context, UploadInfo uploadInfo) {
+
+                    }
+                },
+                Integer.parseInt(DOC_ID)
+        );
+    }
+
     private void subirArchivosDocumento(final int i, final Callback cb){
         try{
-            Log.d("FINSIH", JSONDocumentos.get(i).toString());
-            subirArchivosRegistro(JSONDocumentos.get(i), 0, new Callback(){
-                @Override
-                public void success(){
-                    subirArchivosDocumento(i+1, cb);
-                }
-            });
+            final JSONObject documento = (JSONObject) JSONDocumentos.get(i);
+            if(detectInternet()) {
+                documento.put("token", session.getString("token", ""));
+                REST.post(url_documentos, documento, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject registros_insertados) {
+                        try {
+                            if(registros_insertados.getInt("ok") == 1){
+                                int DOC_ID_INSERTED = registros_insertados.getJSONObject("response").getInt("id");
+                                JSONArray CAMPOS = registros_insertados.getJSONObject("response").getJSONArray("CAMPOS");
+                                ((JSONObject) JSONDocumentos.get(i)).put("CAMPOS", CAMPOS);
+                                documento.put("CAMPOS", CAMPOS);
+                                documento.put("DOC_ID", DOC_ID_INSERTED);
+                                subirPDF(documento);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        subirArchivosRegistro(documento, 0, new Callback(){
+                            @Override
+                            public void success(){
+                                subirArchivosDocumento(i+1, cb);
+                            }
+                        });
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("ERROR SUBIR DOCS", error.toString());
+                    }
+                });
+            } else{
+                Log.d("SIN CONEXION", "INTERNET");
+            }
+
         } catch (Exception e){
             cb.success();
         }
     }
 
-    private void subirArchivosRegistro(Object elementos, int c, Callback cb){
+    private void subirArchivosRegistro(Object elementos, int c, final Callback cb){
 
         JSONObject items = (JSONObject) elementos;
-
         try {
             JSONArray campos = items.getJSONArray("CAMPOS");
             buscarySubirArchivos(0, campos, new Callback(){
                 @Override
                 public void success(){
-
+                    cb.success();
                 }
             });
         } catch (JSONException e) {
@@ -199,27 +280,66 @@ public class SyncService extends Service {
 
     }
 
-    private void buscarySubirArchivos(int x, JSONArray campos, Callback cb){
+    /**
+     * BUSCA ARCHIVOS DE TIPO FOTOGRAFIA PARA PODER SUBIRLOS POSTERIORMENTE
+     * @param x
+     * @param campos
+     * @param cb
+     */
+    private void buscarySubirArchivos(final int x, final JSONArray campos, final Callback cb){
         try {
             JSONObject item = (JSONObject) campos.get(x);
             if(item.getString("REG_TIPO").contains("foto")){
-                subirArchivo(item.getString("REG_VALOR"), new Callback(){
+                subirArchivo(item.getInt("DOC_ID"), item.getString("REG_VALOR"), new Callback(){
                     @Override
                     public void success(){
-
+                        buscarySubirArchivos(x+1, campos, cb);
                     }
                 });
             } else {
                 buscarySubirArchivos(x+1, campos, cb);
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            cb.success();
         }
     }
 
-    private void subirArchivo(String file, Callback cb){
-        Log.d("ARCHIVO", file);
+    /**
+     * SUBIDA DE ARCHIVO CON DOC_ID DEL SERVIDOR
+     * @param DOC_ID
+     * @param file
+     * @param cb
+     */
+    private void subirArchivo(int DOC_ID, String file, final Callback cb){
+        String[] arr = file.split("/");
+        final String filename = arr[arr.length-1];
+        uploadMultipart(
+                getResources().getString(R.string.url_sync_upload_file),
+                file,
+                new UploadStatusDelegate() {
+                    @Override
+                    public void onProgress(Context context, UploadInfo uploadInfo) {
 
+                    }
+
+                    @Override
+                    public void onError(Context context, UploadInfo uploadInfo, Exception exception) {
+
+                    }
+
+                    @Override
+                    public void onCompleted(Context context, UploadInfo uploadInfo, ServerResponse serverResponse) {
+                        Log.d("UPLOAD "+filename, serverResponse.getBodyAsString());
+                        cb.success();
+                    }
+
+                    @Override
+                    public void onCancelled(Context context, UploadInfo uploadInfo) {
+
+                    }
+                },
+                DOC_ID
+        );
     }
 
 
@@ -256,7 +376,7 @@ public class SyncService extends Service {
         final JSONObject JSONDocumento = new JSONObject();
         c.moveToNext();
 
-        Integer DOC_ID = c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.ID));
+        Integer LOCAL_DOC_ID = c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.ID));
         Integer USU_ID = c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.USU_ID));
         Integer FRM_ID = c.getInt(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.FRM_ID));
         String DOC_FECHA_CREACION = c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_FECHA_CREACION));
@@ -269,6 +389,7 @@ public class SyncService extends Service {
         String DOC_EXT_NUMERO_SERIE = c.getString(c.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE));
 
         try{
+            JSONDocumento.put("LOCAL_DOC_ID", LOCAL_DOC_ID);
             JSONDocumento.put(TblDocumentoDefinition.Entry.USU_ID, USU_ID);
             JSONDocumento.put(TblDocumentoDefinition.Entry.FRM_ID, FRM_ID);
             JSONDocumento.put(TblDocumentoDefinition.Entry.DOC_FECHA_CREACION, DOC_FECHA_CREACION);
@@ -280,7 +401,7 @@ public class SyncService extends Service {
             JSONDocumento.put(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO, DOC_EXT_EQUIPO);
             JSONDocumento.put(TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE, DOC_EXT_NUMERO_SERIE);
 
-            prepararRegistros(JSONDocumento, DOC_ID, new Callback(){
+            prepararRegistros(JSONDocumento, LOCAL_DOC_ID, new Callback(){
                 @Override
                 public void success(){
                     if(c.isLast()){
@@ -353,15 +474,74 @@ public class SyncService extends Service {
     }
 
 
+    /**
+     * Clase para poder utilizar un callback
+     */
+    public class Callback{
+        public void success(){
+            Log.d("CALLBACK", "UPLOADFILES");
+        }
+    }
+
+    /**
+     * Carga de archivos al servidor
+     * @param url
+     * @param filepath
+     * @param UploadStatusDelegate
+     */
+    private void uploadMultipart(String url, String filepath, UploadStatusDelegate UploadStatusDelegate, Integer doc_id) {
+        UploadNotificationConfig upconfig = new UploadNotificationConfig();
+        upconfig.setTitle(getResources().getString(R.string.loader_files));
+        upconfig.setAutoClearOnSuccess(true);
+        try {
+            MultipartUploadRequest fup = new MultipartUploadRequest(context, url);
+            fup.addParameter("doc_id", String.valueOf(doc_id));
+            fup.addFileToUpload(filepath, "file");
+            fup.addParameter("token", session.getString("token", ""));
+            fup.setNotificationConfig(upconfig);
+            fup.setMaxRetries(5);
+            fup.setDelegate(UploadStatusDelegate);
+            fup.startUpload();
+        } catch (Exception exc) {
+            Log.e("AndroidUploadService", exc.getMessage(), exc);
+            //Todo rollback
+            Processing = 0;
+            stopForeground(true);
+        }
+    }
+
+    /**
+     * DETECCIÓN DE CONEXIÓN A INTERNET
+     * @return
+     */
+    private boolean detectInternet(){
+        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if(activeNetwork != null){
+            return activeNetwork.isConnected();
+        } else{
+            Processing = 0;
+            return false;
+        }
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_NOT_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {}
 
 
 
 
-
-
-
-
-
+/*
     public void getSyncRegistros(ArrayList<ModelDocumentos> Documentos, int i, Callback cb){
         try{
             TblRegistroHelper TblRegistros = new TblRegistroHelper(context);
@@ -400,7 +580,7 @@ public class SyncService extends Service {
      * Obtiene informacion de documentos y registros, insertando y recuperando doc_id para insertar cada registro.
      * @param Documentos
      * @param Registros
-     */
+     *
     private void subirDocumentosRegistros(ArrayList<ModelDocumentos> Documentos, ArrayList<ModelRegistros> Registros){
 
         Integer local_doc_id;
@@ -502,7 +682,6 @@ public class SyncService extends Service {
     private void UploadFiles(JSONArray docs_id, ArrayList<ModelRegistros> Uploads, int i, Callback Callback){
         try{
             //Log.d("UPLOAD FILES", Uploads.get(i).getREG_VALOR());
-            //TODO revisar si el guardado de imagenes deberia estar en una subcarpeta para evitar problemas de nombres
             getDocId(Uploads.get(i), docs_id, 0);
             //UploadFiles(docs_id, Uploads, i+1, UploadFilesCallback);
         } catch (Exception e){
@@ -515,28 +694,20 @@ public class SyncService extends Service {
             JSONObject data = (JSONObject) docs_id.get(i);
             if(data.getString("local_doc_id").contains(registro.getLOCAL_DOC_ID().toString())){
                 Log.d("DOC_ID",  data.getString("doc_id"));
-                //TODO Nuevo DOC_ID desde la base de datos del servidor, ocupar para reubicar imagen
             }
             getDocId(registro, docs_id, i +1);
         } catch (Exception e){
 
         }
-    }
+    }*/
 
-    /**
-     * Clase para poder utilizar un callback
-     */
-    public class Callback{
-        public void success(){
-            Log.d("CALLBACK", "UPLOADFILES");
-        }
-    }
+
 
     /**
      * Obtiene registros asociados a los local_id y se guardan en un arraylist
-     * @param local_doc_id
+     * @param
      * @return
-     */
+     *
     private ArrayList<ModelRegistros> getAllSyncRegistros(ArrayList<ModelRegistros> ArrayRegistros, Integer local_doc_id){
         TblRegistroHelper Registros = new TblRegistroHelper(context);
         Cursor c = Registros.getByLocalDocId(local_doc_id, "SYNC");
@@ -567,7 +738,7 @@ public class SyncService extends Service {
     /**
      * Obtiene documentos de la base de datos por sincronizar y los guarda en un arraylist
      * @return
-     */
+     *
     private ArrayList<ModelDocumentos> getAllSyncDocumentos(){
         TblDocumentoHelper Documentos = new TblDocumentoHelper(context);
         Cursor c = Documentos.getAllSync();
@@ -599,22 +770,17 @@ public class SyncService extends Service {
 
         return ArrayDocumentos;
     }
+    */
 
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_NOT_STICKY;
-    }
 
-    @Override
-    public void onDestroy() {}
 
 
     /**
      * Recopilación de registros para sincronizar con el servidor
      * @param DOC_ID
      * @param local_doc_id
-     */
+     *
     private void subirRegistros(Integer DOC_ID, Integer local_doc_id){
 
         if(detectInternet()) {
@@ -648,7 +814,7 @@ public class SyncService extends Service {
      * Subida al servidor de cada registro de forma sincrona
      * @param cr
      * @param sync_registros
-     */
+     *
     Integer registroPosition = 0;
     private void subirRegistro(final Cursor cr, final SyncRegistros sync_registros, Integer index, final Integer DOC_ID, final Integer local_doc_id){
 
@@ -770,7 +936,7 @@ public class SyncService extends Service {
     /**
      * SETEA DOCUMENTO COMO ENVIADO EN BASE DE DATOS LOCAL Y MODIFICA DOC_ID CON DATO DESDE EL SERVIDOR
      * @param local_doc_id
-     */
+     *
     private void setSentDocumentAndRegisters(Integer local_doc_id){
         TblDocumentoHelper Documento = new TblDocumentoHelper(getApplicationContext());
         ContentValues values = new ContentValues();
@@ -778,53 +944,8 @@ public class SyncService extends Service {
         values.put(TblDocumentoDefinition.Entry.DOC_ID, RollbackDocIdInserted);
         Documento.update(local_doc_id, values);
     }
-    
+*/
 
 
-    /**
-     * Carga de archivos al servidor
-     * @param url
-     * @param filepath
-     * @param UploadStatusDelegate
-     */
-    private void uploadMultipart(String url, String filepath, UploadStatusDelegate UploadStatusDelegate, Integer doc_id) {
-        UploadNotificationConfig upconfig = new UploadNotificationConfig();
-        upconfig.setTitle(getResources().getString(R.string.loader_files));
-        upconfig.setAutoClearOnSuccess(true);
-        try {
-            MultipartUploadRequest fup = new MultipartUploadRequest(context, url);
-            fup.addParameter("doc_id", String.valueOf(doc_id));
-            fup.addFileToUpload(filepath, "file");
-            fup.addParameter("token", session.getString("token", ""));
-            fup.setNotificationConfig(upconfig);
-            fup.setMaxRetries(5);
-            fup.setDelegate(UploadStatusDelegate);
-            fup.startUpload();
-        } catch (Exception exc) {
-            Log.e("AndroidUploadService", exc.getMessage(), exc);
-            //Todo rollback
-            Processing = 0;
-            stopForeground(true);
-        }
-    }
 
-    /**
-     * DETECCIÓN DE CONEXIÓN A INTERNET
-     * @return
-     */
-    private boolean detectInternet(){
-        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        if(activeNetwork != null){
-            return activeNetwork.isConnected();
-        } else{
-            Processing = 0;
-            return false;
-        }
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
 }
