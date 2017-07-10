@@ -378,6 +378,7 @@ public class SyncService extends Service {
             prepararDocumento(c, JSONDocumentos, new Callback() {
                 @Override
                 public void success() {
+                    c.close();
                     cb.success();
                 }
             });
