@@ -54,8 +54,6 @@ public class SyncService extends Service {
     Integer ARN_ID;
     String ARN_NOMBRE;
     RESTService REST;
-    String titulo;
-    String subtitulo;
     Context context;
 
     ArrayList<Integer> RollbackRegisteredIds;
@@ -64,12 +62,9 @@ public class SyncService extends Service {
     TblDocumentoHelper Documento;
     TblFormulariosHelper Formularios;
 
-    ArrayList<ModelRegistros> Registros;
     JSONArray JSONDocumentos = new JSONArray();
 
     String url_documentos;
-
-    int current_doc_id;
 
     Thread thread;
 
@@ -127,7 +122,6 @@ public class SyncService extends Service {
                                     subirArchivosDocumento(0, new Callback(){
                                         @Override
                                         public void success(){
-                                            //TODO Cambiar de estado a sincronizado
                                             Processing = 0;
                                             stopForeground(true);
                                         }
@@ -236,7 +230,13 @@ public class SyncService extends Service {
                                 ((JSONObject) JSONDocumentos.get(i)).put("CAMPOS", CAMPOS);
                                 documento.put("CAMPOS", CAMPOS);
                                 documento.put("DOC_ID", DOC_ID_INSERTED);
-                                subirPDF(documento);
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        subirPDF(documento);
+                                    }
+                                }).start();
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -244,6 +244,16 @@ public class SyncService extends Service {
                         subirArchivosRegistro(documento, 0, new Callback(){
                             @Override
                             public void success(){
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            cambiarStatusEnviado(documento.getInt("LOCAL_DOC_ID"));
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }).start();
                                 subirArchivosDocumento(i+1, cb);
                             }
                         });
@@ -262,6 +272,19 @@ public class SyncService extends Service {
             cb.success();
         }
     }
+
+    /**
+     * CAMBIA EL STATUS DEL DOCUMENTO A ENVIADO PARA NO VOLVER A PROCESARLO EN EL SINCRONIZADOR
+     * @param LOCAL_DOC_ID
+     */
+    private void cambiarStatusEnviado(Integer LOCAL_DOC_ID){
+        TblDocumentoHelper Documento = new TblDocumentoHelper(getApplicationContext());
+        ContentValues values = new ContentValues();
+        values.put(TblDocumentoDefinition.Entry.SEND_STATUS, "DRAFT"); //Todo, cambiar status a SENT
+        Documento.update(LOCAL_DOC_ID, values);
+        Documento.close();
+    }
+
 
     private void subirArchivosRegistro(Object elementos, int c, final Callback cb){
 
@@ -349,8 +372,7 @@ public class SyncService extends Service {
      * @param cb
      */
     private void prepararDocumentos(final Callback cb){
-        final TblDocumentoHelper DBDocumentos = new TblDocumentoHelper(context);
-        final Cursor c = DBDocumentos.getAllSync();
+        final Cursor c = Documento.getAllSync();
         if(c.getCount() > 0) {
             startForeground(1, builder.build());
             prepararDocumento(c, JSONDocumentos, new Callback() {
@@ -361,7 +383,6 @@ public class SyncService extends Service {
             });
         } else {
             c.close();
-            DBDocumentos.close();
             cb.success();
         }
     }
@@ -923,7 +944,6 @@ public class SyncService extends Service {
 
 
         } else {
-            //Todo, enviar PDF
             //RollbackDataSent();
             //setSentDocumentAndRegisters(local_doc_id);
             Processing = 0;
