@@ -62,7 +62,7 @@ public class SyncService extends Service {
     TblDocumentoHelper Documento;
     TblFormulariosHelper Formularios;
 
-    JSONArray JSONDocumentos = new JSONArray();
+    JSONArray JSONDocumentos;
 
     String url_documentos;
 
@@ -116,6 +116,9 @@ public class SyncService extends Service {
                                     .setContentText("Cargando documentos y registros");
                             builder.setProgress(0,0, true);
 
+
+                            JSONDocumentos = new JSONArray();
+
                             prepararDocumentos(new Callback(){
                                 @Override
                                 public void success(){
@@ -139,7 +142,6 @@ public class SyncService extends Service {
 
     private void subirPDF(JSONObject documento){
         String pdfPath = Environment.getExternalStorageDirectory() + "/Pingon/pdfs/";
-        Log.d("PDF", documento.toString());
         String LOCAL_DOC_ID = "";
         String DOC_ID = "";
         String NOMBRE_CLIENTE = "";
@@ -249,7 +251,7 @@ public class SyncService extends Service {
     private void cambiarStatusEnviado(Integer LOCAL_DOC_ID){
         TblDocumentoHelper Documento = new TblDocumentoHelper(getApplicationContext());
         ContentValues values = new ContentValues();
-        values.put(TblDocumentoDefinition.Entry.SEND_STATUS, "DRAFT"); //Todo, cambiar status a SENT
+        values.put(TblDocumentoDefinition.Entry.SEND_STATUS, "SENT");
         Documento.update(LOCAL_DOC_ID, values);
         Documento.close();
     }
@@ -529,6 +531,6 @@ public class SyncService extends Service {
     @Override
     public void onDestroy() {}
 
-    
+
 
 }
