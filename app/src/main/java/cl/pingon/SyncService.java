@@ -111,7 +111,7 @@ public class SyncService extends Service {
                             //Notificacion por pantalla de proceso
                             builder = new NotificationCompat.Builder(getApplicationContext())
                                     .setSmallIcon(R.drawable.sync)
-                                    .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.pingon))
+                                    .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.pingon_icon))
                                     .setContentTitle("Sincronizando")
                                     .setContentText("Cargando documentos y registros");
                             builder.setProgress(0,0, true);
@@ -133,7 +133,7 @@ public class SyncService extends Service {
                             });
                         }
                     }
-                } ,0 ,60000);
+                } ,0 ,60000*4);
             }
         };
         thread.start();
@@ -158,6 +158,7 @@ public class SyncService extends Service {
         }
 
         String filename = LOCAL_DOC_ID+"__"+ARN_NOMBRE+" - "+NOMBRE_CLIENTE+" - "+NOMBRE_OBRA+" - "+NOMBRE_EQUIPO+".pdf";
+
         uploadMultipart(
                 getResources().getString(R.string.url_sync_upload_file),
                 pdfPath + filename,
@@ -169,7 +170,8 @@ public class SyncService extends Service {
 
                     @Override
                     public void onError(Context context, UploadInfo uploadInfo, Exception exception) {
-
+                        Processing = 0;
+                        stopForeground(true);
                     }
 
                     @Override
@@ -233,10 +235,14 @@ public class SyncService extends Service {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("ERROR SUBIR DOCS", error.toString());
+                        Processing = 0;
+                        stopForeground(true);
                     }
                 });
             } else{
                 Log.d("SIN CONEXION", "INTERNET");
+                Processing = 0;
+                stopForeground(true);
             }
 
         } catch (Exception e){
@@ -251,7 +257,7 @@ public class SyncService extends Service {
     private void cambiarStatusEnviado(Integer LOCAL_DOC_ID){
         TblDocumentoHelper Documento = new TblDocumentoHelper(getApplicationContext());
         ContentValues values = new ContentValues();
-        values.put(TblDocumentoDefinition.Entry.SEND_STATUS, "SENT");
+        values.put(TblDocumentoDefinition.Entry.SEND_STATUS, "SYNC");//todo cambiar a SENT
         Documento.update(LOCAL_DOC_ID, values);
         Documento.close();
     }
@@ -318,7 +324,8 @@ public class SyncService extends Service {
 
                     @Override
                     public void onError(Context context, UploadInfo uploadInfo, Exception exception) {
-
+                        Processing = 0;
+                        stopForeground(true);
                     }
 
                     @Override
