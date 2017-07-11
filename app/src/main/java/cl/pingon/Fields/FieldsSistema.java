@@ -50,7 +50,7 @@ public class FieldsSistema{
         /**
          * CALCULO SEMANAL DE HORAS
          */
-
+        //Todo agregar nuevo tipo de campo en el sistema para feriados y fines de semana (dia habil)
         //HORA SEMANAL NORMAL
         if(Fields.getCAM_TIPO().equals("hora_total_semanal")){
             DateUtils dateutils = new DateUtils();
@@ -104,85 +104,7 @@ public class FieldsSistema{
             Registros.close();
         }
 
-        /*if(Fields.getCAM_TIPO().contains("hora_total_semanal") || Fields.getCAM_TIPO().contains("hora_total_semanal_extra")){
-            TblRegistroHelper Registros = new TblRegistroHelper(context);
-            Cursor c = Registros.getByFrmId(FRM_ID);
 
-            int horas = 0;
-            int minutos = 0;
-            int horas_extras = 0;
-            int minutos_extras = 0;
-            String hora_string = "";
-            String[] hora_arr;
-            String[] fecha_arr;
-            String last_fecha = "";
-            String last_value = "";
-
-
-            while(c.moveToNext()){
-
-                Log.d("FIELDSISTEMA", ":"+c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)));
-
-
-                last_value = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
-
-                //Buscar fecha para saber si es sabado o domingo
-                fecha_arr = last_value.split("-");
-                if(fecha_arr.length == 3){
-                    if(fecha_arr[2].length() == 4){
-                        last_fecha = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
-                    }
-                }
-
-                if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).contains("hora_total_diaria")){
-                    if(!c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)).isEmpty()){
-
-                        hora_string = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
-                        hora_arr = hora_string.split(":");
-
-                        if(last_fecha.isEmpty()) {
-                            horas += Integer.parseInt(hora_arr[0]);
-                            minutos += Integer.parseInt(hora_arr[1]);
-                        } else {
-                            fecha_arr = last_fecha.split("-");
-                            Calendar cal = Calendar.getInstance();
-                            cal.set(Calendar.YEAR, Integer.parseInt(fecha_arr[2]));
-                            cal.set(Calendar.MONTH, Integer.parseInt(fecha_arr[1])-1);
-                            cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(fecha_arr[0]));
-
-                            //Sabado o domingo para sumar horas extras
-                            if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY){
-                                horas_extras += Integer.parseInt(hora_arr[0]);
-                                minutos_extras += Integer.parseInt(hora_arr[1]);
-                            } else {
-                                horas += Integer.parseInt(hora_arr[0]);
-                                minutos += Integer.parseInt(hora_arr[1]);
-                            }
-                            last_fecha = "";
-                        }
-                    }
-                }
-            }
-            c.close();
-            Registros.close();
-
-            DateUtils dateutils = new DateUtils();
-            if(Fields.getCAM_TIPO().contains("hora_total_semanal")){
-                NumeroInput.setText(dateutils.AproximarHora(horas+":"+minutos));
-            }
-            if(Fields.getCAM_TIPO().contains("hora_total_semanal_extra")){
-                int minutos_extra = dateutils.ObtenerMinutos(horas+":"+minutos);
-                if(minutos_extra <= 2700){
-                    minutos_extra = dateutils.ObtenerMinutos(horas_extras+":"+minutos_extras);
-                    NumeroInput.setText(dateutils.MinutosHora(minutos_extra));
-                } else {
-                    minutos_extra -= 2700;
-                    minutos_extra += dateutils.ObtenerMinutos(horas_extras+":"+minutos_extras);
-                    NumeroInput.setText(dateutils.MinutosHora(minutos_extra));
-                }
-
-            }
-        }*/
 
         //TODO probar campo sistema
 

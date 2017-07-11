@@ -1,5 +1,7 @@
 package cl.pingon.Libraries;
 
+import java.util.Calendar;
+
 public class DateUtils {
 
     public DateUtils(){
@@ -43,6 +45,26 @@ public class DateUtils {
             return format((horas_diferencia-1)+":"+minutos_diferencia);
         } else {
             return format(horas_diferencia+":"+minutos_diferencia);
+        }
+    }
+
+    public boolean isWeekend(String texto){
+        boolean valor;
+        try{
+            String[] fecha_arr = texto.split("-");
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.YEAR, Integer.parseInt(fecha_arr[2]));
+            cal.set(Calendar.MONTH, Integer.parseInt(fecha_arr[1])-1);
+            cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(fecha_arr[0]));
+
+            if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY){
+                valor = true;
+            } else {
+                valor = false;
+            }
+            return valor;
+        } catch (Exception e){
+            return false;
         }
     }
 
