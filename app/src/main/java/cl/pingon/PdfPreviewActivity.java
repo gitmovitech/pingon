@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -17,6 +19,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -34,6 +37,7 @@ import com.lowagie.text.Cell;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
+import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.pdf.PdfCell;
@@ -42,6 +46,7 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfTable;
 import com.lowagie.text.pdf.draw.LineSeparator;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -67,6 +72,8 @@ import cl.pingon.SQLite.TblFormulariosHelper;
 import cl.pingon.SQLite.TblRegistroDefinition;
 import cl.pingon.SQLite.TblRegistroHelper;
 import harmony.java.awt.Color;
+
+import static android.R.attr.bitmap;
 
 public class PdfPreviewActivity extends AppCompatActivity {
 
@@ -351,7 +358,31 @@ public class PdfPreviewActivity extends AppCompatActivity {
                     responsable = registros.get(i).getValue();
                 }
             }
+
+
+            /**
+             * Firma de usuario de app
+             */
+            String nombre = session.getString("first_name","")+" "+session.getString("last_name","");
+            String firma = session.getString("sign","");
+            tabla.addCell(pdf.addCell(nombre));
+            ImageView IVFirma = (ImageView) findViewById(R.id.ImageViewFirma);
+            byte[] decodedString = Base64.decode(firma, Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0,decodedString.length);
+            IVFirma.setImageBitmap(decodedByte);
+            BitmapDrawable drawable = (BitmapDrawable) IVFirma.getDrawable();
+            Bitmap bitmapsign = drawable.getBitmap();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmapsign.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            Image imagen = Image.getInstance(stream.toByteArray());
+            imagen.scaleAbsoluteWidth(150);
+            imagen.scaleAbsoluteHeight(150);
+            imagen.setAlignment(Image.RIGHT);
+            tabla.addCell(pdf.addCell(imagen));
+
+
             pdf.add(tabla);
+
 
             /**
              * Declaracion

@@ -133,7 +133,7 @@ public class SyncService extends Service {
                             });
                         }
                     }
-                } ,0 ,60000*4);
+                } ,0 ,60000*10);
             }
         };
         thread.start();
@@ -257,7 +257,7 @@ public class SyncService extends Service {
     private void cambiarStatusEnviado(Integer LOCAL_DOC_ID){
         TblDocumentoHelper Documento = new TblDocumentoHelper(getApplicationContext());
         ContentValues values = new ContentValues();
-        values.put(TblDocumentoDefinition.Entry.SEND_STATUS, "SYNC");//todo cambiar a SENT
+        values.put(TblDocumentoDefinition.Entry.SEND_STATUS, "SENT");//todo PARA TEST CAMBIAR A SYNC
         Documento.update(LOCAL_DOC_ID, values);
         Documento.close();
     }
