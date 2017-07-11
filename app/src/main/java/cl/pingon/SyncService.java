@@ -133,7 +133,7 @@ public class SyncService extends Service {
                             });
                         }
                     }
-                } ,0 ,60000*10);
+                } ,0 ,60000);
             }
         };
         thread.start();

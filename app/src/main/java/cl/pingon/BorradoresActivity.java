@@ -65,8 +65,6 @@ public class BorradoresActivity extends AppCompatActivity {
         Cursor cursor;
         ListDetalle = (ListView) findViewById(R.id.ListDetalle);
 
-        Log.d("BORRADORES", "AQUI"+SECCION);
-
         switch(SECCION){
             case "CLIENTE":
                 getSupportActionBar().setSubtitle("Seleccione cliente");

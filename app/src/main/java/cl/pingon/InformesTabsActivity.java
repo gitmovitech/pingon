@@ -1,5 +1,6 @@
 package cl.pingon;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -63,6 +64,7 @@ public class InformesTabsActivity extends AppCompatActivity {
     ListView Listado;
 
     Menu MenuButton;
+    static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +131,7 @@ public class InformesTabsActivity extends AppCompatActivity {
         this.setTitle(ARN_NOMBRE);
 
 
-
+        activity = this;
 
 
         Listado.setAdapter(list);
