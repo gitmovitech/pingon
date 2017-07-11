@@ -192,7 +192,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         if (data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()) {
                             MessageErrors += MessageCount + " - El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n\n";
                             MessageCount++;
-                        } else if(data.get(x).getCAM_TIPO().contains("rut_responsable")){
+                        } else if(data.get(x).getCAM_TIPO().contains("rut_responsable") && data.get(x).getCAM_MANDATORIO().equals("S")){
                             EditText.setText(Rut.formatear(EditText.getText().toString()));
                             if(!Rut.validar(EditText.getText().toString())){
                                 MessageErrors += MessageCount + " - El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" no es un RUT válido.\n\n";
@@ -201,6 +201,9 @@ public class InformesDetallesActivity extends AppCompatActivity {
                                 data.get(x).setValue(EditText.getText().toString());
                             }
                         } else {
+                            if(data.get(x).getCAM_TIPO().contains("rut")){
+                                EditText.setText(Rut.formatear(EditText.getText().toString()));
+                            }
                             data.get(x).setValue(EditText.getText().toString());
                         }
                     } catch(Exception e){}

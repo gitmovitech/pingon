@@ -80,6 +80,8 @@ public class SyncService extends Service {
         thread = new Thread() {
             public void run() {
 
+                Log.d("PINGON SERVICE", "EJECUTANDO");
+
                 UploadService.NAMESPACE = BuildConfig.APPLICATION_ID;
                 UploadService.HTTP_STACK = new OkHttpStack();
 
