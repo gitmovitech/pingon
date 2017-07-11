@@ -130,7 +130,7 @@ public class BorradoresActivity extends AppCompatActivity {
                 break;
         }
 
-
+        Documentos.close();
 
 
         ListDetalle.setOnItemClickListener(new AdapterView.OnItemClickListener() {

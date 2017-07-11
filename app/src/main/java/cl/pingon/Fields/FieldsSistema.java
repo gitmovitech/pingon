@@ -50,7 +50,61 @@ public class FieldsSistema{
         /**
          * CALCULO SEMANAL DE HORAS
          */
-        if(Fields.getCAM_TIPO().contains("hora_total_semanal") || Fields.getCAM_TIPO().contains("hora_total_semanal_extra")){
+
+        //HORA SEMANAL NORMAL
+        if(Fields.getCAM_TIPO().equals("hora_total_semanal")){
+            DateUtils dateutils = new DateUtils();
+            TblRegistroHelper Registros = new TblRegistroHelper(context);
+            Cursor c = Registros.getByFrmId(FRM_ID);
+
+            int minutos_totales = 0;
+            while(c.moveToNext()) {
+                if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).contains("hora_total_diaria")){
+                    String tiempo = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
+                    int minutos = dateutils.ObtenerMinutos(tiempo);
+                    int minutos_diferencia = 0;
+                    if(minutos > (8*60)){
+                        minutos_diferencia = minutos - (8*60);
+                    }
+                    minutos_totales += minutos-minutos_diferencia;
+                }
+            }
+            NumeroInput.setText(dateutils.MinutosHora(minutos_totales));
+
+            c.close();
+            Registros.close();
+        }
+
+        //HORA SEMANAL EXTRA
+        if(Fields.getCAM_TIPO().equals("hora_total_semanal_extra")){
+            DateUtils dateutils = new DateUtils();
+            TblRegistroHelper Registros = new TblRegistroHelper(context);
+            Cursor c = Registros.getByFrmId(FRM_ID);
+
+            int minutos_totales = 0;
+            int minutos_extra = 0;
+            while(c.moveToNext()) {
+                if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).equals("hora_total_diaria")){
+                    String tiempo = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
+                    int minutos = dateutils.ObtenerMinutos(tiempo);
+                    if(minutos > (8*60)){
+                        minutos_extra = minutos - (8*60);
+                    }
+                    minutos_totales += minutos_extra;
+                }
+                if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).equals("hora_colacion")){
+                    if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)).equals("No")){
+                        minutos_totales += 60;
+                    }
+                }
+            }
+            NumeroInput.setText(dateutils.MinutosHora(minutos_totales));
+
+            c.close();
+            Registros.close();
+        }
+
+        /*if(Fields.getCAM_TIPO().contains("hora_total_semanal") || Fields.getCAM_TIPO().contains("hora_total_semanal_extra")){
             TblRegistroHelper Registros = new TblRegistroHelper(context);
             Cursor c = Registros.getByFrmId(FRM_ID);
 
@@ -64,7 +118,10 @@ public class FieldsSistema{
             String last_fecha = "";
             String last_value = "";
 
+
             while(c.moveToNext()){
+
+                Log.d("FIELDSISTEMA", ":"+c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)));
 
 
                 last_value = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
@@ -125,7 +182,7 @@ public class FieldsSistema{
                 }
 
             }
-        }
+        }*/
 
         //TODO probar campo sistema
 

@@ -39,7 +39,7 @@ public class DateUtils {
         int horas_diferencia = (int) Math.floor(minutos_diferencia/60);
         minutos_diferencia = minutos_diferencia % 60;
 
-        if(hora_colacion) {
+        if(horas_diferencia >= 4) {
             return format((horas_diferencia-1)+":"+minutos_diferencia);
         } else {
             return format(horas_diferencia+":"+minutos_diferencia);

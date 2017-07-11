@@ -280,6 +280,9 @@ public class InformesTabsActivity extends AppCompatActivity {
             ContadorTabs.setCheck(0);
         }
 
+        Registros.close();
+        Checklist.close();
+
         return ContadorTabs;
     }
 
@@ -324,5 +327,6 @@ public class InformesTabsActivity extends AppCompatActivity {
                     c.getString(c.getColumnIndexOrThrow("SEND_STATUS")));
         }
         c.close();
+        Registros.close();
     }
 }
