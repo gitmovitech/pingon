@@ -203,6 +203,7 @@ public class InformesTabsActivity extends AppCompatActivity {
         ModelChecklistSimple ChecklistItem;
         Cursor cursor = Checklist.getAllGroupByChkNombre(FRM_ID);
         ListItems = new ArrayList<ModelTabsItem>();
+        String required_message = "";
 
         while (cursor.moveToNext()) {
             CHK_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_ID));
@@ -212,10 +213,17 @@ public class InformesTabsActivity extends AppCompatActivity {
             ArrayChecklist.add(ChecklistItem);
 
             ContadorTabs = getContadoresTabsRegistros(this, FRM_ID, CHK_ID);
+
+            if(ContadorTabs.getContador_mandatorios() == 0){
+                required_message = "";
+            } else {
+                required_message = "Obligatorios "+ContadorTabs.getContador_mandatorios_completados()+" de "+ContadorTabs.getContador_mandatorios();
+            }
+
             ListItems.add(new ModelTabsItem(
                     CHK_NOMBRE,
                     "Total "+ContadorTabs.getContador_total_completados()+" de "+ContadorTabs.getContador_total(),
-                    "Obligatorios "+ContadorTabs.getContador_mandatorios_completados()+" de "+ContadorTabs.getContador_mandatorios(),
+                    required_message,
                     ContadorTabs.getCheck()));
         }
         cursor.close();
@@ -273,12 +281,18 @@ public class InformesTabsActivity extends AppCompatActivity {
         ContadorTabs.setContador_total_completados(contador_total_completados);
         ContadorTabs.setContador_mandatorios_completados(contador_obligatorios_completados);
 
-        if(contador_obligatorios == contador_obligatorios_completados){
-            ContadorTabs.setCheck(1);
+        if(contador_total_completados == contador_obligatorios_completados){
+            ActivateSendButton = 1;
         } else {
             ActivateSendButton = 0;
+        }
+
+        if(contador_total == contador_total_completados){
+            ContadorTabs.setCheck(1);
+        } else {
             ContadorTabs.setCheck(0);
         }
+
 
         Registros.close();
         Checklist.close();
