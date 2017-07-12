@@ -23,6 +23,7 @@ public class TblRegistroHelper extends SQLiteOpenHelper {
         query += TblRegistroDefinition.Entry.CAM_ID+" INTEGER NOT NULL,";
         query += TblRegistroDefinition.Entry.FRM_ID+" INTEGER NOT NULL,";
         query += TblRegistroDefinition.Entry.CHK_ID+" INTEGER NOT NULL,";
+        query += TblRegistroDefinition.Entry.CAM_POSICION+" INTEGER,";
         query += TblRegistroDefinition.Entry.REG_ID+" INTEGER NULL,";
         query += TblRegistroDefinition.Entry.REG_TIPO+" TEXT NOT NULL,";
         query += TblRegistroDefinition.Entry.REG_VALOR+" TEXT NOT NULL,";

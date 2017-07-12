@@ -149,6 +149,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     ViewReturn = FieldsMoneda.getView();
                     break;
                 case "binario":
+                case "dia_habil":
                 case "hora_colacion":
                     FieldsBinario FieldsBinario = new FieldsBinario(Inflater, ChecklistFields.get(contador), ChecklistFields);
                     ViewReturn = FieldsBinario.getView();

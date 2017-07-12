@@ -265,6 +265,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     } catch(Exception e){}
                     break;
                 case "hora_colacion":
+                case "dia_habil":
                 case "binario":
                     try {
                         int checked = 1;
@@ -382,6 +383,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         values.put(TblRegistroDefinition.Entry.REG_TIPO, data.get(x).getCAM_TIPO());
                         values.put(TblRegistroDefinition.Entry.REG_VALOR, data.get(x).getValue());
                         values.put(TblRegistroDefinition.Entry.SEND_STATUS, "DRAFT");
+                        values.put(TblRegistroDefinition.Entry.CAM_POSICION, data.get(x).getCAM_POSICION());
                         if (LOCAL_REG_ID > 0) {
                             Registros.update(LOCAL_REG_ID, values);
                         } else {

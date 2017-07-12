@@ -11,9 +11,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import cl.pingon.Libraries.DateUtils;
+import cl.pingon.Model.ModelChecklist;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.R;
 import cl.pingon.SQLite.TblRegistroDefinition;
@@ -58,8 +60,19 @@ public class FieldsSistema{
             Cursor c = Registros.getByFrmId(FRM_ID);
 
             int minutos_totales = 0;
+            boolean dia_habil = false;
             while(c.moveToNext()) {
-                if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).contains("hora_total_diaria")){
+
+                Log.d("UUARII",c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO))+ ":"+c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
+
+                if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).equals("dia_habil")){
+                    if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)).equals("Si")){
+                        dia_habil = true;
+                    } else {
+                        dia_habil = false;
+                    }
+                }
+                if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).equals("hora_total_diaria") && dia_habil){
                     String tiempo = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
                     int minutos = dateutils.ObtenerMinutos(tiempo);
                     int minutos_diferencia = 0;
@@ -83,12 +96,24 @@ public class FieldsSistema{
 
             int minutos_totales = 0;
             int minutos_extra = 0;
+            boolean dia_habil = false;
             while(c.moveToNext()) {
+                if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).equals("dia_habil")){
+                    if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)).equals("Si")){
+                        dia_habil = true;
+                    } else {
+                        dia_habil = false;
+                    }
+                }
                 if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).equals("hora_total_diaria")){
                     String tiempo = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
                     int minutos = dateutils.ObtenerMinutos(tiempo);
-                    if(minutos > (8*60)){
-                        minutos_extra = minutos - (8*60);
+                    if(!dia_habil){
+                        minutos_totales += minutos;
+                    } else {
+                        if(minutos > (8*60)){
+                            minutos_extra = minutos - (8*60);
+                        }
                     }
                     minutos_totales += minutos_extra;
                 }
