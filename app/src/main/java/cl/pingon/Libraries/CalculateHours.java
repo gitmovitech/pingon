@@ -89,8 +89,13 @@ public class CalculateHours {
          * CALCULO DE HORAS EXTRAS EN REPORTE DIARIO
          */
         DateUtils dateutils = new DateUtils();
-        int minutos = dateutils.ObtenerMinutos(dateutils.HoursDiference(hora_entrada, hora_salida, hora_colacion));
-        if(dia_habil){
+        int minutos = 0;
+        try {
+            minutos = dateutils.ObtenerMinutos(dateutils.HoursDiference(hora_entrada, hora_salida, hora_colacion));
+        } catch(Exception e){
+
+        }
+        if(dia_habil && minutos > 0){
             if(minutos >= (8*60)){
                 int minutos_extras = minutos - (8*60);
                 if(!hora_colacion){
@@ -114,7 +119,7 @@ public class CalculateHours {
                 }
             }
 
-        } else {
+        } else if(minutos > 0) {
             if(!hora_colacion){
                 minutos += 60;
             }
