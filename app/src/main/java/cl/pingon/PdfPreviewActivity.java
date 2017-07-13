@@ -259,6 +259,13 @@ public class PdfPreviewActivity extends AppCompatActivity {
             cursor.close();
         }
 
+        Documento.close();
+        Clientes.close();
+        Checklist.close();
+        Formularios.close();
+        Projectos.close();
+        Registro.close();
+
         return registro;
 
     }

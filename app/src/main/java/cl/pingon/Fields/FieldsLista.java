@@ -48,6 +48,7 @@ public class FieldsLista {
                 Listado.add(cursor.getString(cursor.getColumnIndexOrThrow(TblListOptionsDefinition.Entry.OPC_VALOR)));
             }
             cursor.close();
+            DBHelper.close();
         } catch (Exception e){
             Log.e("ERROR CAMPO VACIO", e.toString());
         }
@@ -72,6 +73,7 @@ public class FieldsLista {
                     }
                 }
                 cursor.close();
+                DBHelper.close();
             } catch (Exception e){
                 Log.e("ERROR CAMPO VACIO", e.toString());
             }
