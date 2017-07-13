@@ -164,17 +164,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void Message(String title, String message){
+
+        alert.setTitle(title);
+        alert.setMessage(message);
+        alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                System.exit(0);
+                finish();
+            }
+        });
+        alert.create();
         try{
-            alert.setTitle(title);
-            alert.setMessage(message);
-            alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                    System.exit(0);
-                    finish();
-                }
-            });
-            alert.create();
             alert.show();
         } catch (Exception e){
             Log.d("ERROR", e.toString());

@@ -73,6 +73,7 @@ public class PendientesEnvioActivity extends AppCompatActivity {
             c.close();
         }
         cursor.close();
+        Documentos.close();
 
         AdapterListadoPendientes adapter = new AdapterListadoPendientes(this, ArrayListadoPendientes);
         ListView ListViewEnviados = (ListView) findViewById(R.id.ListDetalle);

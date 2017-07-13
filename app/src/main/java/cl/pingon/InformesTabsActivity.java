@@ -227,6 +227,7 @@ public class InformesTabsActivity extends AppCompatActivity {
                     ContadorTabs.getCheck()));
         }
         cursor.close();
+        Checklist.close();
     }
 
 
@@ -281,7 +282,7 @@ public class InformesTabsActivity extends AppCompatActivity {
         ContadorTabs.setContador_total_completados(contador_total_completados);
         ContadorTabs.setContador_mandatorios_completados(contador_obligatorios_completados);
 
-        if(contador_total_completados == contador_obligatorios_completados){
+        if(contador_obligatorios == contador_obligatorios_completados){
             ActivateSendButton = 1;
         } else {
             ActivateSendButton = 0;

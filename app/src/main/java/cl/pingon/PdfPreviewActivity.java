@@ -289,12 +289,14 @@ public class PdfPreviewActivity extends AppCompatActivity {
             cursor = Documentos.getById(LOCAL_DOC_ID);
             cursor.moveToFirst();
             String NOMBRE_CLIENTE = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE));
+            int DOC_EXT_ID_CLIENTE = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE));
             String NOMBRE_OBRA = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_OBRA));
+            int DOC_EXT_ID_PROYECTO = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO));
             String NOMBRE_EQUIPO = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO));
             cursor.close();
             Documentos.close();
 
-            pdfFilename = LOCAL_DOC_ID+"__"+ARN_NOMBRE+" - "+NOMBRE_CLIENTE+" - "+NOMBRE_OBRA+" - "+NOMBRE_EQUIPO+".pdf";
+            pdfFilename = LOCAL_DOC_ID+".pdf";
             pdf = new PDF(this, pdfFilename);
             pdf.open();
             pdf.addImage(R.drawable.pingon_pdf, 100, 80);

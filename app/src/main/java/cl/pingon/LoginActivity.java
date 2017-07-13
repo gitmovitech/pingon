@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import cl.pingon.Libraries.RESTService;
 
@@ -83,7 +84,11 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         progress.setTitle("Iniciando sesión");
                         progress.setMessage("Por favor espere...");
-                        progress.show();
+                        try {
+                            progress.show();
+                        } catch (Exception e){
+
+                        }
 
                         String url = getResources().getString(R.string.url_signin) + "?user=" + EditTextUser.getText().toString() + "&pass=" + EditTextPassword.getText().toString();
                         JSONObject params = new JSONObject();
