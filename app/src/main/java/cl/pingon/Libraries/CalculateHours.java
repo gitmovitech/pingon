@@ -84,18 +84,42 @@ public class CalculateHours {
                     break;
             }
         }
-        DateUtils dateutils = new DateUtils();
 
+        /**
+         * CALCULO DE HORAS EXTRAS EN REPORTE DIARIO
+         */
+        DateUtils dateutils = new DateUtils();
+        int minutos = dateutils.ObtenerMinutos(dateutils.HoursDiference(hora_entrada, hora_salida, hora_colacion));
         if(dia_habil){
-            try{
-                HoraTotalDiariaText.setText(dateutils.HoursDiference(hora_entrada, hora_salida, hora_colacion));
-                HoraTotalDiariaExtraText.setText("00:00");
-            } catch (Exception e){
-                Log.e("ERRR", e.toString());
+            if(minutos >= (8*60)){
+                int minutos_extras = minutos - (8*60);
+                if(!hora_colacion){
+                    minutos_extras += 60;
+                }
+                try{
+                    HoraTotalDiariaText.setText("08:00");
+                    HoraTotalDiariaExtraText.setText(dateutils.MinutosHora(minutos_extras));
+                } catch (Exception e){
+                    Log.e("ERRR", e.toString());
+                }
+            } else {
+                if(!hora_colacion){
+                    minutos += 60;
+                }
+                try{
+                    HoraTotalDiariaText.setText(dateutils.MinutosHora(minutos));
+                    HoraTotalDiariaExtraText.setText("00:00");
+                } catch (Exception e){
+                    Log.e("ERRR", e.toString());
+                }
             }
+
         } else {
+            if(!hora_colacion){
+                minutos += 60;
+            }
             try{
-                HoraTotalDiariaExtraText.setText(dateutils.HoursDiference(hora_entrada, hora_salida, hora_colacion));
+                HoraTotalDiariaExtraText.setText(dateutils.MinutosHora(minutos));
                 HoraTotalDiariaText.setText("00:00");
             } catch (Exception e){
                 Log.e("ERRR", e.toString());
