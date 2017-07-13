@@ -1,6 +1,7 @@
 package cl.pingon;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
@@ -15,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -178,7 +180,13 @@ public class NuevoFormularioActivity extends AppCompatActivity {
                 SpinnerEquipo.setSelection(0);
                 SpinnerSerie.setSelection(0);
                 getProjectsInSpinner(index);
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+                try{
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                } catch (Exception e){
+                    Log.e("ERR", e.toString());
+                }
             }
         });
         SpinnerObras.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -190,6 +198,14 @@ public class NuevoFormularioActivity extends AppCompatActivity {
                     SpinnerSerie.setSelection(0);
                     getBrandInSpinner(i);
                 }
+
+                try{
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                } catch (Exception e){
+                    Log.e("ERR", e.toString());
+                }
+
             }
 
             @Override
@@ -204,6 +220,13 @@ public class NuevoFormularioActivity extends AppCompatActivity {
                     SpinnerEquipo.setSelection(0);
                     SpinnerSerie.setSelection(0);
                     getProductInSpinner(i);
+                }
+
+                try{
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                } catch (Exception e){
+                    Log.e("ERR", e.toString());
                 }
             }
 
@@ -230,6 +253,14 @@ public class NuevoFormularioActivity extends AppCompatActivity {
                         }
                     }
                 }
+
+
+                try{
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                } catch (Exception e){
+                    Log.e("ERR", e.toString());
+                }
             }
 
             @Override
@@ -238,7 +269,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             }
         });
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     @Override
