@@ -398,7 +398,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
             Image imagen = Image.getInstance(stream.toByteArray());
             imagen.scaleAbsoluteWidth(150);
             imagen.scaleAbsoluteHeight(150);
-            imagen.setAlignment(Image.RIGHT);
+            imagen.setAlignment(Image.LEFT);
             tabla.addCell(pdf.addCell(imagen));
 
 
