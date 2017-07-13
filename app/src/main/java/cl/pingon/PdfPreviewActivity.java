@@ -224,7 +224,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
             } else {
                 coords = "Desconocida";
             }
-            header.add(new ModelKeyPairs("Ubicación",coords,"texto"));
+            header.add(new ModelKeyPairs("Ubicación",COMUNA_OBRA,"texto"));
             cursor.close();
 
 
