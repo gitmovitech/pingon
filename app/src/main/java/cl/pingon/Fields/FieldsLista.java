@@ -16,6 +16,9 @@ import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.R;
 import cl.pingon.SQLite.TblListOptionsDefinition;
 import cl.pingon.SQLite.TblListOptionsHelper;
+import cl.pingon.SQLite.TblListasGeneralesHelper;
+import cl.pingon.SQLite.TblListasGeneralesItemsDefinition;
+import cl.pingon.SQLite.TblListasGeneralesItemsHelper;
 
 public class FieldsLista {
 
@@ -40,17 +43,28 @@ public class FieldsLista {
 
         }
 
-
-        try {
-            TblListOptionsHelper DBHelper = new TblListOptionsHelper(context);
-            Cursor cursor = DBHelper.getAllByCamId(Fields.getCAM_ID());
+        if(Fields.getCUSTOM_LIST() > 0){
+            TblListasGeneralesItemsHelper ListasGenerales = new TblListasGeneralesItemsHelper(context);
+            Cursor cursor = ListasGenerales.getByListaId(Fields.getCUSTOM_LIST());
             while(cursor.moveToNext()){
-                Listado.add(cursor.getString(cursor.getColumnIndexOrThrow(TblListOptionsDefinition.Entry.OPC_VALOR)));
+                Listado.add(cursor.getString(cursor.getColumnIndexOrThrow(TblListasGeneralesItemsDefinition.Entry.NAME)));
             }
             cursor.close();
-            DBHelper.close();
-        } catch (Exception e){
-            Log.e("ERROR CAMPO VACIO", e.toString());
+            ListasGenerales.close();
+        } else {
+
+            try {
+                TblListOptionsHelper DBHelper = new TblListOptionsHelper(context);
+                Cursor cursor = DBHelper.getAllByCamId(Fields.getCAM_ID());
+                while (cursor.moveToNext()) {
+                    Listado.add(cursor.getString(cursor.getColumnIndexOrThrow(TblListOptionsDefinition.Entry.OPC_VALOR)));
+                }
+                cursor.close();
+                DBHelper.close();
+            } catch (Exception e) {
+                Log.e("ERROR CAMPO VACIO", e.toString());
+            }
+
         }
 
         ArrayAdapter ListadoAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, Listado);

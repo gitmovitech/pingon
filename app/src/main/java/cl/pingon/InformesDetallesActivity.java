@@ -468,6 +468,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
     private String CAM_MANDATORIO;
     private String CAM_VAL_DEFECTO;
     private String CAM_PLACE_HOLDER;
+    private int CUSTOM_LIST;
 
     private ArrayList<ModelChecklistFields> getChecklists(int FRM_ID, int CHK_ID){
         TblChecklistHelper Checklist = new TblChecklistHelper(this);
@@ -482,6 +483,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
             CAM_MANDATORIO = c.getString(c.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_MANDATORIO));
             CAM_VAL_DEFECTO = c.getString(c.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_VAL_DEFECTO));
             CAM_PLACE_HOLDER = c.getString(c.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_PLACE_HOLDER));
+            CUSTOM_LIST = c.getInt(c.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CUSTOM_LIST));
             ArrayChecklist.add(new ModelChecklistFields(
                     CAM_ID,
                     CAM_POSICION,
@@ -490,7 +492,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     CAM_TIPO,
                     CAM_MANDATORIO,
                     CAM_VAL_DEFECTO,
-                    CAM_PLACE_HOLDER
+                    CAM_PLACE_HOLDER,
+                    CUSTOM_LIST
             ));
         }
         c.close();

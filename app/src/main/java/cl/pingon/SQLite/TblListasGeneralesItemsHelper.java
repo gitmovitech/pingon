@@ -56,4 +56,15 @@ public class TblListasGeneralesItemsHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TblListasGeneralesItemsDefinition.Entry.TABLE_NAME, projection, null, null, null, null, null);
         return cursor;
     }
+
+    public Cursor getByListaId(int id){
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {
+                TblListasGeneralesItemsDefinition.Entry.ID,
+                TblListasGeneralesItemsDefinition.Entry.NAME
+        };
+        Cursor cursor = db.query(TblListasGeneralesItemsDefinition.Entry.TABLE_NAME, projection, TblListasGeneralesItemsDefinition.Entry.ID_LISTA+"=?", new String[]{String.valueOf(id)}, null, null, null);
+        return cursor;
+    }
+
 }
