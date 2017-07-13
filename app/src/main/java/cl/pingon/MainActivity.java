@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
             } else {
                 Message(getResources().getString(R.string.no_internet), getResources().getString(R.string.first_time_no_internet));
-                finish();
+                //finish();
             }
 
         }

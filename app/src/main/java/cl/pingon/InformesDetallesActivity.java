@@ -37,6 +37,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import cl.pingon.Adapter.AdapterChecklist;
+import cl.pingon.Libraries.CalculateHours;
 import cl.pingon.Libraries.DrawSign;
 import cl.pingon.Libraries.ImageUtils;
 import cl.pingon.Libraries.Rut;
@@ -93,7 +94,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
         ListViewInformesDetalles.setAdapter(AdapterChecklist);
 
         RequestWriteExternalPerms();
-        getRegistrosDatabase();
+        //getRegistrosDatabase();
 
     }
 

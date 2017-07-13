@@ -49,12 +49,12 @@ public class FieldsHora {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                new CalculateHours(ChecklistFields);
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                new CalculateHours(ChecklistFields);
+
             }
         });
         Button.setOnClickListener(new View.OnClickListener() {
