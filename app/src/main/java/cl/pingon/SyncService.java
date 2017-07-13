@@ -159,7 +159,7 @@ public class SyncService extends Service {
             e.printStackTrace();
         }
 
-        String filename = LOCAL_DOC_ID+"__"+ARN_NOMBRE+" - "+NOMBRE_CLIENTE+" - "+NOMBRE_OBRA+" - "+NOMBRE_EQUIPO+".pdf";
+        String filename = LOCAL_DOC_ID+".pdf";
 
         uploadMultipart(
                 getResources().getString(R.string.url_sync_upload_file),

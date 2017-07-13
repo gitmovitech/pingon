@@ -138,6 +138,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     ViewReturn = FieldsNumeroEntero.getView();
                     break;
                 case "hora_total_diaria":
+                case "hora_total_diaria_extra":
                 case "hora_total_semanal":
                 case "hora_total_semanal_extra":
                 case "sistema":

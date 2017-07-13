@@ -295,6 +295,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 case "moneda":
                 case "sistema":
                 case "hora_total_diaria":
+                case "hora_total_diaria_extra":
                 case "hora_total_semanal":
                 case "hora_total_semanal_extra":
                     try {

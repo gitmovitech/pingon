@@ -214,7 +214,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
             cursor = Projectos.getByCompanyId(DOC_EXT_ID_CLIENTE);
             cursor.moveToFirst();
             COMUNA_OBRA = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ADDRESS));
-            String coords = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COORDINATES));
+            /*String coords = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COORDINATES));
             if(coords != null){
                 if(!coords.isEmpty()){
                     coords = "http://maps.google.com/maps?q="+coords;
@@ -223,7 +223,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
                 }
             } else {
                 coords = "Desconocida";
-            }
+            }*/
             header.add(new ModelKeyPairs("Ubicación",COMUNA_OBRA,"texto"));
             cursor.close();
 
