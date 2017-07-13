@@ -23,6 +23,7 @@ import cl.pingon.Sync.SyncCompany;
 import cl.pingon.Sync.SyncFormularios;
 import cl.pingon.Sync.SyncListOptions;
 import cl.pingon.Sync.SyncListasGenerales;
+import cl.pingon.Sync.SyncListasGeneralesItems;
 import cl.pingon.Sync.SyncProducts;
 import cl.pingon.Sync.SyncProjects;
 
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     String ProductsUrl;
     String BrandsUrl;
     String ListasGeneralesUrl;
+    String ListasGeneralesItemsUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         ProductsUrl = getResources().getString(R.string.url_sync_emp_products).toString()+"/"+session.getString("token","");
         BrandsUrl = getResources().getString(R.string.url_sync_emp_brands).toString()+"/"+session.getString("token","");
         ListasGeneralesUrl = getResources().getString(R.string.url_sync_listas_generales).toString()+"/"+session.getString("token","");
+        ListasGeneralesItemsUrl = getResources().getString(R.string.url_sync_listas_generales_items).toString()+"/"+session.getString("token","");
 
         if(session.getString("token","") != "") {
 
@@ -104,12 +107,17 @@ public class MainActivity extends AppCompatActivity {
                                                                 ListOptions.Sync(new CallbackSync(){
                                                                     @Override
                                                                     public void success() {
-                                                                        Log.d("URL",ListasGeneralesUrl);
                                                                         SyncListasGenerales ListasGenerales = new SyncListasGenerales(getApplicationContext(), mainactivity, ListasGeneralesUrl);
                                                                         ListasGenerales.Sync(new CallbackSync(){
                                                                             @Override
                                                                             public void success() {
-                                                                                SyncReady();
+                                                                                SyncListasGeneralesItems ListasGeneralesItems = new SyncListasGeneralesItems(getApplicationContext(), mainactivity, ListasGeneralesItemsUrl);
+                                                                                ListasGeneralesItems.Sync(new CallbackSync(){
+                                                                                    @Override
+                                                                                    public void success() {
+                                                                                        SyncReady();
+                                                                                    }
+                                                                                });
                                                                             }
                                                                         });
                                                                     }

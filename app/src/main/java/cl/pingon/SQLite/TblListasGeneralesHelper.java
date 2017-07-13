@@ -30,7 +30,7 @@ public class TblListasGeneralesHelper extends SQLiteOpenHelper {
 
     public void deleteAll(){
         SQLiteDatabase db = getReadableDatabase();
-        db.delete(TblListasGeneralesDefinition.Entry.TABLE_NAME, "1=?", new String[]{"1"});
+        db.delete(TblListasGeneralesDefinition.Entry.TABLE_NAME, null, null);
         db.close();
     }
 
