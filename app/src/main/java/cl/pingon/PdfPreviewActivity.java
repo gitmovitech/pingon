@@ -133,16 +133,6 @@ public class PdfPreviewActivity extends AppCompatActivity {
                 cv.put(TblRegistroDefinition.Entry.SEND_STATUS, "SYNC");
                 Registro.updateLocalDocId(LOCAL_DOC_ID, cv);
 
-                try{
-                    InformesTabsActivity.activity.finish();
-                } catch (Exception e){}
-                try{
-                    BorradoresActivity.activity.finish();
-                } catch (Exception e){}
-                try{
-                    InformesActivity.activity.finish();
-                } catch (Exception e){}
-
                 Intent intent = new Intent(getApplicationContext(), BuzonActivity.class);
                 intent.putExtra("GOTO", "PendientesEnvioActivity");
                 startActivity(intent);

@@ -113,6 +113,22 @@ public class PendientesEnvioActivity extends AppCompatActivity {
 
         }
 
+        try{
+            InformesTabsActivity.activity.finish();
+        } catch (Exception e){}
+        try{
+            BorradoresActivity.activity.finish();
+        } catch (Exception e){}
+        try{
+            InformesActivity.activity.finish();
+        } catch (Exception e){}
+        try{
+            InformesActivity.activity.finish();
+        } catch (Exception e){}
+        try{
+            NuevoFormularioActivity.activity.finish();
+        } catch (Exception e){}
+
     }
 
     @Override

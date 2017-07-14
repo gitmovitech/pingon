@@ -65,11 +65,28 @@ public class BuzonActivity extends AppCompatActivity {
         Intent IntentSyncListenerService = new Intent(this, SyncService.class);
         startService(IntentSyncListenerService);
 
-        try {
-            if (getIntent().getStringExtra("GOTO").contains("PendientesEnvioActivity")) {
+        try{
+            InformesTabsActivity.activity.finish();
+        } catch (Exception e){}
+        try{
+            BorradoresActivity.activity.finish();
+        } catch (Exception e){}
+        try{
+            InformesActivity.activity.finish();
+        } catch (Exception e){}
+        try{
+            InformesActivity.activity.finish();
+        } catch (Exception e){}
+        try{
+            NuevoFormularioActivity.activity.finish();
+        } catch (Exception e){}
+        try{
+            if (getIntent().getStringExtra("GOTO").equals("PendientesEnvioActivity")) {
+                finish();
                 startActivity(IntentPendientes);
             }
         } catch (Exception e){}
+
     }
 
     @Override
