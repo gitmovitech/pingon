@@ -281,27 +281,36 @@ public class PdfPreviewActivity extends AppCompatActivity {
             /**
              * OBTENER NOMBRE DEL AREA DE NEGOCIO
              */
-            TblFormulariosHelper Formularios = new TblFormulariosHelper(getApplicationContext());
+            /*TblFormulariosHelper Formularios = new TblFormulariosHelper(getApplicationContext());
             Cursor cursor = Formularios.getByArnId(ARN_ID);
             cursor.moveToFirst();
             String FRM_DECLARACION = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_DECLARACION));
             String ARN_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
             cursor.close();
-            Formularios.close();
+            Formularios.close();*/
 
             /**
              * OBTENER NOMBRE DEL CLIENTE
              */
             TblDocumentoHelper Documentos = new TblDocumentoHelper(getApplicationContext());
-            cursor = Documentos.getById(LOCAL_DOC_ID);
+            Cursor cursor = Documentos.getById(LOCAL_DOC_ID);
             cursor.moveToFirst();
-            String NOMBRE_CLIENTE = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE));
+            int FRM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.FRM_ID));
+            /*String NOMBRE_CLIENTE = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE));
             int DOC_EXT_ID_CLIENTE = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE));
             String NOMBRE_OBRA = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_OBRA));
             int DOC_EXT_ID_PROYECTO = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO));
-            String NOMBRE_EQUIPO = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO));
+            String NOMBRE_EQUIPO = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO));*/
             cursor.close();
             Documentos.close();
+
+            TblFormulariosHelper Formularios = new TblFormulariosHelper(getApplicationContext());
+            cursor = Formularios.getByArnIdFrmId(ARN_ID, FRM_ID);
+            cursor.moveToFirst();
+            String FRM_DECLARACION = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_DECLARACION));
+            cursor.close();
+            Formularios.close();
+
 
             pdfFilename = LOCAL_DOC_ID+".pdf";
             pdf = new PDF(this, pdfFilename);
@@ -404,7 +413,6 @@ public class PdfPreviewActivity extends AppCompatActivity {
 
             pdf.add(tabla);
 
-
             /**
              * Declaracion
              */
@@ -412,9 +420,10 @@ public class PdfPreviewActivity extends AppCompatActivity {
             pdf.add(Chunk.NEWLINE);
             pdf.add(Chunk.NEWLINE);
 
+
             //FECHA
             Date fecha = new Date();
-            SimpleDateFormat ft = new SimpleDateFormat ("dd/MM/yyyy");
+            SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
             FRM_DECLARACION = FRM_DECLARACION.replace("[fecha]", ft.format(fecha));
             //OBRA
             FRM_DECLARACION = FRM_DECLARACION.replace("[obra]", DOC_EXT_OBRA);
@@ -423,6 +432,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
             FRM_DECLARACION = FRM_DECLARACION.replace("[comuna_obra]", COMUNA_OBRA);
             FRM_DECLARACION = FRM_DECLARACION.replace("[responsable]", responsable);
             FRM_DECLARACION = FRM_DECLARACION.replace("[rut]", rut_responsable);
+            FRM_DECLARACION = FRM_DECLARACION.replace("null", "");
 
             p = new Paragraph(FRM_DECLARACION);
             pdf.add(p);
