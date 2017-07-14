@@ -157,6 +157,7 @@ public class BorradoresActivity extends AppCompatActivity {
                         IntentDetalle.putExtra("SERIE", Equipo.get(i).getSerie());
                         IntentDetalle.putExtra("LOCAL_DOC_ID", Equipo.get(i).getLOCAL_DOC_ID());
                         IntentDetalle.putExtra("FRM_ID", Integer.parseInt(Equipo.get(i).getFRM_ID()));
+                        IntentDetalle.putExtra("anim_left", true);
                         startActivity(IntentDetalle);
                         break;
                 }

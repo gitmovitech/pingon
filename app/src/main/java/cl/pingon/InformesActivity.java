@@ -119,6 +119,7 @@ public class InformesActivity extends AppCompatActivity {
                 InformesTabsActivity.putExtra("LOCAL_DOC_ID",LOCAL_DOC_ID);
                 InformesTabsActivity.putExtra("ARN_NOMBRE",ArrayInformes.get(i).getTitle());
                 InformesTabsActivity.putExtra("FRM_NOMBRE",ArrayInformes.get(i).getSubtitle());
+                InformesTabsActivity.putExtra("anim_left", true);
                 startActivityForResult(InformesTabsActivity, 1);
             }
         });

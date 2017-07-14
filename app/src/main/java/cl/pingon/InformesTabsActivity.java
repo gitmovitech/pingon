@@ -77,7 +77,9 @@ public class InformesTabsActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
-        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
+        if(getIntent().getBooleanExtra("anim_left", false)) {
+            overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
+        }
 
         IntentDetalle = new Intent(this, InformesDetallesActivity.class);
         IntentDetalle.putExtras(getIntent().getExtras());
@@ -205,6 +207,9 @@ public class InformesTabsActivity extends AppCompatActivity {
         ListItems = new ArrayList<ModelTabsItem>();
         String required_message = "";
 
+        int obligatorios = 0;
+        int obligatorios_completados = 0;
+
         while (cursor.moveToNext()) {
             CHK_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_ID));
             CHK_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CHK_NOMBRE));
@@ -213,6 +218,10 @@ public class InformesTabsActivity extends AppCompatActivity {
             ArrayChecklist.add(ChecklistItem);
 
             ContadorTabs = getContadoresTabsRegistros(this, FRM_ID, CHK_ID);
+
+            obligatorios += ContadorTabs.getContador_mandatorios();
+            obligatorios_completados += ContadorTabs.getContador_mandatorios_completados();
+
 
             if(ContadorTabs.getContador_mandatorios() == 0){
                 required_message = "";
@@ -226,6 +235,13 @@ public class InformesTabsActivity extends AppCompatActivity {
                     required_message,
                     ContadorTabs.getCheck()));
         }
+
+        if(obligatorios == obligatorios_completados){
+            ActivateSendButton = 1;
+        } else {
+            ActivateSendButton = 0;
+        }
+
         cursor.close();
         Checklist.close();
     }
@@ -254,6 +270,7 @@ public class InformesTabsActivity extends AppCompatActivity {
 
         String CAM_MANDATORIO;
         Integer CAM_ID;
+        Log.d("=============", "=============");
         while(CursorChecklist.moveToNext()){
             if(!CursorChecklist.getString(CursorChecklist.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_TIPO)).contains("etiqueta")){
                 contador_total++;
@@ -275,18 +292,14 @@ public class InformesTabsActivity extends AppCompatActivity {
                 }
             }
         }
+
+        Log.d(":"+contador_obligatorios_completados, ":"+ contador_obligatorios+"="+contador_total+"=="+contador_total_completados);
         CursorChecklist.close();
 
         ContadorTabs.setContador_total(contador_total);
         ContadorTabs.setContador_mandatorios(contador_obligatorios);
         ContadorTabs.setContador_total_completados(contador_total_completados);
         ContadorTabs.setContador_mandatorios_completados(contador_obligatorios_completados);
-
-        if(contador_obligatorios == contador_obligatorios_completados){
-            ActivateSendButton = 1;
-        } else {
-            ActivateSendButton = 0;
-        }
 
         if(contador_total == contador_total_completados){
             ContadorTabs.setCheck(1);
@@ -309,6 +322,7 @@ public class InformesTabsActivity extends AppCompatActivity {
             getItems(FRM_ID);
             Intent intent = new Intent(this, InformesTabsActivity.class);
             intent.putExtras(getIntent().getExtras());
+            intent.putExtra("anim_left", false);
             finish();
             startActivity(intent);
         }
