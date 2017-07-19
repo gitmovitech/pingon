@@ -54,19 +54,21 @@ public class SyncProducts {
                         try {
                             if(ResponseEmpProducts.getInt("ok") == 1){
 
+                                EmpProducts.deleteAll();
+
                                 JSONArray data = (JSONArray) ResponseEmpProducts.get("data");
                                 JSONObject item;
-                                Integer ID = null;
+                                /*Integer ID = null;
                                 String NAME = null;
                                 String CODE = null;
                                 String YEAR = null;
                                 Integer BRAND_ID = null;
-                                Boolean addItem;
+                                Boolean addItem;*/
                                 ContentValues values;
 
                                 for(int i = 0;i < data.length(); i++){
                                     item = (JSONObject) data.get(i);
-                                    addItem = true;
+                                    /*addItem = true;
                                     while(CursorEmpProducts.moveToNext()) {
                                         ID = CursorEmpProducts.getInt(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.ID));
                                         NAME = CursorEmpProducts.getString(CursorEmpProducts.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.NAME));
@@ -93,15 +95,16 @@ public class SyncProducts {
                                             break;
                                         }
                                     }
-                                    if(addItem){
+                                    if(addItem){*/
                                         values = new ContentValues();
                                         values.put(TblEmpProductsDefinition.Entry.ID, item.getInt(TblEmpProductsDefinition.Entry.ID));
-                                        values.put(TblEmpProductsDefinition.Entry.NAME, item.getString(TblEmpProductsDefinition.Entry.NAME));
+                                        values.put(TblEmpProductsDefinition.Entry.NAME, item.getString(TblEmpProductsDefinition.Entry.NAME).trim());
                                         values.put(TblEmpProductsDefinition.Entry.CODE, item.getString(TblEmpProductsDefinition.Entry.CODE));
                                         values.put(TblEmpProductsDefinition.Entry.YEAR, item.getString(TblEmpProductsDefinition.Entry.YEAR));
                                         values.put(TblEmpProductsDefinition.Entry.BRAND_ID, item.getInt(TblEmpProductsDefinition.Entry.BRAND_ID));
+                                        values.put(TblEmpProductsDefinition.Entry.PROJECT_ID, item.getInt(TblEmpProductsDefinition.Entry.PROJECT_ID));
                                         EmpProducts.insert(values);
-                                    }
+                                    //}
                                 }
                                 CursorEmpProducts.close();
                                 cb.success();

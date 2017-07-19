@@ -51,17 +51,19 @@ public class SyncBrands {
                         try {
                             if(ResponseEmpBrands.getInt("ok") == 1){
 
+                                EmpBrands.deleteAll();
+
                                 JSONArray data = (JSONArray) ResponseEmpBrands.get("data");
                                 JSONObject item;
-                                Integer ID = null;
+                                /*Integer ID = null;
                                 String NAME = null;
                                 Integer PROJECT_ID = null;
-                                Boolean addItem;
+                                Boolean addItem;*/
                                 ContentValues values;
 
                                 for(int i = 0;i < data.length(); i++){
                                     item = (JSONObject) data.get(i);
-                                    addItem = true;
+                                    /*addItem = true;
                                     while(CursorEmpBrands.moveToNext()) {
                                         ID = CursorEmpBrands.getInt(CursorEmpBrands.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.ID));
                                         NAME = CursorEmpBrands.getString(CursorEmpBrands.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.NAME));
@@ -80,13 +82,13 @@ public class SyncBrands {
                                             break;
                                         }
                                     }
-                                    if(addItem){
+                                    if(addItem){*/
                                         values = new ContentValues();
                                         values.put(TblEmpBrandsDefinition.Entry.ID, item.getInt(TblEmpBrandsDefinition.Entry.ID));
                                         values.put(TblEmpBrandsDefinition.Entry.NAME, item.getString(TblEmpBrandsDefinition.Entry.NAME));
                                         values.put(TblEmpBrandsDefinition.Entry.PROJECT_ID, item.getInt(TblEmpBrandsDefinition.Entry.PROJECT_ID));
                                         EmpBrands.insert(values);
-                                    }
+                                    //}
                                 }
                                 CursorEmpBrands.close();
                                 cb.success();

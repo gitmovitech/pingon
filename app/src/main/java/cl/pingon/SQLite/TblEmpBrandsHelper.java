@@ -29,6 +29,12 @@ public class TblEmpBrandsHelper extends SQLiteOpenHelper{
 
     }
 
+    public void deleteAll(){
+        SQLiteDatabase db = getReadableDatabase();
+        db.delete(TblEmpBrandsDefinition.Entry.TABLE_NAME, null, null);
+        db.close();
+    }
+
     public void insert(ContentValues values){
         SQLiteDatabase db = getReadableDatabase();
         db.insert(TblEmpBrandsDefinition.Entry.TABLE_NAME, null, values);

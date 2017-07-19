@@ -54,17 +54,19 @@ public class SyncCompany {
                         try {
                             if(ResponseEmpCompany.getInt("ok") == 1){
 
+                                EmpCompany.deleteAll();
+
                                 JSONArray data = (JSONArray) ResponseEmpCompany.get("data");
                                 JSONObject item;
-                                Integer ID = null;
+                                /*Integer ID = null;
                                 String NAME = null;
                                 String RUT = null;
-                                Boolean addItem;
+                                Boolean addItem;*/
                                 ContentValues values;
 
                                 for(int i = 0;i < data.length(); i++){
                                     item = (JSONObject) data.get(i);
-                                    addItem = true;
+                                    /*addItem = true;
                                     while(CursorEmpCompany.moveToNext()) {
                                         ID = CursorEmpCompany.getInt(CursorEmpCompany.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.ID));
                                         NAME = CursorEmpCompany.getString(CursorEmpCompany.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.NAME));
@@ -83,13 +85,13 @@ public class SyncCompany {
                                             break;
                                         }
                                     }
-                                    if(addItem){
+                                    if(addItem){*/
                                         values = new ContentValues();
                                         values.put(TblEmpCompanyDefinition.Entry.ID, item.getInt(TblEmpCompanyDefinition.Entry.ID));
                                         values.put(TblEmpCompanyDefinition.Entry.NAME, item.getString(TblEmpCompanyDefinition.Entry.NAME));
                                         values.put(TblEmpCompanyDefinition.Entry.RUT, item.getString(TblEmpCompanyDefinition.Entry.RUT));
                                         EmpCompany.insert(values);
-                                    }
+                                    //}
                                 }
                                 CursorEmpCompany.close();
                                 cb.success();

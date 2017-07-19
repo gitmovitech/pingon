@@ -27,6 +27,8 @@ import cl.pingon.Sync.SyncListasGeneralesItems;
 import cl.pingon.Sync.SyncProducts;
 import cl.pingon.Sync.SyncProjects;
 
+import static repack.org.bouncycastle.crypto.tls.ContentType.alert;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     public MainActivity mainactivity;
     SharedPreferences session;
     RESTService REST;
-    AlertDialog.Builder alert;
 
     String ChecklistUrl;
     String ListOptionsUrl;
@@ -59,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
 
         activity = this;
         mainactivity = this;
-        alert = new AlertDialog.Builder(this);
 
         IntentBuzon = new Intent(this, BuzonActivity.class);
 
@@ -174,15 +174,20 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void CheckErrorToExit(Cursor CursorSync, String message){
-        if(CursorSync.getCount() == 0){
+        try {
+            if (CursorSync.getCount() == 0) {
+                Message("Error de sincronización", message);
+            } else {
+                SyncReady();
+            }
+        } catch (Exception e){
             Message("Error de sincronización", message);
-        } else {
-            SyncReady();
         }
     }
 
     private void Message(String title, String message){
 
+        AlertDialog.Builder alert = new AlertDialog.Builder(getApplicationContext());
         alert.setTitle(title);
         alert.setMessage(message);
         alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
@@ -193,11 +198,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         alert.create();
-        try{
-            alert.show();
-        } catch (Exception e){
-            Log.d("ERROR", e.toString());
-        }
+        alert.show();
 
     }
 

@@ -207,7 +207,7 @@ public class SyncChecklist {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("ERROR SyncChecklist", error.toString());
-                        if (intentos >= 3) {
+                        if (intentos >= 10) {
                             intentos = 0;
                             MainActivity.CheckErrorToExit(Cursor, "Ha habido un error de sincronización con el servidor (CHECKLIST). Si el problema persiste por favor contáctenos.");
                             cb.error();

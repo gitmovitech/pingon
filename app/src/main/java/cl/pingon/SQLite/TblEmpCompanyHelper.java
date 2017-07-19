@@ -30,7 +30,13 @@ public class TblEmpCompanyHelper extends SQLiteOpenHelper {
 
     }
 
-    public void insert(ContentValues values){
+    public void deleteAll(){
+        SQLiteDatabase db = getReadableDatabase();
+        db.delete(TblEmpCompanyDefinition.Entry.TABLE_NAME, null, null);
+        db.close();
+    }
+
+    public void insert(ContentValues values) {
         SQLiteDatabase db = getReadableDatabase();
         db.insert(TblEmpCompanyDefinition.Entry.TABLE_NAME, null, values);
     }

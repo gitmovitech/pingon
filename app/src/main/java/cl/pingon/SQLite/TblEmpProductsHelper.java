@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class TblEmpProductsHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
@@ -22,7 +23,8 @@ public class TblEmpProductsHelper extends SQLiteOpenHelper {
         query += TblEmpProductsDefinition.Entry.NAME+ " TEXT NOT NULL,";
         query += TblEmpProductsDefinition.Entry.CODE+ " TEXT NOT NULL,";
         query += TblEmpProductsDefinition.Entry.YEAR+ " TEXT NOT NULL,";
-        query += TblEmpProductsDefinition.Entry.BRAND_ID+ " INTEGER NOT NULL)";
+        query += TblEmpProductsDefinition.Entry.BRAND_ID+ " TEXT NOT NULL,";
+        query += TblEmpProductsDefinition.Entry.PROJECT_ID+ " INTEGER NOT NULL)";
         //query += "UNIQUE ("+TblEmpProductsDefinition.Entry.ID+"))";
         db.execSQL(query);
     }
@@ -32,7 +34,13 @@ public class TblEmpProductsHelper extends SQLiteOpenHelper {
 
     }
 
-    public void insert(ContentValues values){
+    public void deleteAll() {
+        SQLiteDatabase db = getReadableDatabase();
+        db.delete(TblEmpProductsDefinition.Entry.TABLE_NAME, null, null);
+        db.close();
+    }
+
+    public void insert(ContentValues values) {
         SQLiteDatabase db = getReadableDatabase();
         //Log.w("VALUES",values.get("id").toString());
         try {
@@ -42,23 +50,40 @@ public class TblEmpProductsHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void update(Integer id, ContentValues values){
+    public void update(Integer id, ContentValues values) {
         SQLiteDatabase db = getReadableDatabase();
         String where = TblEmpProductsDefinition.Entry.ID + " = "+ id;
         db.update(TblEmpProductsDefinition.Entry.TABLE_NAME, values, where, null);
     }
 
-    public Cursor getAll(){
+    public Cursor getAll() {
         SQLiteDatabase db = getReadableDatabase();
         String[] projection = {"ID", "NAME", "CODE", "YEAR", "BRAND_ID"};
         Cursor cursor = db.query(TblEmpProductsDefinition.Entry.TABLE_NAME, projection, null, null, null, null, null);
         return cursor;
     }
 
-    public Cursor getByBrandId(int ID){
+    public Cursor getByBrandIdProjectId(int BRAND_ID, int PROJECT_ID) {
         SQLiteDatabase db = getReadableDatabase();
-        String[] projection = {"ID", "NAME", "CODE", "YEAR", "BRAND_ID"};
-        Cursor cursor = db.query(TblEmpProductsDefinition.Entry.TABLE_NAME, projection, "BRAND_ID = ?", new String[]{String.valueOf(ID)}, null, null, null);
+
+        Cursor cursor = db.rawQuery("SELECT ID, NAME, CODE, YEAR, BRAND_ID FROM "+TblEmpProductsDefinition.Entry.TABLE_NAME+" WHERE BRAND_ID = "+BRAND_ID+" AND PROJECT_ID = "+PROJECT_ID+" GROUP BY NAME", null);
+
+        /*String[] select = {
+                TblEmpProductsDefinition.Entry.ID,
+                TblEmpProductsDefinition.Entry.NAME,
+                TblEmpProductsDefinition.Entry.CODE,
+                TblEmpProductsDefinition.Entry.YEAR,
+                TblEmpProductsDefinition.Entry.BRAND_ID
+        };
+        Cursor cursor = db.query(
+                TblEmpProductsDefinition.Entry.TABLE_NAME,
+                select,
+                TblEmpProductsDefinition.Entry.BRAND_ID + " = ? AND " + TblEmpProductsDefinition.Entry.PROJECT_ID + " = ?",
+                new String[]{String.valueOf(BRAND_ID), String.valueOf(PROJECT_ID)},
+                null,
+                null,
+                TblEmpProductsDefinition.Entry.NAME + " ASC"
+        );*/
         return cursor;
     }
 }

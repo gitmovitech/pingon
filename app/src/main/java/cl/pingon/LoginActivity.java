@@ -34,7 +34,6 @@ public class LoginActivity extends AppCompatActivity {
     AutoCompleteTextView EditTextUser;
     EditText EditTextPassword;
     Intent IntentMain;
-    ProgressDialog progress;
     RESTService REST;
     AlertDialog.Builder alert;
     SharedPreferences session;
@@ -53,6 +52,8 @@ public class LoginActivity extends AppCompatActivity {
 
         IntentMain = new Intent(this, MainActivity.class);
 
+        final ProgressDialog progress = new ProgressDialog(this);
+
         REST = new RESTService(this);
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
@@ -62,9 +63,6 @@ public class LoginActivity extends AppCompatActivity {
             finish();
 
         } else {
-
-            progress = new ProgressDialog(this);
-            progress.setCancelable(false);
 
             ButtonSignin = (Button) findViewById(R.id.ButtonSignin);
             EditTextUser = (AutoCompleteTextView) findViewById(R.id.EditTextUser);
@@ -82,13 +80,10 @@ public class LoginActivity extends AppCompatActivity {
                     } else if (EditTextPassword.getText().toString().isEmpty()) {
                         EditTextPassword.setError("Debe ingresar su contraseña");
                     } else {
+                        progress.setCancelable(false);
                         progress.setTitle("Iniciando sesión");
                         progress.setMessage("Por favor espere...");
-                        try {
-                            progress.show();
-                        } catch (Exception e){
-
-                        }
+                        progress.show();
 
                         String url = getResources().getString(R.string.url_signin) + "?user=" + EditTextUser.getText().toString() + "&pass=" + EditTextPassword.getText().toString();
                         JSONObject params = new JSONObject();

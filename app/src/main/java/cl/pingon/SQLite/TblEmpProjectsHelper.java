@@ -32,6 +32,12 @@ public class TblEmpProjectsHelper extends SQLiteOpenHelper{
 
     }
 
+    public void deleteAll(){
+        SQLiteDatabase db = getReadableDatabase();
+        db.delete(TblEmpProjectsDefinition.Entry.TABLE_NAME, null, null);
+        db.close();
+    }
+
     public void insert(ContentValues values){
         SQLiteDatabase db = getReadableDatabase();
         //Log.w("VALUES",values.get("id").toString());

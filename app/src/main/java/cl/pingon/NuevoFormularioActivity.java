@@ -209,9 +209,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
+            public void onNothingSelected(AdapterView<?> adapterView) {}
         });
         SpinnerMarca.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -231,9 +229,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
+            public void onNothingSelected(AdapterView<?> adapterView) {}
         });
         SpinnerSerie.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -264,9 +260,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
+            public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
         //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -355,7 +349,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     private void getBrandInSpinner(int Index){
         ModelEmpProjects Item = ArrayListModelEmpProjects.get(Index);
         PROYECTO_ID = Item.getID();
-        Cursor cursor = EmpBrand.getByProjectId(Item.getID());
+        Cursor cursor = EmpBrand.getByProjectId(PROYECTO_ID);
         int RowValueId;
         String RowValueName;
         int RowValueProjectId;
@@ -387,7 +381,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
      */
     private void getProductInSpinner(int Index){
         ModelEmpBrands Item = ArrayListModelEmpBrands.get(Index);
-        Cursor cursor = EmpProduct.getByBrandId(Item.getID());
+        Cursor cursor = EmpProduct.getByBrandIdProjectId(Item.getID(), Item.getProjectId());
         int RowValueId;
         String RowValueName;
         String RowValueCode;
@@ -405,6 +399,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         ModelEmpProducts ItemEmpProducts;
 
         while(cursor.moveToNext()) {
+
             Index++;
             RowValueId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.ID));
             RowValueName = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.NAME));
@@ -412,6 +407,8 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             RowValueYear = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.YEAR));
             RowValueBrandId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.BRAND_ID));
             ItemEmpProducts = new ModelEmpProducts(RowValueId, RowValueName, RowValueCode, RowValueYear, RowValueBrandId);
+
+            Log.d("PRODUCTOS", "-"+RowValueName+"-");
 
             ArrayListModelEmpProducts.add(Index, ItemEmpProducts);
             ArrayListModelEmpSerie.add(Index, ItemEmpProducts);

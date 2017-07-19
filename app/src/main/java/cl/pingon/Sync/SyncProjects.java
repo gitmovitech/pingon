@@ -3,7 +3,9 @@ package cl.pingon.Sync;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.android.volley.Response;
@@ -57,19 +59,21 @@ public class SyncProjects {
                         try {
                             if(ResponseEmpProjects.getInt("ok") == 1){
 
+                                EmpProjects.deleteAll();
+
                                 JSONArray data = (JSONArray) ResponseEmpProjects.get("data");
                                 JSONObject item;
-                                Integer ID = null;
+                                /*Integer ID = null;
                                 String NAME = null;
                                 String COORDINATES = null;
                                 String ADDRESS = null;
                                 Integer COMPANY_ID = null;
-                                Boolean addItem;
+                                Boolean addItem;*/
                                 ContentValues values;
 
                                 for(int i = 0;i < data.length(); i++){
                                     item = (JSONObject) data.get(i);
-                                    addItem = true;
+                                    /*addItem = true;
                                     while(CursorEmpProjects.moveToNext()) {
                                         ID = CursorEmpProjects.getInt(CursorEmpProjects.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ID));
                                         NAME = CursorEmpProjects.getString(CursorEmpProjects.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.NAME));
@@ -96,7 +100,7 @@ public class SyncProjects {
                                             break;
                                         }
                                     }
-                                    if(addItem){
+                                    if(addItem){*/
                                         values = new ContentValues();
                                         values.put(TblEmpProjectsDefinition.Entry.ID, item.getInt(TblEmpProjectsDefinition.Entry.ID));
                                         values.put(TblEmpProjectsDefinition.Entry.NAME, item.getString(TblEmpProjectsDefinition.Entry.NAME));
@@ -104,7 +108,7 @@ public class SyncProjects {
                                         values.put(TblEmpProjectsDefinition.Entry.ADDRESS, item.getString(TblEmpProjectsDefinition.Entry.ADDRESS));
                                         values.put(TblEmpProjectsDefinition.Entry.COMPANY_ID, item.getInt(TblEmpProjectsDefinition.Entry.COMPANY_ID));
                                         EmpProjects.insert(values);
-                                    }
+                                    //}
                                 }
                                 CursorEmpProjects.close();
                                 cb.success();
@@ -115,12 +119,12 @@ public class SyncProjects {
                                 EmpProjects.close();
 
                             } else {
-                                MainActivity.CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
+                                CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (NO DATA). Si el problema persiste por favor contáctenos.");
                                 cb.error();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            MainActivity.CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
+                            CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (RESPONSE). Si el problema persiste por favor contáctenos.");
                             cb.error();
                         }
 
@@ -129,9 +133,9 @@ public class SyncProjects {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("ERROR SyncProjects", error.toString());
-                        if (intentos >= 3) {
+                        if (intentos >= 10) {
                             intentos = 0;
-                            MainActivity.CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (EMP PROJECTS). Si el problema persiste por favor contáctenos.");
+                            CheckErrorToExit(CursorEmpProjects, "Ha habido un error de sincronización con el servidor (EMP PROJECTS). Si el problema persiste por favor contáctenos.");
                             cb.error();
                         } else {
                             try {
@@ -148,6 +152,31 @@ public class SyncProjects {
             }
         });
         SyncThread.start();
+
+    }
+
+    public void CheckErrorToExit(Cursor CursorSync, String message){
+        if (CursorSync.getCount() == 0) {
+            Message("Error de sincronización", message);
+        } else {
+            MainActivity.SyncReady();
+        }
+    }
+
+    private void Message(String title, String message){
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.getApplicationContext());
+        alert.setTitle(title);
+        alert.setMessage(message);
+        alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                System.exit(0);
+                MainActivity.finish();
+            }
+        });
+        alert.create();
+        alert.show();
 
     }
 
