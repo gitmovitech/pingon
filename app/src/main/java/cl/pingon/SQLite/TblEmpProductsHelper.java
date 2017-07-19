@@ -66,24 +66,14 @@ public class TblEmpProductsHelper extends SQLiteOpenHelper {
     public Cursor getByBrandIdProjectId(int BRAND_ID, int PROJECT_ID) {
         SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT ID, NAME, CODE, YEAR, BRAND_ID FROM "+TblEmpProductsDefinition.Entry.TABLE_NAME+" WHERE BRAND_ID = "+BRAND_ID+" AND PROJECT_ID = "+PROJECT_ID+" GROUP BY NAME", null);
-
-        /*String[] select = {
-                TblEmpProductsDefinition.Entry.ID,
-                TblEmpProductsDefinition.Entry.NAME,
-                TblEmpProductsDefinition.Entry.CODE,
-                TblEmpProductsDefinition.Entry.YEAR,
-                TblEmpProductsDefinition.Entry.BRAND_ID
-        };
-        Cursor cursor = db.query(
-                TblEmpProductsDefinition.Entry.TABLE_NAME,
-                select,
-                TblEmpProductsDefinition.Entry.BRAND_ID + " = ? AND " + TblEmpProductsDefinition.Entry.PROJECT_ID + " = ?",
-                new String[]{String.valueOf(BRAND_ID), String.valueOf(PROJECT_ID)},
-                null,
-                null,
-                TblEmpProductsDefinition.Entry.NAME + " ASC"
-        );*/
+        Cursor cursor = db.rawQuery("SELECT ID, NAME, CODE, YEAR, BRAND_ID, PROJECT_ID FROM "+TblEmpProductsDefinition.Entry.TABLE_NAME+" WHERE BRAND_ID = "+BRAND_ID+" AND PROJECT_ID = "+PROJECT_ID+" GROUP BY NAME", null);
         return cursor;
     }
+
+    public Cursor getByProductNameBrandId(String PRODUCT_NAME, int BRAND_ID, int PROJECT_ID) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT ID, NAME, CODE, YEAR, BRAND_ID, PROJECT_ID FROM "+TblEmpProductsDefinition.Entry.TABLE_NAME+" WHERE NAME = '"+PRODUCT_NAME+"' AND BRAND_ID = "+BRAND_ID+" AND PROJECT_ID = "+PROJECT_ID, null);
+        return cursor;
+    }
+
 }

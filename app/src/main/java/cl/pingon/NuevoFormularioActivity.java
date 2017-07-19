@@ -130,8 +130,8 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         ArrayListModelEmpCompany.add(Index, new ModelEmpCompany(0, null, null));
         ArrayListModelEmpProjects.add(Index, new ModelEmpProjects(0, null, null, null, 0));
         ArrayListModelEmpBrands.add(Index, new ModelEmpBrands(0, null, 0));
-        ArrayListModelEmpProducts.add(Index, new ModelEmpProducts(0, null, null, null, 0));
-        ArrayListModelEmpSerie.add(Index, new ModelEmpProducts(0, null, null, null, 0));
+        ArrayListModelEmpProducts.add(Index, new ModelEmpProducts(0, null, null, null, 0, 0));
+        ArrayListModelEmpSerie.add(Index, new ModelEmpProducts(0, null, null, null, 0, 0));
 
 
         /**
@@ -216,8 +216,26 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if(i > 0){
                     SpinnerEquipo.setSelection(0);
-                    SpinnerSerie.setSelection(0);
                     getProductInSpinner(i);
+                }
+
+                try{
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                } catch (Exception e){
+                    Log.e("ERR", e.toString());
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
+        SpinnerEquipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(i > 0){
+                    SpinnerSerie.setSelection(0);
+                    getSerieInSpinner(i);
                 }
 
                 try{
@@ -376,7 +394,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
 
 
     /**
-     * OBTIENE LOS EQUIPOS Y SERIES SEGUN MARCAS Y LAS AGREGA A LOS SPINNERS
+     * OBTIENE LOS EQUIPOS SEGUN MARCAS Y LAS AGREGA A LOS SPINNERS
      * @param Index
      */
     private void getProductInSpinner(int Index){
@@ -387,12 +405,50 @@ public class NuevoFormularioActivity extends AppCompatActivity {
         String RowValueCode;
         String RowValueYear;
         int RowValueBrandId;
+        int RowProjectId;
 
         ListadoArrayListModelEmpProduct.clear();
-        ListadoArrayListModelEmpSerie.clear();
         Index = 0;
         ListadoArrayListModelEmpProduct.add(Index,"Seleccione Equipo");
         SpinnerEquipo.setSelection(0);
+
+        ModelEmpProducts ItemEmpProducts;
+
+        while(cursor.moveToNext()) {
+
+            Index++;
+            RowValueId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.ID));
+            RowValueName = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.NAME));
+            RowValueCode = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.CODE));
+            RowValueYear = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.YEAR));
+            RowValueBrandId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.BRAND_ID));
+            RowProjectId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.PROJECT_ID));
+            ItemEmpProducts = new ModelEmpProducts(RowValueId, RowValueName, RowValueCode, RowValueYear, RowValueBrandId, RowProjectId);
+
+            ArrayListModelEmpProducts.add(Index, ItemEmpProducts);
+            ListadoArrayListModelEmpProduct.add(Index, RowValueName);
+        }
+        cursor.close();
+    }
+
+
+    /**
+     * OBTIENE LOS SERIES SEGUN MARCAS, EQUIPO Y LAS AGREGA A LOS SPINNERS
+     * @param Index
+     */
+    private void getSerieInSpinner(int Index){
+        ModelEmpProducts Item = ArrayListModelEmpProducts.get(Index);
+        String ProductName = Item.getName().trim();
+        Cursor cursor = EmpProduct.getByProductNameBrandId(ProductName, Item.getBrandId(), Item.getPROJECT_ID());
+        int RowValueId;
+        String RowValueName;
+        String RowValueCode;
+        String RowValueYear;
+        int RowValueBrandId;
+        int RowProjectId;
+
+        ListadoArrayListModelEmpSerie.clear();
+        Index = 0;
         ListadoArrayListModelEmpSerie.add(Index, "Seleccion Serie");
         SpinnerSerie.setSelection(0);
 
@@ -406,13 +462,10 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             RowValueCode = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.CODE));
             RowValueYear = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.YEAR));
             RowValueBrandId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.BRAND_ID));
-            ItemEmpProducts = new ModelEmpProducts(RowValueId, RowValueName, RowValueCode, RowValueYear, RowValueBrandId);
+            RowProjectId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProductsDefinition.Entry.PROJECT_ID));
+            ItemEmpProducts = new ModelEmpProducts(RowValueId, RowValueName, RowValueCode, RowValueYear, RowValueBrandId, RowProjectId);
 
-            Log.d("PRODUCTOS", "-"+RowValueName+"-");
-
-            ArrayListModelEmpProducts.add(Index, ItemEmpProducts);
             ArrayListModelEmpSerie.add(Index, ItemEmpProducts);
-            ListadoArrayListModelEmpProduct.add(Index, RowValueName);
             ListadoArrayListModelEmpSerie.add(Index, RowValueCode);
         }
         cursor.close();

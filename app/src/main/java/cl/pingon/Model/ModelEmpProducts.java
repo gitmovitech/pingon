@@ -6,13 +6,19 @@ public class ModelEmpProducts {
     String CODE;
     String YEAR;
     int BRAND_ID;
+    int PROJECT_ID;
 
-    public ModelEmpProducts(int ID, String NAME, String CODE, String YEAR, int BRAND_ID){
+    public ModelEmpProducts(int ID, String NAME, String CODE, String YEAR, int BRAND_ID, int PROJECT_ID){
         this.ID = ID;
         this.NAME = NAME;
         this.CODE = CODE;
         this.YEAR = YEAR;
         this.BRAND_ID = BRAND_ID;
+        this.PROJECT_ID = PROJECT_ID;
+    }
+
+    public int getPROJECT_ID() {
+        return PROJECT_ID;
     }
 
     public int getID(){
