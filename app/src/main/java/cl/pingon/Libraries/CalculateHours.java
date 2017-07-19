@@ -96,13 +96,13 @@ public class CalculateHours {
 
         }
         if(dia_habil && minutos > 0){
-            if(minutos >= (8*60)){
-                int minutos_extras = minutos - (8*60);
+            if(minutos >= (9*60)){
+                int minutos_extras = minutos - (9*60);
                 if(!hora_colacion){
                     minutos_extras += 60;
                 }
                 try{
-                    HoraTotalDiariaText.setText("08:00");
+                    HoraTotalDiariaText.setText("09:00");
                     HoraTotalDiariaExtraText.setText(dateutils.MinutosHora(minutos_extras));
                 } catch (Exception e){
                     Log.e("ERRR", e.toString());
@@ -131,13 +131,5 @@ public class CalculateHours {
             }
 
         }
-
-        /*int minutos = dateutils.ObtenerMinutos(dateutils.HoursDiference(hora_entrada, hora_salida, hora_colacion));
-
-        Log.d("MIONUTOS", ":"+minutos/60);
-        Log.d("MIONUTOS", ":"+dateutils.ObtenerMinutos(hora_salida));
-
-        //int minutos = dateutils.ObtenerMinutos(;
-        Log.d("MIONUTOS", ":"+dateutils.HoursDiference(hora_entrada, hora_salida, hora_colacion));*/
     }
 }

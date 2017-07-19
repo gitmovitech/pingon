@@ -52,7 +52,7 @@ public class FieldsSistema{
         /**
          * CALCULO SEMANAL DE HORAS
          */
-        //Todo agregar nuevo tipo de campo en el sistema para feriados y fines de semana (dia habil)
+
         //HORA SEMANAL NORMAL
         if(Fields.getCAM_TIPO().equals("hora_total_semanal")){
             DateUtils dateutils = new DateUtils();
@@ -62,8 +62,6 @@ public class FieldsSistema{
             int minutos_totales = 0;
             boolean dia_habil = false;
             while(c.moveToNext()) {
-
-                Log.d("UUARII",c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO))+ ":"+c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)));
 
                 if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).equals("dia_habil")){
                     if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)).equals("Si")){
@@ -76,8 +74,8 @@ public class FieldsSistema{
                     String tiempo = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
                     int minutos = dateutils.ObtenerMinutos(tiempo);
                     int minutos_diferencia = 0;
-                    if(minutos > (8*60)){
-                        minutos_diferencia = minutos - (8*60);
+                    if(minutos > (9*60)){
+                        minutos_diferencia = minutos - (9*60);
                     }
                     minutos_totales += minutos-minutos_diferencia;
                 }
@@ -111,8 +109,8 @@ public class FieldsSistema{
                     if(!dia_habil){
                         minutos_totales += minutos;
                     } else {
-                        if(minutos > (8*60)){
-                            minutos_extra = minutos - (8*60);
+                        if(minutos > (9*60)){
+                            minutos_extra = minutos - (9*60);
                         }
                     }
                     minutos_totales += minutos_extra;
