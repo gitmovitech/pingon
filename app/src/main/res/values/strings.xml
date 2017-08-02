@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Pingon</string>
+    <string name="ok">Entendido</string>
+    <string name="cancel">Cancelar</string>
+    <string name="yes">Si</string>
+    <string name="no">No</string>
     <string name="welcome_message">Sincronizando.\n Por favor espere ...</string>
     <string name="pdf_gen_message">Generando PDF.\n Por favor espere ...</string>
     <string name="loader_files">Pingon Cargador de archivos</string>
@@ -57,4 +61,7 @@
     <string name="url_download">http://pingon.newbits.cl/appm/dl.php</string>
     <string name="url_sync_upload_data">http://104.154.36.61:2234/upload/data</string>
     <string name="title_activity_eliminar">ELIMINAR</string>
+
+    <string name="delete_draft">Eliminar borrador</string>
+    <string name="delete_draft_question">¿Esta seguro que desea eliminar este borrador?</string>
 </resources>

@@ -2,12 +2,16 @@ package cl.pingon;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ContextThemeWrapper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -26,6 +30,7 @@ import cl.pingon.Model.ModelContadorTabs;
 import cl.pingon.Model.ModelTabsItem;
 import cl.pingon.SQLite.TblChecklistDefinition;
 import cl.pingon.SQLite.TblChecklistHelper;
+import cl.pingon.SQLite.TblDocumentoHelper;
 import cl.pingon.SQLite.TblFormulariosDefinition;
 import cl.pingon.SQLite.TblFormulariosHelper;
 import cl.pingon.SQLite.TblRegistroDefinition;
@@ -177,19 +182,40 @@ public class InformesTabsActivity extends AppCompatActivity {
                 createPdfIntent.putExtra("LOCAL_DOC_ID", LOCAL_DOC_ID);
                 startActivity(createPdfIntent);
                 return true;
+            case R.id.ButtonErase:
+                @SuppressWarnings("RestrictedApi")
+                ContextThemeWrapper cwrapper = new ContextThemeWrapper(this, R.style.Theme_AppCompat_Dialog);
+                AlertDialog.Builder alert = new AlertDialog.Builder(cwrapper);
+                alert.setTitle(getResources().getString(R.string.delete_draft));
+                alert.setMessage(getResources().getString(R.string.delete_draft_question));
+                alert.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        TblRegistroHelper Registros = new TblRegistroHelper(getApplicationContext());
+                        Registros.deleteByDocId(LOCAL_DOC_ID);
+                        Registros.close();
+
+                        TblDocumentoHelper Documento = new TblDocumentoHelper(getApplicationContext());
+                        Documento.deleteById(LOCAL_DOC_ID);
+                        Documento.close();
+
+                        dialog.cancel();
+                        Intent intent = new Intent(getApplicationContext(), BuzonActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                });
+                alert.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                alert.create();
+                alert.show();
+                return true;
             case R.id.ButtonGoHome:
-                finish();
-                try{
-                    InformesActivity.activity.finish();
-                } catch(Exception e){}
-                try {
-                    NuevoFormularioActivity.activity.finish();
-                } catch(Exception e){}
-                try {
-                    BorradoresActivity.activity.finish();
-                } catch (Exception e){}
-                overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
                 Intent intent = new Intent(getApplicationContext(), BuzonActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 return true;
             default:

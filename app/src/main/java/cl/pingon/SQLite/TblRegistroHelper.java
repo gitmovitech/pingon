@@ -37,6 +37,12 @@ public class TblRegistroHelper extends SQLiteOpenHelper {
 
     }
 
+    public void deleteByDocId(int DOC_ID){
+        SQLiteDatabase db = getReadableDatabase();
+        String where = TblRegistroDefinition.Entry.LOCAL_DOC_ID + " = ?";
+        db.delete(TblRegistroDefinition.Entry.TABLE_NAME, where, new String[]{String.valueOf(DOC_ID)});
+    }
+
     public void insert(ContentValues values){
         SQLiteDatabase db = getReadableDatabase();
         db.insert(TblRegistroDefinition.Entry.TABLE_NAME, null, values);
