@@ -31,6 +31,10 @@ public class FieldsLista {
         Listado.add("Seleccione aquí");
         Spinner SpinnerSelect = (Spinner) view.findViewById(R.id.SpinnerSelect);
 
+        int selectIndex = 0;
+        int index = 0;
+        String itemName = "";
+
         try{
             TextView TextViewTitle = (TextView) view.findViewById(R.id.TextViewLabel);
             TextViewTitle.setHint(Fields.getCAM_NOMBRE_INTERNO());
@@ -46,9 +50,16 @@ public class FieldsLista {
         if(Fields.getCUSTOM_LIST() > 0){
             TblListasGeneralesItemsHelper ListasGenerales = new TblListasGeneralesItemsHelper(context);
             Cursor cursor = ListasGenerales.getByListaId(Fields.getCUSTOM_LIST());
+
             while(cursor.moveToNext()){
-                Listado.add(cursor.getString(cursor.getColumnIndexOrThrow(TblListasGeneralesItemsDefinition.Entry.NAME)));
+                index++;
+                itemName = cursor.getString(cursor.getColumnIndexOrThrow(TblListasGeneralesItemsDefinition.Entry.NAME));
+                if(Fields.getCAM_VAL_DEFECTO().equals(itemName)){
+                    selectIndex = index;
+                }
+                Listado.add(itemName);
             }
+
             cursor.close();
             ListasGenerales.close();
         } else {
@@ -57,7 +68,12 @@ public class FieldsLista {
                 TblListOptionsHelper DBHelper = new TblListOptionsHelper(context);
                 Cursor cursor = DBHelper.getAllByCamId(Fields.getCAM_ID());
                 while (cursor.moveToNext()) {
-                    Listado.add(cursor.getString(cursor.getColumnIndexOrThrow(TblListOptionsDefinition.Entry.OPC_VALOR)));
+                    index++;
+                    itemName = cursor.getString(cursor.getColumnIndexOrThrow(TblListOptionsDefinition.Entry.OPC_VALOR));
+                    if(Fields.getCAM_VAL_DEFECTO().equals(itemName)){
+                        selectIndex = index;
+                    }
+                    Listado.add(itemName);
                 }
                 cursor.close();
                 DBHelper.close();
@@ -70,27 +86,8 @@ public class FieldsLista {
         ArrayAdapter ListadoAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, Listado);
         SpinnerSelect.setAdapter(ListadoAdapter);
 
-
-        /**
-         * SELECCIONAR CON EL DATO POR DEFECTO GUARDADO
-         */
-        if(!Fields.getCAM_VAL_DEFECTO().isEmpty()){
-            try {
-                TblListOptionsHelper DBHelper = new TblListOptionsHelper(context);
-                Cursor cursor = DBHelper.getAllByCamId(Fields.getCAM_ID());
-                int index = 0;
-                while(cursor.moveToNext()){
-                    index++;
-                    if(Fields.getCAM_VAL_DEFECTO().contains(cursor.getString(cursor.getColumnIndexOrThrow(TblListOptionsDefinition.Entry.OPC_VALOR)))){
-                        SpinnerSelect.setSelection(index);
-                        break;
-                    }
-                }
-                cursor.close();
-                DBHelper.close();
-            } catch (Exception e){
-                Log.e("ERROR CAMPO VACIO", e.toString());
-            }
+        if(selectIndex > 0){
+            SpinnerSelect.setSelection(selectIndex);
         }
 
         try {
