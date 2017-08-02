@@ -185,6 +185,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     } catch (Exception e){}
                     break;
                 case "rut_responsable":
+                case "rut":
                 case "texto":
                 case "responsable":
                     try {
@@ -193,7 +194,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         if (data.get(x).getCAM_MANDATORIO().equals("S") && EditText.getText().toString().isEmpty()) {
                             MessageErrors += MessageCount + " - El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" es obligatorio.\n\n";
                             MessageCount++;
-                        } else if(data.get(x).getCAM_TIPO().contains("rut_responsable") && data.get(x).getCAM_MANDATORIO().equals("S")){
+                        } else if(data.get(x).getCAM_TIPO().contains("rut") && data.get(x).getCAM_MANDATORIO().equals("S")){
                             EditText.setText(Rut.formatear(EditText.getText().toString()));
                             if(!Rut.validar(EditText.getText().toString())){
                                 MessageErrors += MessageCount + " - El campo \"" + data.get(x).getCAM_NOMBRE_EXTERNO() + "\" no es un RUT válido.\n\n";

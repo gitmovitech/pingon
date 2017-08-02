@@ -107,6 +107,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
                     FieldsEmail FieldsEmail = new FieldsEmail(Inflater, ChecklistFields.get(contador));
                     ViewReturn = FieldsEmail.getView();
                     break;
+                case "rut":
                 case "rut_responsable":
                 case "responsable":
                 case "texto":
