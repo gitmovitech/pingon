@@ -414,6 +414,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         Snackbar.make(findViewById(R.id.activity_informes_detalles), "Registro guardado", Snackbar.LENGTH_LONG).setAction("Action", null).show();
 
+        //RETORNO AL MENU DE TABS
+        onSupportNavigateUp();
 
     }
 

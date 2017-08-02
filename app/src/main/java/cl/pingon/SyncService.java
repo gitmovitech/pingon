@@ -80,7 +80,6 @@ public class SyncService extends Service {
         thread = new Thread() {
             public void run() {
 
-                Log.d("PINGON SERVICE", "EJECUTANDO");
 
                 UploadService.NAMESPACE = BuildConfig.APPLICATION_ID;
                 UploadService.HTTP_STACK = new OkHttpStack();
@@ -95,47 +94,53 @@ public class SyncService extends Service {
                 session = getSharedPreferences("session", context.MODE_PRIVATE);
                 ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
 
-                Documento = new TblDocumentoHelper(context);
-                Formularios = new TblFormulariosHelper(context);
+                try {
 
-                Cursor cursor = Formularios.getByArnId(ARN_ID);
-                cursor.moveToFirst();
-                ARN_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
-                cursor.close();
+                    Log.d("PINGON SERVICE", "EJECUTANDO");
+                    Documento = new TblDocumentoHelper(context);
+                    Formularios = new TblFormulariosHelper(context);
 
-                new Timer().scheduleAtFixedRate(new TimerTask(){
-                    @Override
-                    public void run(){
-                        if(Processing == 0) {
+                    Cursor cursor = Formularios.getByArnId(ARN_ID);
+                    cursor.moveToFirst();
+                    ARN_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_NOMBRE));
+                    cursor.close();
 
-                            Processing = 1;
+                    new Timer().scheduleAtFixedRate(new TimerTask() {
+                        @Override
+                        public void run() {
+                            if (Processing == 0) {
 
-                            //Notificacion por pantalla de proceso
-                            builder = new NotificationCompat.Builder(getApplicationContext())
-                                    .setSmallIcon(R.drawable.sync)
-                                    .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.pingon_icon))
-                                    .setContentTitle("Sincronizando")
-                                    .setContentText("Cargando documentos y registros");
-                            builder.setProgress(0,0, true);
+                                Processing = 1;
+
+                                //Notificacion por pantalla de proceso
+                                builder = new NotificationCompat.Builder(getApplicationContext())
+                                        .setSmallIcon(R.drawable.sync)
+                                        .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.pingon_icon))
+                                        .setContentTitle("Sincronizando")
+                                        .setContentText("Cargando documentos y registros");
+                                builder.setProgress(0, 0, true);
 
 
-                            JSONDocumentos = new JSONArray();
+                                JSONDocumentos = new JSONArray();
 
-                            prepararDocumentos(new Callback(){
-                                @Override
-                                public void success(){
-                                    subirArchivosDocumento(0, new Callback(){
-                                        @Override
-                                        public void success(){
-                                            Processing = 0;
-                                            stopForeground(true);
-                                        }
-                                    });
-                                }
-                            });
+                                prepararDocumentos(new Callback() {
+                                    @Override
+                                    public void success() {
+                                        subirArchivosDocumento(0, new Callback() {
+                                            @Override
+                                            public void success() {
+                                                Processing = 0;
+                                                stopForeground(true);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
                         }
-                    }
-                } ,0 ,60000);
+                    }, 0, 60000);
+                } catch (Exception e){
+
+                }
             }
         };
         thread.start();
