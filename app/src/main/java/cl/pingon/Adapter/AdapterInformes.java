@@ -55,8 +55,8 @@ public abstract class AdapterInformes extends BaseAdapter {
         TextView text1 = twoLineListItem.getText1();
         TextView text2 = twoLineListItem.getText2();
 
-        text1.setText(informes.get(position).getTitle());
-        text2.setText("" + informes.get(position).getSubtitle());
+        //text2.setText(informes.get(position).getTitle());
+        text1.setText("" + informes.get(position).getSubtitle());
 
         return twoLineListItem;
     }

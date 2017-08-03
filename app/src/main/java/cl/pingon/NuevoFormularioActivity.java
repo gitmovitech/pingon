@@ -350,7 +350,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             RowValueCoordinates = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COORDINATES));
             RowValueAddress = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ADDRESS));
             RowValueCompanyId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COMPANY_ID));
-            Log.d("CURSOR", RowValueName);
+            //Log.d("CURSOR", RowValueName);
             ItemEmpProjects = new ModelEmpProjects(RowValueId, RowValueName, RowValueCoordinates, RowValueAddress, RowValueCompanyId);
 
             ArrayListModelEmpProjects.add(Index, ItemEmpProjects);
@@ -385,6 +385,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
             RowValueName = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.NAME));
             RowValueProjectId = cursor.getInt(cursor.getColumnIndexOrThrow(TblEmpBrandsDefinition.Entry.PROJECT_ID));
             ItemEmpBrands = new ModelEmpBrands(RowValueId, RowValueName, RowValueProjectId);
+            //Log.d("CURSOR", RowValueName);
 
             ArrayListModelEmpBrands.add(Index, ItemEmpBrands);
             ListadoArrayListModelEmpBrand.add(Index, RowValueName);
