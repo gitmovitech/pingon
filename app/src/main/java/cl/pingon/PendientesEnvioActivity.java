@@ -90,12 +90,12 @@ public class PendientesEnvioActivity extends AppCompatActivity {
                 cursor.close();
 
                 String pdfPath = Environment.getExternalStorageDirectory() + "/Pingon/pdfs/";
-                String pdfFile = pdfPath + ArrayListadoPendientes.get(p).getLocal_doc_id() + "__";
-                pdfFile += ARN_NOMBRE + " - ";
+                String pdfFile = pdfPath + ArrayListadoPendientes.get(p).getLocal_doc_id() + ".pdf";
+                /*pdfFile += ARN_NOMBRE + " - ";
                 pdfFile += ArrayListadoPendientes.get(p).getCliente() + " - ";
                 pdfFile += ArrayListadoPendientes.get(p).getObra() + " - ";
                 pdfFile += ArrayListadoPendientes.get(p).getEquipo() + ".pdf";
-                Log.d("PDFFILE", pdfFile);
+                Log.d("PDFFILE", pdfFile);*/
 
                 File file = new File(pdfFile);
                 Intent target = new Intent(Intent.ACTION_VIEW);
