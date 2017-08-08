@@ -367,7 +367,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     private void getBrandInSpinner(int Index){
         ModelEmpProjects Item = ArrayListModelEmpProjects.get(Index);
         PROYECTO_ID = Item.getID();
-        Cursor cursor = EmpBrand.getByProjectId(PROYECTO_ID);
+        Cursor cursor = EmpBrand.getByProjectId(PROYECTO_ID, true);
         int RowValueId;
         String RowValueName;
         int RowValueProjectId;

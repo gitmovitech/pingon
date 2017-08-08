@@ -59,4 +59,11 @@ public class TblEmpBrandsHelper extends SQLiteOpenHelper{
         Cursor cursor = db.query(TblEmpBrandsDefinition.Entry.TABLE_NAME, projection, "PROJECT_ID = ?", new String[]{String.valueOf(ID)}, null, null, null);
         return cursor;
     }
+
+    public Cursor getByProjectId(int ID, boolean group){
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {"ID", "NAME", "PROJECT_ID"};
+        Cursor cursor = db.query(TblEmpBrandsDefinition.Entry.TABLE_NAME, projection, "PROJECT_ID = ?", new String[]{String.valueOf(ID)}, TblEmpBrandsDefinition.Entry.ID, null, null);
+        return cursor;
+    }
 }
