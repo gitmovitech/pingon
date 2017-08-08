@@ -68,4 +68,11 @@ public class TblEmpProjectsHelper extends SQLiteOpenHelper{
         return cursor;
     }
 
+    public Cursor getById(int ID){
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {"ID", "NAME", "COORDINATES", "ADDRESS", "COMPANY_ID"};
+        Cursor cursor = db.query(TblEmpProjectsDefinition.Entry.TABLE_NAME, projection, "ID = ?", new String[]{String.valueOf(ID)}, null, null, null);
+        return cursor;
+    }
+
 }

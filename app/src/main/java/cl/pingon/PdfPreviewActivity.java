@@ -173,8 +173,17 @@ public class PdfPreviewActivity extends AppCompatActivity {
             Integer FRM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.FRM_ID));
             String DOC_FECHA_CREACION = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_FECHA_CREACION));
             Integer DOC_EXT_ID_CLIENTE = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE));
+            Integer PROJECT_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO));
             DOC_EXT_OBRA = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_OBRA));
             DOC_EXT_NOMBRE_CLIENTE = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE));
+            header.add(new ModelKeyPairs("Cliente",DOC_EXT_NOMBRE_CLIENTE,"texto"));
+            header.add(new ModelKeyPairs("Obra",DOC_EXT_OBRA,"texto"));
+            String DOC_EXT_MARCA_EQUIPO = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_MARCA_EQUIPO));
+            String DOC_EXT_EQUIPO = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO));
+            String DOC_EXT_NUMERO_SERIE = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE));
+            header.add(new ModelKeyPairs("Marca",DOC_EXT_MARCA_EQUIPO,"texto"));
+            header.add(new ModelKeyPairs("Modelo",DOC_EXT_EQUIPO,"texto"));
+            header.add(new ModelKeyPairs("Serie",DOC_EXT_NUMERO_SERIE,"texto"));
 
             cursor.close();
 
@@ -201,7 +210,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
             Date time = new Date();
             header.add(new ModelKeyPairs("Número de referencia",numero_referencia+"-"+DOC_FECHA_CREACION.replace("-","")+"-"+String.valueOf(time.getTime()),"texto"));
 
-            cursor = Projectos.getByCompanyId(DOC_EXT_ID_CLIENTE);
+            cursor = Projectos.getById(PROJECT_ID);
             cursor.moveToFirst();
             COMUNA_OBRA = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ADDRESS));
             /*String coords = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COORDINATES));
