@@ -10,52 +10,37 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Build;
-import android.provider.DocumentsContract;
 import android.provider.Settings;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
-import com.lowagie.text.Cell;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
 import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.PdfCell;
-import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfTable;
 import com.lowagie.text.pdf.draw.LineSeparator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import cl.pingon.Libraries.DrawSign;
 import cl.pingon.Libraries.PDF;
 import cl.pingon.Libraries.TimerUtils;
 import cl.pingon.Model.ModelKeyPairs;
@@ -71,9 +56,6 @@ import cl.pingon.SQLite.TblFormulariosDefinition;
 import cl.pingon.SQLite.TblFormulariosHelper;
 import cl.pingon.SQLite.TblRegistroDefinition;
 import cl.pingon.SQLite.TblRegistroHelper;
-import harmony.java.awt.Color;
-
-import static android.R.attr.bitmap;
 
 public class PdfPreviewActivity extends AppCompatActivity {
 
@@ -343,6 +325,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
 
             tabla = pdf.createTable(2);
             tabla.setWidthPercentage(100);
+
             for(int i = 0; i < registros.size(); i++){
                 if(registros.get(i).getType().contains("etiqueta")){
                     pdf.add(tabla);
@@ -375,6 +358,24 @@ public class PdfPreviewActivity extends AppCompatActivity {
                         tabla.addCell(pdf.addCell(registros.get(i).getKey()));
                         tabla.addCell(pdf.addCell(getResources().getString(R.string.url_download)+"?a="+android_id+"&v="+videofile[videofile.length-1]));
                         */
+                    } else if(registros.get(i).getType().equals("fecha")){
+
+                        tabla.addCell(pdf.addCell(registros.get(i).getKey()));
+
+                        String sdate = registros.get(i).getValue();
+                        SimpleDateFormat spf=new SimpleDateFormat("dd-MM-yyyy");
+                        Date newDate= null;
+                        try {
+                            newDate = spf.parse(sdate);
+                            spf= new SimpleDateFormat("E, dd-MM-yyyy");
+                            sdate = spf.format(newDate);
+
+                            tabla.addCell(pdf.addCell(sdate));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                            tabla.addCell(pdf.addCell(registros.get(i).getValue()));
+                        }
+
                     } else {
                         tabla.addCell(pdf.addCell(registros.get(i).getKey()));
                         tabla.addCell(pdf.addCell(registros.get(i).getValue()));
