@@ -360,6 +360,11 @@ public class PdfPreviewActivity extends AppCompatActivity {
                         */
                     } else if(registros.get(i).getType().equals("fecha")){
 
+                        pdf.add(tabla);
+                        pdf.add(Chunk.NEWLINE);
+                        tabla = pdf.createTable(2);
+                        tabla.setWidthPercentage(100);
+
                         tabla.addCell(pdf.addCell(registros.get(i).getKey()));
 
                         String sdate = registros.get(i).getValue();
@@ -376,7 +381,8 @@ public class PdfPreviewActivity extends AppCompatActivity {
                             tabla.addCell(pdf.addCell(registros.get(i).getValue()));
                         }
 
-                    } else {
+                    } else if(!registros.get(i).getType().equals("hora_total_diaria")) {
+                        Log.e("TYPE TYPE", registros.get(i).getType());
                         tabla.addCell(pdf.addCell(registros.get(i).getKey()));
                         tabla.addCell(pdf.addCell(registros.get(i).getValue()));
                     }
