@@ -96,14 +96,14 @@ public class FieldsSistema{
             int minutos_extra = 0;
             boolean dia_habil = false;
             while(c.moveToNext()) {
-                if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).equals("dia_habil")){
+                /*if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).equals("dia_habil")){
                     if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)).equals("Si")){
                         dia_habil = true;
                     } else {
                         dia_habil = false;
                     }
-                }
-                if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).equals("hora_total_diaria")){
+                }*/
+                if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).equals("hora_total_diaria_extra")){
                     String tiempo = c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR));
                     int minutos = dateutils.ObtenerMinutos(tiempo);
                     if(!dia_habil){
@@ -115,11 +115,11 @@ public class FieldsSistema{
                     }
                     minutos_totales += minutos_extra;
                 }
-                if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).equals("hora_colacion")){
+                /*if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO)).equals("hora_colacion")){
                     if(c.getString(c.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)).equals("No")){
                         minutos_totales += 60;
                     }
-                }
+                }*/
             }
             NumeroInput.setText(dateutils.MinutosHora(minutos_totales));
 
