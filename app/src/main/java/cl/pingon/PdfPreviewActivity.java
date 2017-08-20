@@ -381,7 +381,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
                             tabla.addCell(pdf.addCell(registros.get(i).getValue()));
                         }
 
-                    } else if(!registros.get(i).getType().equals("hora_total_diaria")) {
+                    } else if(!registros.get(i).getType().equals("hora_total_diaria") && !registros.get(i).getType().equals("hora_total_semanal")) {
                         Log.e("TYPE TYPE", registros.get(i).getType());
                         tabla.addCell(pdf.addCell(registros.get(i).getKey()));
                         tabla.addCell(pdf.addCell(registros.get(i).getValue()));
