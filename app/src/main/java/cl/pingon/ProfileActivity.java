@@ -1,11 +1,14 @@
 package cl.pingon;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
@@ -124,63 +127,89 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.Save:
-                String url = getResources().getString(R.string.url_profile_update);
-                if(!sign.isEmpty()){
-                    final DrawSign firma = new DrawSign(sign);
-                    firma.createSign();
-                }
-                JSONObject params = new JSONObject();
-                try {
-                    params.put("token", session.getString("token",""));
-                    params.put("user_id", user_id);
-                    if(!sign.isEmpty()) {
-                        params.put("SIGN", firma.convertToBase64());
-                        Log.d("EMPTY", firma.convertToBase64());
-                    } else {
-                        params.put("SIGN", sign64);
-                        Log.d("EMPTY", sign64);
-                    }
-                    params.put("EMAIL", Email.getText().toString());
-                    params.put("PASSWORD", Password.getText().toString());
-                } catch(Exception e){}
-                REST.post(url, params,
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                SharedPreferences.Editor editor = session.edit();
-                                editor.putString("email", Email.getText().toString());
-                                if(!sign.isEmpty()) {
-                                    editor.putString("sign", firma.convertToBase64());
-                                } else {
-                                    editor.putString("sign", sign64);
-                                }
-                                editor.commit();
+                if(detectInternet()) {
 
-                                alert.setTitle(getResources().getString(R.string.profile_title));
-                                alert.setMessage(getResources().getString(R.string.profile_save_message));
-                                alert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
+
+                    final ProgressDialog dialog = new ProgressDialog(this);
+                    dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    dialog.setMessage("Guardando firma y enviando al servidor, por favor espere...");
+                    dialog.setIndeterminate(true);
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.show();
+
+
+                    String url = getResources().getString(R.string.url_profile_update);
+                    if (!sign.isEmpty()) {
+                        final DrawSign firma = new DrawSign(sign);
+                        firma.createSign();
+                    }
+                    JSONObject params = new JSONObject();
+                    try {
+                        params.put("token", session.getString("token", ""));
+                        params.put("user_id", user_id);
+                        if (!sign.isEmpty()) {
+                            params.put("SIGN", firma.convertToBase64());
+                            Log.d("EMPTY", firma.convertToBase64());
+                        } else {
+                            params.put("SIGN", sign64);
+                            Log.d("EMPTY", sign64);
+                        }
+                        params.put("EMAIL", Email.getText().toString());
+                        params.put("PASSWORD", Password.getText().toString());
+                    } catch (Exception e) {
+                    }
+                    REST.post(url, params,
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    SharedPreferences.Editor editor = session.edit();
+                                    editor.putString("email", Email.getText().toString());
+                                    if (!sign.isEmpty()) {
+                                        editor.putString("sign", firma.convertToBase64());
+                                    } else {
+                                        editor.putString("sign", sign64);
                                     }
-                                });
-                                alert.create();
-                                alert.show();
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                alert.setTitle(getResources().getString(R.string.profile_title));
-                                alert.setMessage(getResources().getString(R.string.profile_save_message_error));
-                                alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
-                                alert.create();
-                                alert.show();
-                            }
-                        });
+                                    editor.commit();
+
+                                    dialog.hide();
+
+                                    alert.setTitle(getResources().getString(R.string.profile_title));
+                                    alert.setMessage(getResources().getString(R.string.profile_save_message));
+                                    alert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                                    alert.create();
+                                    alert.show();
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    dialog.hide();
+                                    alert.setTitle(getResources().getString(R.string.profile_title));
+                                    alert.setMessage(getResources().getString(R.string.profile_save_message_error));
+                                    alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                                    alert.create();
+                                    alert.show();
+                                }
+                            });
+                } else {
+                    alert.setTitle(getResources().getString(R.string.profile_title));
+                    alert.setMessage(getResources().getString(R.string.profile_save_message_error));
+                    alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    alert.create();
+                    alert.show();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -199,4 +228,21 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }
     }
+
+    /**
+     * DETECCIÓN DE CONEXIÓN A INTERNET
+     * @return
+     */
+    private boolean detectInternet(){
+        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if(activeNetwork != null){
+            return activeNetwork.isConnected();
+        } else{
+            return false;
+        }
+    }
+
+
+
 }
