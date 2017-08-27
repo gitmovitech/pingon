@@ -57,6 +57,7 @@ public class ProfileActivity extends AppCompatActivity {
     EditText Email;
     EditText Password;
     AlertDialog.Builder alert;
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,8 @@ public class ProfileActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
+
+        dialog = new ProgressDialog(this);
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
         email = session.getString("email", "");
@@ -129,8 +132,6 @@ public class ProfileActivity extends AppCompatActivity {
             case R.id.Save:
                 if(detectInternet()) {
 
-
-                    final ProgressDialog dialog = new ProgressDialog(this);
                     dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                     dialog.setMessage("Guardando firma y enviando al servidor, por favor espere...");
                     dialog.setIndeterminate(true);

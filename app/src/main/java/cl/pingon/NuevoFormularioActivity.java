@@ -260,11 +260,15 @@ public class NuevoFormularioActivity extends AppCompatActivity {
                         }
                     }
                 } else {
-                    for(int m = 0; m < MenuButton.size(); m++){
-                        if(MenuButton.getItem(m).getItemId() == R.id.Next){
-                            MenuButton.getItem(m).setVisible(false);
-                            break;
+                    try {
+                        for (int m = 0; m < MenuButton.size(); m++) {
+                            if (MenuButton.getItem(m).getItemId() == R.id.Next) {
+                                MenuButton.getItem(m).setVisible(false);
+                                break;
+                            }
                         }
+                    } catch (Exception e){
+
                     }
                 }
 
@@ -288,7 +292,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_nuevo_informe, menu);
-        MenuButton = menu;
+        this.MenuButton = menu;
         return true;
     }
 
@@ -314,8 +318,9 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     private int getIndexFromClients(String clientname){
         int index = 0;
         for(int x = 0; x < ListadoArrayListModelEmpCompany.size(); x++){
-            if(clientname.contains(ListadoArrayListModelEmpCompany.get(x))){
+            if(clientname.equals(ListadoArrayListModelEmpCompany.get(x))){
                 index = x;
+                break;
             }
         }
         return index;
@@ -329,6 +334,7 @@ public class NuevoFormularioActivity extends AppCompatActivity {
     private void getProjectsInSpinner(int Index){
         ModelEmpCompany Item = ArrayListModelEmpCompany.get(Index);
         COMPANY_ID = Item.getID();
+        Log.d("COMPANYID", ":"+COMPANY_ID);
         Cursor cursor = EmpProject.getByCompanyId(Item.getID());
         int RowValueId;
         String RowValueName;
