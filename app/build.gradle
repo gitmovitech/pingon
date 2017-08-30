@@ -6,9 +6,9 @@ android {
     defaultConfig {
         applicationId "cl.pingon"
         minSdkVersion 14
-        targetSdkVersion 25
-        versionCode 28
-        versionName "2.0.8"
+        targetSdkVersion 23
+        versionCode 209
+        versionName "2.0.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

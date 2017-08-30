@@ -70,6 +70,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
     String DOC_EXT_NOMBRE_CLIENTE;
     String RUT_CLIENTE;
     String COMUNA_OBRA;
+    AlertDialog.Builder alert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +87,8 @@ public class PdfPreviewActivity extends AppCompatActivity {
         getSupportActionBar().setSubtitle("Generación del documento PDF");
 
         android_id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        alert = new AlertDialog.Builder(this);
 
         session = getSharedPreferences("session", Context.MODE_PRIVATE);
         ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
@@ -151,93 +154,98 @@ public class PdfPreviewActivity extends AppCompatActivity {
         Cursor cursor = Documento.getById(ID);
 
         if(cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            Integer FRM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.FRM_ID));
-            String DOC_FECHA_CREACION = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_FECHA_CREACION));
-            Integer DOC_EXT_ID_CLIENTE = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE));
-            Integer PROJECT_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO));
-            DOC_EXT_OBRA = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_OBRA));
-            DOC_EXT_NOMBRE_CLIENTE = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE));
-            header.add(new ModelKeyPairs("Cliente",DOC_EXT_NOMBRE_CLIENTE,"texto"));
-            header.add(new ModelKeyPairs("Obra",DOC_EXT_OBRA,"texto"));
-            String DOC_EXT_MARCA_EQUIPO = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_MARCA_EQUIPO));
-            String DOC_EXT_EQUIPO = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO));
-            String DOC_EXT_NUMERO_SERIE = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE));
-            header.add(new ModelKeyPairs("Marca",DOC_EXT_MARCA_EQUIPO,"texto"));
-            header.add(new ModelKeyPairs("Modelo",DOC_EXT_EQUIPO,"texto"));
-            header.add(new ModelKeyPairs("Serie",DOC_EXT_NUMERO_SERIE,"texto"));
+            try {
+                cursor.moveToFirst();
+                Integer FRM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.FRM_ID));
+                String DOC_FECHA_CREACION = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_FECHA_CREACION));
+                Integer DOC_EXT_ID_CLIENTE = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_CLIENTE));
+                Integer PROJECT_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_ID_PROYECTO));
+                DOC_EXT_OBRA = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_OBRA));
+                DOC_EXT_NOMBRE_CLIENTE = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NOMBRE_CLIENTE));
+                header.add(new ModelKeyPairs("Cliente", DOC_EXT_NOMBRE_CLIENTE, "texto"));
+                header.add(new ModelKeyPairs("Obra", DOC_EXT_OBRA, "texto"));
+                String DOC_EXT_MARCA_EQUIPO = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_MARCA_EQUIPO));
+                String DOC_EXT_EQUIPO = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_EQUIPO));
+                String DOC_EXT_NUMERO_SERIE = cursor.getString(cursor.getColumnIndexOrThrow(TblDocumentoDefinition.Entry.DOC_EXT_NUMERO_SERIE));
+                header.add(new ModelKeyPairs("Marca", DOC_EXT_MARCA_EQUIPO, "texto"));
+                header.add(new ModelKeyPairs("Modelo", DOC_EXT_EQUIPO, "texto"));
+                header.add(new ModelKeyPairs("Serie", DOC_EXT_NUMERO_SERIE, "texto"));
 
-            cursor.close();
-
-
-            cursor = Clientes.getById(String.valueOf(DOC_EXT_ID_CLIENTE));
-            cursor.moveToFirst();
-            RUT_CLIENTE = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.RUT));
-            cursor.close();
+                cursor.close();
 
 
-            cursor = Formularios.getByArnIdFrmId(ARN_ID, FRM_ID);
-            cursor.moveToFirst();
-            String FRM_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
-            header.add(new ModelKeyPairs("Nombre del formulario",FRM_NOMBRE,"texto"));
-            cursor.close();
-            header.add(new ModelKeyPairs("Remitente",USU_NAME,"texto"));
+                cursor = Clientes.getById(String.valueOf(DOC_EXT_ID_CLIENTE));
+                cursor.moveToFirst();
+                RUT_CLIENTE = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpCompanyDefinition.Entry.RUT));
+                cursor.close();
 
 
-            String[] nombre_array = FRM_NOMBRE.split(" ");
-            String numero_referencia = "";
-            for(int f = 0; f < nombre_array.length; f++){
-                numero_referencia += nombre_array[f].charAt(0);
-            }
-            Date time = new Date();
-            header.add(new ModelKeyPairs("Número de referencia",numero_referencia+"-"+DOC_FECHA_CREACION.replace("-","")+"-"+String.valueOf(time.getTime()),"texto"));
+                cursor = Formularios.getByArnIdFrmId(ARN_ID, FRM_ID);
+                cursor.moveToFirst();
+                String FRM_NOMBRE = cursor.getString(cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.FRM_NOMBRE));
+                header.add(new ModelKeyPairs("Nombre del formulario",FRM_NOMBRE,"texto"));
+                cursor.close();
+                header.add(new ModelKeyPairs("Remitente",USU_NAME,"texto"));
 
-            cursor = Projectos.getById(PROJECT_ID);
-            cursor.moveToFirst();
-            COMUNA_OBRA = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ADDRESS));
-            /*String coords = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.COORDINATES));
-            if(coords != null){
-                if(!coords.isEmpty()){
-                    coords = "http://maps.google.com/maps?q="+coords;
-                } else {
-                    coords = "Desconocida";
+
+                String[] nombre_array = FRM_NOMBRE.split(" ");
+                String numero_referencia = "";
+                for(int f = 0; f < nombre_array.length; f++){
+                    numero_referencia += nombre_array[f].charAt(0);
                 }
-            } else {
-                coords = "Desconocida";
-            }*/
-            header.add(new ModelKeyPairs("Ubicación",COMUNA_OBRA,"texto"));
-            cursor.close();
+                Date time = new Date();
+                header.add(new ModelKeyPairs("Número de referencia",numero_referencia+"-"+DOC_FECHA_CREACION.replace("-","")+"-"+String.valueOf(time.getTime()),"texto"));
+
+                cursor = Projectos.getById(PROJECT_ID);
+                cursor.moveToFirst();
+                COMUNA_OBRA = cursor.getString(cursor.getColumnIndexOrThrow(TblEmpProjectsDefinition.Entry.ADDRESS));
+                header.add(new ModelKeyPairs("Ubicación",COMUNA_OBRA,"texto"));
+                cursor.close();
 
 
-            Integer CAM_ID;
-            String CAM_NAME;
-            String CAM_TIPO;
-            cursor = Checklist.getByFrmId(FRM_ID);
-            while(cursor.moveToNext()){
-                CAM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_ID));
-                CAM_NAME = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_NOMBRE_EXTERNO));
-                CAM_TIPO = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_TIPO));
+                Integer CAM_ID;
+                String CAM_NAME;
+                String CAM_TIPO;
+                cursor = Checklist.getByFrmId(FRM_ID);
+                while(cursor.moveToNext()){
+                    CAM_ID = cursor.getInt(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_ID));
+                    CAM_NAME = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_NOMBRE_EXTERNO));
+                    CAM_TIPO = cursor.getString(cursor.getColumnIndexOrThrow(TblChecklistDefinition.Entry.CAM_TIPO));
 
-                if(CAM_TIPO.contains("etiqueta")){
-                    registro.add(new ModelKeyPairs(CAM_NAME, "", CAM_TIPO));
-                } else {
-                    cr = Registro.getDraftsByFrmId(FRM_ID);
-                    if (cr.getCount() > 0) {
-                        while (cr.moveToNext()) {
-                            if (CAM_ID == cr.getInt(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID))) {
-                                registro.add(new ModelKeyPairs(
-                                        CAM_NAME,
-                                        cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)),
-                                        cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO))
-                                ));
-                                break;
+                    if(CAM_TIPO.contains("etiqueta")){
+                        registro.add(new ModelKeyPairs(CAM_NAME, "", CAM_TIPO));
+                    } else {
+                        cr = Registro.getDraftsByFrmId(FRM_ID);
+                        if (cr.getCount() > 0) {
+                            while (cr.moveToNext()) {
+                                if (CAM_ID == cr.getInt(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID))) {
+                                    registro.add(new ModelKeyPairs(
+                                            CAM_NAME,
+                                            cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_VALOR)),
+                                            cr.getString(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.REG_TIPO))
+                                    ));
+                                    break;
+                                }
                             }
                         }
+                        cr.close();
                     }
-                    cr.close();
                 }
+                cursor.close();
+
+            } catch (Exception e){
+
+                alert.setTitle("Error de Base de datos");
+                alert.setMessage(e.toString());
+                alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                alert.create();
+                alert.show();
+
             }
-            cursor.close();
         }
 
         Documento.close();

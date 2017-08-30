@@ -37,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
     RESTService REST;
     AlertDialog.Builder alert;
     SharedPreferences session;
+    ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
 
         IntentMain = new Intent(this, MainActivity.class);
 
-        final ProgressDialog progress = new ProgressDialog(this);
+        progress = new ProgressDialog(this);
 
         REST = new RESTService(this);
 
