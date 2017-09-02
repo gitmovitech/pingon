@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     String BrandsUrl;
     String ListasGeneralesUrl;
     String ListasGeneralesItemsUrl;
+    AlertDialog.Builder alert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
 
         activity = this;
         mainactivity = this;
+
+        alert = new AlertDialog.Builder(this);
 
         IntentBuzon = new Intent(this, BuzonActivity.class);
 
@@ -189,7 +192,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void Message(String title, String message){
 
-        AlertDialog.Builder alert = new AlertDialog.Builder(getApplicationContext());
         alert.setTitle(title);
         alert.setMessage(message);
         alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
