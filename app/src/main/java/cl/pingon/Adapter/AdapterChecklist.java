@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -103,6 +104,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
             ViewReturn = Inflater.inflate(R.layout.item_empty, null);
         } else {
             ViewReturn = view;
+            Log.d("VIEW", "OK");
         }
 
         if(contador < getCount()){
@@ -181,9 +183,10 @@ public abstract class AdapterChecklist extends BaseAdapter {
         contador++;
 
         if (!animationStates[i]) {
-            Animation animation = AnimationUtils.loadAnimation(context, R.anim.slideup);
-            animation.setStartOffset(i * 400);
+            /*Animation animation = AnimationUtils.loadAnimation(context, R.anim.slideup);
+            animation.setStartOffset(i * 100);
             ViewReturn.startAnimation(animation);
+            animationStates[i] = true;*/
         }
 
         return ViewReturn;
@@ -321,7 +324,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
      * @param RowItemIndex
      * @return
      */
-    private View Foto(LayoutInflater Inflater, ModelChecklistFields Fields, final int RowItemIndex){
+    private View Foto(LayoutInflater Inflater, final ModelChecklistFields Fields, final int RowItemIndex){
         View view = Inflater.inflate(R.layout.item_foto, null);
 
         try{
@@ -343,7 +346,11 @@ public abstract class AdapterChecklist extends BaseAdapter {
         ImageButtonFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                InformesDetallesActivity.showPhoto(RowItemIndex, FRM_ID);
+                try {
+                    InformesDetallesActivity.showPhoto(Fields.getCAM_VAL_DEFECTO());
+                } catch(Exception e){
+                    InformesDetallesActivity.showPhoto(InformesDetallesActivity.LastImageFilename);
+                }
             }
         });
 
@@ -368,11 +375,16 @@ public abstract class AdapterChecklist extends BaseAdapter {
     public void setImageButton(Bitmap ImageBitmapDecoded, int index){
         for(int x = 0; x < ImageItems.size(); x++){
             if(ImageItems.get(x).getIndex() == index){
-                ImageItems.get(x).getImageButtonFoto().setImageBitmap(ImageBitmapDecoded);
+                //ImageItems.get(x).getImageButtonFoto().setImageBitmap(ImageBitmapDecoded);
+                setImage(ImageBitmapDecoded, ImageItems.get(x).getImageButtonFoto());
                 ImageItems.get(x).getImageButtonFoto().setVisibility(View.VISIBLE);
+                break;
             }
         }
     }
 
+    private void setImage(final Bitmap ImageBitmapDecoded, final ImageButton data){
+        data.setImageBitmap(ImageBitmapDecoded);
+    }
 
 }

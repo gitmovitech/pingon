@@ -10,7 +10,7 @@ public class ImageUtils {
     }
 
     public Bitmap ImageThumb(Bitmap Image){
-        int size = 400;
+        int size = 100;
         int width = Image.getWidth();
         int height = Image.getHeight();
         int nwidth = 0;

@@ -92,10 +92,27 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this, getIntent().getIntExtra("FRM_ID",0)){};
         ListViewInformesDetalles.setAdapter(AdapterChecklist);
+        //ListViewInformesDetalles.setVisibility(View.INVISIBLE);
+        ListViewInformesDetalles.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                ListViewInformesDetalles.smoothScrollToPosition(ListViewInformesDetalles.getCount());
+            }
+        });
 
         RequestWriteExternalPerms();
         //getRegistrosDatabase();
 
+        TimerUtils.setTimeout(new Runnable() {
+            public void run() {
+                ListViewInformesDetalles.smoothScrollToPosition(0);
+            }
+        }, 1000);
+        /*TimerUtils.setTimeout(new Runnable() {
+            public void run() {
+                ListViewInformesDetalles.setVisibility(View.VISIBLE);
+            }
+        }, 8000);*/
     }
 
 
@@ -514,7 +531,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
      */
     int RowItemIndex = 0;
     int RowItemFrmId = 0;
-    String LastImageFilename = "";
+    public String LastImageFilename = "";
     String LastVideoFilename = "";
     String ImageName = Environment.getExternalStorageDirectory() + "/Pingon/fotos/imagen-";
     String VideoName = Environment.getExternalStorageDirectory() + "/Pingon/videos/video-";
@@ -532,10 +549,10 @@ public class InformesDetallesActivity extends AppCompatActivity {
         RequestCameraPerms();
     }
 
-    public void showPhoto(int index, int FRM_ID){
+    public void showPhoto(String filename){
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(new File(LastImageFilename)), "image/*");
+        intent.setDataAndType(Uri.fromFile(new File(filename)), "image/*");
         startActivity(intent);
     }
 
