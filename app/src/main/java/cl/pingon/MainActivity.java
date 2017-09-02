@@ -19,6 +19,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import cl.pingon.Libraries.RESTService;
+import cl.pingon.SQLite.TblChecklistHelper;
+import cl.pingon.SQLite.TblEmpBrandsHelper;
+import cl.pingon.SQLite.TblEmpCompanyHelper;
+import cl.pingon.SQLite.TblEmpProductsHelper;
+import cl.pingon.SQLite.TblEmpProjectsHelper;
+import cl.pingon.SQLite.TblFormulariosHelper;
+import cl.pingon.SQLite.TblListOptionsHelper;
+import cl.pingon.SQLite.TblListasGeneralesHelper;
+import cl.pingon.SQLite.TblListasGeneralesItemsHelper;
 import cl.pingon.Sync.SyncBrands;
 import cl.pingon.Sync.SyncChecklist;
 import cl.pingon.Sync.SyncCompany;
@@ -140,9 +149,65 @@ public class MainActivity extends AppCompatActivity {
                 });
 
             } else {
-                //TODO verificar si hay datos en base de datos
-                Message(getResources().getString(R.string.no_internet), getResources().getString(R.string.first_time_no_internet));
-                //finish();
+                TblEmpCompanyHelper company = new TblEmpCompanyHelper(this);
+                Cursor c = company.getAll();
+                int Company = c.getCount();
+                c.close();
+                company.close();
+
+                TblEmpProjectsHelper projects = new TblEmpProjectsHelper(this);
+                c = projects.getAll();
+                int Projects = c.getCount();
+                c.close();
+                projects.close();
+
+                TblEmpBrandsHelper brands = new TblEmpBrandsHelper(this);
+                c = brands.getAll();
+                int Brands = c.getCount();
+                c.close();
+                brands.close();
+
+                TblEmpProductsHelper products = new TblEmpProductsHelper(this);
+                c = products.getAll();
+                int Products = c.getCount();
+                c.close();
+                products.close();
+
+                TblFormulariosHelper formularios = new TblFormulariosHelper(this);
+                c = formularios.getAll();
+                int Formularios = c.getCount();
+                c.close();
+                formularios.close();
+
+                TblChecklistHelper checklist = new TblChecklistHelper(this);
+                c = checklist.getAll();
+                int Checklist = c.getCount();
+                c.close();
+                checklist.close();
+
+                TblListOptionsHelper listoptions = new TblListOptionsHelper(this);
+                c = listoptions.getAll();
+                int ListOptions = c.getCount();
+                c.close();
+                listoptions.close();
+
+                TblListasGeneralesHelper listasgenerales = new TblListasGeneralesHelper(this);
+                c = listasgenerales.getAll();
+                int ListasGenerales = c.getCount();
+                c.close();
+                listasgenerales.close();
+
+                TblListasGeneralesItemsHelper listasgeneralesitems = new TblListasGeneralesItemsHelper(this);
+                c = listasgeneralesitems.getAll();
+                int ListasGeneralesItems = c.getCount();
+                c.close();
+                listasgeneralesitems.close();
+
+                if(Company > 0 && Projects > 0 && Brands > 0 && Products > 0 && Formularios > 0 && Checklist > 0 && ListOptions > 0 && ListasGenerales > 0 && ListasGeneralesItems > 0){
+                    SyncReady();
+                } else {
+                    Message(getResources().getString(R.string.no_internet), getResources().getString(R.string.first_time_no_internet));
+                }
             }
 
         }
