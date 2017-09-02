@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 });
 
             } else {
+                //TODO verificar si hay datos en base de datos
                 Message(getResources().getString(R.string.no_internet), getResources().getString(R.string.first_time_no_internet));
                 //finish();
             }

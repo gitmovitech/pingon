@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -34,6 +36,7 @@ import cl.pingon.Fields.FieldsTitle;
 import cl.pingon.InformesDetallesActivity;
 import cl.pingon.Libraries.DrawSign;
 import cl.pingon.Libraries.ImageUtils;
+import cl.pingon.Libraries.TimerUtils;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.Model.ModelImage;
 import cl.pingon.R;
@@ -51,6 +54,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
     ArrayList<ModelImage> ImageItems;
     Intent IntentSign;
     Integer FRM_ID;
+    boolean[] animationStates;
 
     int Timer = 1000;
 
@@ -61,6 +65,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
         this.FRM_ID = FRM_ID;
         ImageItems = new ArrayList<ModelImage>();
         IntentSign = new Intent(context, SignDrawActivity.class);
+        animationStates = new boolean[ChecklistFields.size()];
     }
 
     @Override
@@ -175,7 +180,14 @@ public abstract class AdapterChecklist extends BaseAdapter {
         }
         contador++;
 
+        if (!animationStates[i]) {
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.slideup);
+            animation.setStartOffset(i * 400);
+            ViewReturn.startAnimation(animation);
+        }
+
         return ViewReturn;
+
     }
 
     public ArrayList<ModelChecklistFields> getChecklistData(){

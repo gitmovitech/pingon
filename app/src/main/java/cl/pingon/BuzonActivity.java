@@ -26,6 +26,8 @@ public class BuzonActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimary));
         }
 
+        this.setTitle(getResources().getString(R.string.app_name)+" "+getResources().getString(R.string.app_version));
+
         IntentNuevo = new Intent(this, NuevoFormularioActivity.class);
         IntentBorradores = new Intent(this, BorradoresActivity.class);
         IntentPendientes = new Intent(this, PendientesEnvioActivity.class);
