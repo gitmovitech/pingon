@@ -183,10 +183,10 @@ public abstract class AdapterChecklist extends BaseAdapter {
         contador++;
 
         if (!animationStates[i]) {
-            /*Animation animation = AnimationUtils.loadAnimation(context, R.anim.slideup);
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.slideup);
             animation.setStartOffset(i * 100);
             ViewReturn.startAnimation(animation);
-            animationStates[i] = true;*/
+            animationStates[i] = true;
         }
 
         return ViewReturn;
@@ -342,7 +342,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
                 InformesDetallesActivity.setCameraIntentAction(RowItemIndex, FRM_ID);
             }
         });
-        ImageButton ImageButtonFoto = (ImageButton) view.findViewById(R.id.ImageViewFoto);
+        Button ImageButtonFoto = (Button) view.findViewById(R.id.image_button);
         ImageButtonFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -354,17 +354,13 @@ public abstract class AdapterChecklist extends BaseAdapter {
             }
         });
 
-        ArrayList<ModelImage> ModelImageItems = new ArrayList<ModelImage>();
+        /*ArrayList<ModelImage> ModelImageItems = new ArrayList<ModelImage>();
         ImageItems.add(new ModelImage(RowItemIndex, ButtonFoto, ImageButtonFoto));
-
+        */
 
         if(Fields.getCAM_VAL_DEFECTO() != null){
             if(!Fields.getCAM_VAL_DEFECTO().isEmpty()) {
-                try {
-                    ImageUtils img = new ImageUtils();
-                    Bitmap ImageBitmapDecoded = img.ImageThumb(BitmapFactory.decodeFile(Fields.getCAM_VAL_DEFECTO()));
-                    setImageButton(ImageBitmapDecoded, RowItemIndex);
-                } catch(Exception e){}
+                ImageButtonFoto.setVisibility(View.VISIBLE);
             }
         }
 
@@ -372,7 +368,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
         return view;
     }
 
-    public void setImageButton(Bitmap ImageBitmapDecoded, int index){
+    /*public void setImageButton(Bitmap ImageBitmapDecoded, int index){
         for(int x = 0; x < ImageItems.size(); x++){
             if(ImageItems.get(x).getIndex() == index){
                 //ImageItems.get(x).getImageButtonFoto().setImageBitmap(ImageBitmapDecoded);
@@ -385,6 +381,6 @@ public abstract class AdapterChecklist extends BaseAdapter {
 
     private void setImage(final Bitmap ImageBitmapDecoded, final ImageButton data){
         data.setImageBitmap(ImageBitmapDecoded);
-    }
+    }*/
 
 }

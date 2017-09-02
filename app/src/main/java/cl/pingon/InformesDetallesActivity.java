@@ -92,7 +92,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this, getIntent().getIntExtra("FRM_ID",0)){};
         ListViewInformesDetalles.setAdapter(AdapterChecklist);
-        //ListViewInformesDetalles.setVisibility(View.INVISIBLE);
+        ListViewInformesDetalles.setVisibility(View.INVISIBLE);
         ListViewInformesDetalles.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
@@ -105,14 +105,14 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         TimerUtils.setTimeout(new Runnable() {
             public void run() {
-                ListViewInformesDetalles.smoothScrollToPosition(0);
-            }
-        }, 1000);
-        /*TimerUtils.setTimeout(new Runnable() {
-            public void run() {
                 ListViewInformesDetalles.setVisibility(View.VISIBLE);
             }
-        }, 8000);*/
+        }, 1000);
+        TimerUtils.setTimeout(new Runnable() {
+            public void run() {
+                ListViewInformesDetalles.smoothScrollToPosition(0);
+            }
+        }, 1100);
     }
 
 
@@ -651,7 +651,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
             Bitmap ImageBitmapDecoded = null;
             try {
                 ImageBitmapDecoded = img.ImageThumb(BitmapFactory.decodeFile(LastImageFilename));
-                AdapterChecklist.setImageButton(ImageBitmapDecoded, RowItemIndex);
+                //AdapterChecklist.setImageButton(ImageBitmapDecoded, RowItemIndex);
                 ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
                 Fields.setValue(LastImageFilename);
             } catch (Exception E){
