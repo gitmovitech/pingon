@@ -147,19 +147,19 @@ public class SyncService extends Service {
 
     }
 
-    private void subirPDF(JSONObject documento){
+    private void subirPDF(JSONObject documento, final Callback cb){
         String pdfPath = Environment.getExternalStorageDirectory() + "/Pingon/pdfs/";
         String LOCAL_DOC_ID = "";
         String DOC_ID = "";
-        String NOMBRE_CLIENTE = "";
+        /*String NOMBRE_CLIENTE = "";
         String NOMBRE_OBRA = "";
-        String NOMBRE_EQUIPO = "";
+        String NOMBRE_EQUIPO = "";*/
         try{
             DOC_ID = documento.get("DOC_ID").toString();
             LOCAL_DOC_ID = documento.get("LOCAL_DOC_ID").toString();
-            NOMBRE_CLIENTE = documento.get("DOC_EXT_NOMBRE_CLIENTE").toString();
+            /*NOMBRE_CLIENTE = documento.get("DOC_EXT_NOMBRE_CLIENTE").toString();
             NOMBRE_OBRA = documento.get("DOC_EXT_OBRA").toString();
-            NOMBRE_EQUIPO = documento.get("DOC_EXT_EQUIPO").toString();
+            NOMBRE_EQUIPO = documento.get("DOC_EXT_EQUIPO").toString();*/
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -183,7 +183,7 @@ public class SyncService extends Service {
 
                     @Override
                     public void onCompleted(Context context, UploadInfo uploadInfo, ServerResponse serverResponse) {
-
+                        cb.success();
                     }
 
                     @Override
@@ -213,7 +213,30 @@ public class SyncService extends Service {
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        subirPDF(documento);
+                                        subirPDF(documento, new Callback(){
+                                            @Override
+                                            public void success() {
+                                                super.success();
+
+                                                subirArchivosRegistro(documento, 0, new Callback(){
+                                                    @Override
+                                                    public void success(){
+                                                        new Thread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                try {
+                                                                    cambiarStatusEnviado(documento.getInt("LOCAL_DOC_ID"));
+                                                                } catch (JSONException e) {
+                                                                    e.printStackTrace();
+                                                                }
+                                                            }
+                                                        }).start();
+                                                        subirArchivosDocumento(i+1, cb);
+                                                    }
+                                                });
+
+                                            }
+                                        });
                                     }
                                 }).start();
 
@@ -221,22 +244,6 @@ public class SyncService extends Service {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        subirArchivosRegistro(documento, 0, new Callback(){
-                            @Override
-                            public void success(){
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            cambiarStatusEnviado(documento.getInt("LOCAL_DOC_ID"));
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }).start();
-                                subirArchivosDocumento(i+1, cb);
-                            }
-                        });
                     }
                 }, new Response.ErrorListener() {
                     @Override
