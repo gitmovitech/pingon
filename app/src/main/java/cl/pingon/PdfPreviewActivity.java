@@ -409,20 +409,24 @@ public class PdfPreviewActivity extends AppCompatActivity {
              */
             String nombre = session.getString("first_name","")+" "+session.getString("last_name","");
             String firma = session.getString("sign","");
-            tabla.addCell(pdf.addCell(nombre));
-            ImageView IVFirma = (ImageView) findViewById(R.id.ImageViewFirma);
-            byte[] decodedString = Base64.decode(firma, Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0,decodedString.length);
-            IVFirma.setImageBitmap(decodedByte);
-            BitmapDrawable drawable = (BitmapDrawable) IVFirma.getDrawable();
-            Bitmap bitmapsign = drawable.getBitmap();
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmapsign.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            Image imagen = Image.getInstance(stream.toByteArray());
-            imagen.scaleAbsoluteWidth(150);
-            imagen.scaleAbsoluteHeight(150);
-            imagen.setAlignment(Image.LEFT);
-            tabla.addCell(pdf.addCell(imagen));
+            try {
+                tabla.addCell(pdf.addCell(nombre));
+                ImageView IVFirma = (ImageView) findViewById(R.id.ImageViewFirma);
+                byte[] decodedString = Base64.decode(firma, Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                IVFirma.setImageBitmap(decodedByte);
+                BitmapDrawable drawable = (BitmapDrawable) IVFirma.getDrawable();
+                Bitmap bitmapsign = drawable.getBitmap();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmapsign.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                Image imagen = Image.getInstance(stream.toByteArray());
+                imagen.scaleAbsoluteWidth(150);
+                imagen.scaleAbsoluteHeight(150);
+                imagen.setAlignment(Image.LEFT);
+                tabla.addCell(pdf.addCell(imagen));
+            } catch (Exception e){
+                Log.e("ERROR FIRMA", e.toString());
+            }
 
 
             pdf.add(tabla);
