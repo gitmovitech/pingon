@@ -37,9 +37,9 @@
         <activity android:name=".EnviadosActivity" />
         <activity android:name=".InformesDetallesActivity" android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".InformesTabsActivity" />
-        <activity android:name=".SignDrawActivity" />
+        <activity android:name=".SignDrawActivity" android:screenOrientation="landscape"/>
         <activity android:name=".PdfPreviewActivity" />
-        <activity android:name=".ProfileActivity" />
+        <activity android:name=".ProfileActivity" android:screenOrientation="portrait" />
 
 
         <service
