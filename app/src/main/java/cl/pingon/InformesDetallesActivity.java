@@ -64,6 +64,9 @@ public class InformesDetallesActivity extends AppCompatActivity {
     AdapterChecklist AdapterChecklist;
     ListView ListViewInformesDetalles;
     Dialog ImagePreviewDialog;
+    ImageView ImagePreview;
+    Button btnGuardar;
+    Button btnCancelar;
 
     private static final int PERMS_REQUEST_CAMERA = 0;
     private static final int PERMS_WRITE_EXTERNAL_STORAGE = 1;
@@ -85,6 +88,10 @@ public class InformesDetallesActivity extends AppCompatActivity {
         ImagePreviewDialog = new Dialog(this);
         ImagePreviewDialog.setContentView(R.layout.image_preview_dialog);
         ImagePreviewDialog.setTitle("Previsualización");
+
+        ImagePreview = (ImageView) ImagePreviewDialog.findViewById(R.id.ImagePreviewDialog);
+        btnGuardar = (Button) ImagePreviewDialog.findViewById(R.id.btnGuardar);
+        btnCancelar = (Button) ImagePreviewDialog.findViewById(R.id.btnCancelar);
 
         this.setTitle(getIntent().getStringExtra("FRM_NOMBRE"));
         getSupportActionBar().setSubtitle(getIntent().getStringExtra("CHK_NOMBRE"));
@@ -661,12 +668,13 @@ public class InformesDetallesActivity extends AppCompatActivity {
         //FOTO
         if(requestCode == 1){
             ImageUtils img = new ImageUtils();
-            //Bitmap ImageBitmapDecoded = null;
             try {
-                //ImageBitmapDecoded = img.ImageThumb(BitmapFactory.decodeFile(LastImageFilename));
+                Bitmap ImageBitmapDecoded = img.ImageThumb(BitmapFactory.decodeFile(LastImageFilename));
+                ImagePreview.setImageBitmap(ImageBitmapDecoded);
+                ImagePreviewDialog.show();
                 //AdapterChecklist.setImageButton(ImageBitmapDecoded, RowItemIndex);
-                ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
-                Fields.setValue(LastImageFilename);
+                //ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
+                //Fields.setValue(LastImageFilename);
             } catch (Exception E){
                 Log.e("IMAGENAME", ":"+ImageName);
                 Log.e("IMAGEINDEX", ":"+RowItemIndex);
@@ -681,9 +689,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
             final Uri uri = data.getData();
             try {
                 final Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                ImageView ImagePreview = (ImageView) ImagePreviewDialog.findViewById(R.id.ImagePreviewDialog);
-                Button btnGuardar = (Button) ImagePreviewDialog.findViewById(R.id.btnGuardar);
-                Button btnCancelar = (Button) ImagePreviewDialog.findViewById(R.id.btnCancelar);
+
                 ImagePreview.setImageBitmap(bitmap);
                 ImagePreviewDialog.show();
 
