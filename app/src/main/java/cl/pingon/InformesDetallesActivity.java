@@ -1,6 +1,7 @@
 package cl.pingon;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -33,7 +35,13 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.lowagie.text.Image;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 import cl.pingon.Adapter.AdapterChecklist;
@@ -55,6 +63,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
     AlertDialog.Builder alert;
     AdapterChecklist AdapterChecklist;
     ListView ListViewInformesDetalles;
+    Dialog ImagePreviewDialog;
 
     private static final int PERMS_REQUEST_CAMERA = 0;
     private static final int PERMS_WRITE_EXTERNAL_STORAGE = 1;
@@ -71,7 +80,11 @@ public class InformesDetallesActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
+
         alert = new AlertDialog.Builder(this);
+        ImagePreviewDialog = new Dialog(this);
+        ImagePreviewDialog.setContentView(R.layout.image_preview_dialog);
+        ImagePreviewDialog.setTitle("Previsualización");
 
         this.setTitle(getIntent().getStringExtra("FRM_NOMBRE"));
         getSupportActionBar().setSubtitle(getIntent().getStringExtra("CHK_NOMBRE"));
@@ -644,13 +657,13 @@ public class InformesDetallesActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         //FOTO
         if(requestCode == 1){
             ImageUtils img = new ImageUtils();
-            Bitmap ImageBitmapDecoded = null;
+            //Bitmap ImageBitmapDecoded = null;
             try {
-                ImageBitmapDecoded = img.ImageThumb(BitmapFactory.decodeFile(LastImageFilename));
+                //ImageBitmapDecoded = img.ImageThumb(BitmapFactory.decodeFile(LastImageFilename));
                 //AdapterChecklist.setImageButton(ImageBitmapDecoded, RowItemIndex);
                 ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
                 Fields.setValue(LastImageFilename);
@@ -660,6 +673,49 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 Log.e("IMAGEFILENAME", ":"+LastImageFilename);
             }
         }
+
+
+        //GALERIA
+        if (requestCode == 77 && resultCode == RESULT_OK && data != null && data.getData() != null) {
+
+            final Uri uri = data.getData();
+            try {
+                final Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                ImageView ImagePreview = (ImageView) ImagePreviewDialog.findViewById(R.id.ImagePreviewDialog);
+                Button btnGuardar = (Button) ImagePreviewDialog.findViewById(R.id.btnGuardar);
+                Button btnCancelar = (Button) ImagePreviewDialog.findViewById(R.id.btnCancelar);
+                ImagePreview.setImageBitmap(bitmap);
+                ImagePreviewDialog.show();
+
+                btnGuardar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        try {
+                            File filename = savebitmap(bitmap, "gallery-image-"+RowItemIndex+".jpg");
+                            ImagePreviewDialog.hide();
+                            //TODO, IMAGEN NO GUARDA REVISAR Y SOLUCIONAR, SOLO FALTA ESO
+                            AdapterChecklist.getChecklistData().get(RowItemIndex).setCAM_VAL_DEFECTO(filename.getAbsolutePath());
+                            AdapterChecklist.getChecklistData().get(RowItemIndex).setValue(filename.getAbsolutePath());
+                            AdapterChecklist.ImageButtonFotoVisible();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+                btnCancelar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ImagePreviewDialog.hide();
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
         //VIDEO
         if (requestCode == REQUEST_VIDEO_CAPTURE){
             AdapterChecklist.setVideoURI(Uri.parse(LastVideoFilename));
@@ -668,6 +724,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
             ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
             Fields.setValue(LastVideoFilename);
         }
+
+
         //FIRMA
         if(requestCode == 10){
             if(resultCode == RESULT_OK) {
@@ -683,6 +741,17 @@ public class InformesDetallesActivity extends AppCompatActivity {
     }
 
 
+    public static File savebitmap(Bitmap bmp, String filename) throws IOException {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 60, bytes);
+        File f = new File(Environment.getExternalStorageDirectory()
+                + File.separator + filename);
+        f.createNewFile();
+        FileOutputStream fo = new FileOutputStream(f);
+        fo.write(bytes.toByteArray());
+        fo.close();
+        return f;
+    }
 
 
 

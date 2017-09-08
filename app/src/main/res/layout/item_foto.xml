@@ -1,34 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout
+    android:padding="10dp"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/label"/>
+
+    <Button
+        android:visibility="gone"
+        android:id="@+id/image_button"
+        android:layout_width="match_parent"
+        style="@style/Base.Widget.AppCompat.Button.Colored"
+        android:layout_height="wrap_content"
+        android:gravity="left|center"
+        android:drawableLeft="@drawable/file_image"
+        android:text="Ver imagen"/>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <Button
-            android:visibility="gone"
-            android:id="@+id/image_button"
-            android:layout_width="150dp"
-            style="@style/Base.Widget.AppCompat.Button.Colored"
-            android:layout_height="wrap_content"
-            android:gravity="left|center"
-            android:drawableLeft="@drawable/file_image"
-            android:text="Ver imagen"/>
-
         <Button
             android:id="@+id/item_foto"
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:gravity="left|center"
             android:drawableLeft="@drawable/camera"
-            android:text="Tomar una fotografía"/>
+            android:text="Tomar foto"/>
+
+        <Button
+            android:id="@+id/item_foto_gallery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left|center"
+            android:drawableLeft="@drawable/folder_multiple_image"
+            android:text="Galería"/>
 
     </LinearLayout>
 

@@ -4,9 +4,7 @@ package cl.pingon.Adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,8 +34,6 @@ import cl.pingon.Fields.FieldsText;
 import cl.pingon.Fields.FieldsTitle;
 import cl.pingon.InformesDetallesActivity;
 import cl.pingon.Libraries.DrawSign;
-import cl.pingon.Libraries.ImageUtils;
-import cl.pingon.Libraries.TimerUtils;
 import cl.pingon.Model.ModelChecklistFields;
 import cl.pingon.Model.ModelImage;
 import cl.pingon.R;
@@ -56,6 +52,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
     Intent IntentSign;
     Integer FRM_ID;
     boolean[] animationStates;
+    Button ImageButtonFoto;
 
     int Timer = 1000;
 
@@ -324,6 +321,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
      * @param RowItemIndex
      * @return
      */
+    private int PICK_IMAGE_REQUEST = 77;
     private View Foto(LayoutInflater Inflater, final ModelChecklistFields Fields, final int RowItemIndex){
         View view = Inflater.inflate(R.layout.item_foto, null);
 
@@ -334,15 +332,18 @@ public abstract class AdapterChecklist extends BaseAdapter {
             }
         } catch(Exception e){}
 
+        TextView Label = (TextView) view.findViewById(R.id.label);
         Button ButtonFoto = (Button) view.findViewById(R.id.item_foto);
-        ButtonFoto.setText(Fields.getCAM_NOMBRE_INTERNO());
+        Button ButtonGallery = (Button) view.findViewById(R.id.item_foto_gallery);
+        Label.setText(Fields.getCAM_NOMBRE_INTERNO());
+
         ButtonFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 InformesDetallesActivity.setCameraIntentAction(RowItemIndex, FRM_ID);
             }
         });
-        Button ImageButtonFoto = (Button) view.findViewById(R.id.image_button);
+        ImageButtonFoto = (Button) view.findViewById(R.id.image_button);
         ImageButtonFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -351,6 +352,17 @@ public abstract class AdapterChecklist extends BaseAdapter {
                 } catch(Exception e){
                     InformesDetallesActivity.showPhoto(InformesDetallesActivity.LastImageFilename);
                 }
+            }
+        });
+
+        ButtonGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.putExtra("RowItemIndex", RowItemIndex);
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                InformesDetallesActivity.startActivityForResult(Intent.createChooser(intent, "Selecciona fotografía"), PICK_IMAGE_REQUEST);
             }
         });
 
@@ -366,6 +378,10 @@ public abstract class AdapterChecklist extends BaseAdapter {
 
         Fields.setView(view);
         return view;
+    }
+
+    public void ImageButtonFotoVisible(){
+        ImageButtonFoto.setVisibility(View.VISIBLE);
     }
 
     /*public void setImageButton(Bitmap ImageBitmapDecoded, int index){
