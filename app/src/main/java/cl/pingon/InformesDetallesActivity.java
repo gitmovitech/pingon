@@ -704,7 +704,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
             ImageUtils img = new ImageUtils();
             try {
                 final Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                final File filename = savebitmap(bitmap, ImageName+"gallery-"+RowItemIndex+".jpg");
+                final File filename = savebitmap(bitmap, ImageName+AdapterChecklist.getFRMID()+"-"+RowItemIndex+".jpg");
 
                 ImagePreview.setImageBitmap(img.ImageThumb(BitmapFactory.decodeFile(filename.getAbsolutePath())));
                 ImagePreviewDialog.show();

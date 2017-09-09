@@ -359,7 +359,6 @@ public abstract class AdapterChecklist extends BaseAdapter {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent();
-                intent.putExtra("RowItemIndex", RowItemIndex);
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 InformesDetallesActivity.startActivityForResult(Intent.createChooser(intent, "Selecciona fotografía"), PICK_IMAGE_REQUEST);
@@ -378,6 +377,10 @@ public abstract class AdapterChecklist extends BaseAdapter {
 
         Fields.setView(view);
         return view;
+    }
+
+    public int getFRMID(){
+        return FRM_ID;
     }
 
     public void ImageButtonFotoVisible(){
