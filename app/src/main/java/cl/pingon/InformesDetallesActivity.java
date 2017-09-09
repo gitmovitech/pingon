@@ -686,9 +686,9 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
                         Fields.setValue(LastImageFilename);
                         Fields.setCAM_VAL_DEFECTO(LastImageFilename);
+                        Log.d("PATH", Fields.getValue());
                     }
                 });
-                //AdapterChecklist.setImageButton(ImageBitmapDecoded, RowItemIndex);
             } catch (Exception E){
                 Log.e("IMAGENAME", ":"+ImageName);
                 Log.e("IMAGEINDEX", ":"+RowItemIndex);
@@ -701,27 +701,22 @@ public class InformesDetallesActivity extends AppCompatActivity {
         if (requestCode == 77 && resultCode == RESULT_OK && data != null && data.getData() != null) {
 
             final Uri uri = data.getData();
+            ImageUtils img = new ImageUtils();
             try {
                 final Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                final File filename = savebitmap(bitmap, ImageName+"gallery-"+RowItemIndex+".jpg");
 
-                ImagePreview.setImageBitmap(bitmap);
+                ImagePreview.setImageBitmap(img.ImageThumb(BitmapFactory.decodeFile(filename.getAbsolutePath())));
                 ImagePreviewDialog.show();
-
                 btnGuardar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
-                        try {
-                            File filename = savebitmap(bitmap, "gallery-image-"+RowItemIndex+".jpg");
-                            ImagePreviewDialog.hide();
-                            //TODO, IMAGEN NO GUARDA REVISAR Y SOLUCIONAR, SOLO FALTA ESO
-                            AdapterChecklist.getChecklistData().get(RowItemIndex).setCAM_VAL_DEFECTO(filename.getAbsolutePath());
-                            AdapterChecklist.getChecklistData().get(RowItemIndex).setValue(filename.getAbsolutePath());
-                            AdapterChecklist.ImageButtonFotoVisible();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
+                        ImagePreviewDialog.hide();
+                        AdapterChecklist.ImageButtonFotoVisible();
+                        ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
+                        Fields.setValue(filename.getAbsolutePath());
+                        Fields.setCAM_VAL_DEFECTO(filename.getAbsolutePath());
+                        Log.d("PATH", Fields.getValue());
                     }
                 });
                 btnCancelar.setOnClickListener(new View.OnClickListener() {
@@ -730,7 +725,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         ImagePreviewDialog.hide();
                     }
                 });
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -764,8 +759,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
     public static File savebitmap(Bitmap bmp, String filename) throws IOException {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 60, bytes);
-        File f = new File(Environment.getExternalStorageDirectory()
-                + File.separator + filename);
+        File f = new File(/*Environment.getExternalStorageDirectory()
+                + File.separator + */filename);
         f.createNewFile();
         FileOutputStream fo = new FileOutputStream(f);
         fo.write(bytes.toByteArray());
