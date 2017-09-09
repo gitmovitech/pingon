@@ -704,9 +704,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
             ImageUtils img = new ImageUtils();
             try {
                 final Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                final File filename = savebitmap(bitmap, ImageName+AdapterChecklist.getFRMID()+"-"+RowItemIndex+".jpg");
 
-                ImagePreview.setImageBitmap(img.ImageThumb(BitmapFactory.decodeFile(filename.getAbsolutePath())));
+                ImagePreview.setImageBitmap(img.ImageThumb(bitmap));
                 ImagePreviewDialog.show();
                 btnGuardar.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -714,9 +713,14 @@ public class InformesDetallesActivity extends AppCompatActivity {
                         ImagePreviewDialog.hide();
                         AdapterChecklist.ImageButtonFotoVisible();
                         ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
-                        Fields.setValue(filename.getAbsolutePath());
-                        Fields.setCAM_VAL_DEFECTO(filename.getAbsolutePath());
-                        Log.d("PATH", Fields.getValue());
+                        try {
+                            File filename = savebitmap(bitmap, ImageName+AdapterChecklist.getFRMID()+"-"+RowItemIndex+".jpg");
+                            Fields.setValue(filename.getAbsolutePath());
+                            Fields.setCAM_VAL_DEFECTO(filename.getAbsolutePath());
+                            Log.d("PATH", Fields.getValue());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
                 btnCancelar.setOnClickListener(new View.OnClickListener() {
