@@ -672,9 +672,23 @@ public class InformesDetallesActivity extends AppCompatActivity {
                 Bitmap ImageBitmapDecoded = img.ImageThumb(BitmapFactory.decodeFile(LastImageFilename));
                 ImagePreview.setImageBitmap(ImageBitmapDecoded);
                 ImagePreviewDialog.show();
+                btnCancelar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ImagePreviewDialog.hide();
+                    }
+                });
+                btnGuardar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ImagePreviewDialog.hide();
+                        AdapterChecklist.ImageButtonFotoVisible();
+                        ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
+                        Fields.setValue(LastImageFilename);
+                        Fields.setCAM_VAL_DEFECTO(LastImageFilename);
+                    }
+                });
                 //AdapterChecklist.setImageButton(ImageBitmapDecoded, RowItemIndex);
-                //ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
-                //Fields.setValue(LastImageFilename);
             } catch (Exception E){
                 Log.e("IMAGENAME", ":"+ImageName);
                 Log.e("IMAGEINDEX", ":"+RowItemIndex);
