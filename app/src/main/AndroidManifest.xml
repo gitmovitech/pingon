@@ -18,27 +18,29 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".LoginActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".BuzonActivity" />
+        <activity android:name=".MainActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BuzonActivity" android:screenOrientation="portrait"/>
         <activity
+            android:screenOrientation="portrait"
             android:name=".NuevoFormularioActivity"
             android:label="@string/title_activity_nuevo_formulario"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".InformesActivity" />
-        <activity android:name=".BorradoresActivity" />
-        <activity android:name=".PendientesEnvioActivity" />
-        <activity android:name=".EnviadosActivity" />
-        <activity android:name=".InformesDetallesActivity" android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".InformesTabsActivity" />
+        <activity android:name=".InformesActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BorradoresActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".PendientesEnvioActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".EnviadosActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".InformesDetallesActivity" android:windowSoftInputMode="adjustPan" android:screenOrientation="portrait"/>
+        <activity android:name=".InformesTabsActivity" android:screenOrientation="portrait"/>
         <activity android:name=".SignDrawActivity" android:screenOrientation="landscape"/>
-        <activity android:name=".PdfPreviewActivity" />
+        <activity android:name=".PdfPreviewActivity" android:screenOrientation="portrait"/>
         <activity android:name=".ProfileActivity" android:screenOrientation="portrait" />
 
 

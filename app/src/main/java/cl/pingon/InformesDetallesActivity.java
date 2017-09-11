@@ -748,13 +748,17 @@ public class InformesDetallesActivity extends AppCompatActivity {
         //FIRMA
         if(requestCode == 10){
             if(resultCode == RESULT_OK) {
-                RowItemIndex = Integer.parseInt(data.getStringExtra("RowItemIndex"));
-                String sign = data.getStringExtra("sign");
-                ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
-                ImageView signImage = (ImageView) Fields.getView().findViewById(R.id.ImageViewSign);
-                DrawSign firma = new DrawSign(sign);
-                firma.DrawToImageView(signImage);
-                Fields.setValue(sign);
+                try {
+                    RowItemIndex = Integer.parseInt(data.getStringExtra("RowItemIndex"));
+                    String sign = data.getStringExtra("sign");
+                    ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
+                    ImageView signImage = (ImageView) Fields.getView().findViewById(R.id.ImageViewSign);
+                    DrawSign firma = new DrawSign(sign);
+                    firma.DrawToImageView(signImage);
+                    Fields.setValue(sign);
+                } catch(Exception e){
+                    Log.e("FIRMA", e.toString());
+                }
             }
         }
     }
