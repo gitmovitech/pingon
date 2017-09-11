@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -54,6 +55,7 @@ public class RESTService {
      */
     public void post(String uri, JSONObject params, Response.Listener<JSONObject> jsonListener, Response.ErrorListener errorListener){
         JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.POST, uri, params, jsonListener,errorListener);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         RequestQueue requestQueue = Volley.newRequestQueue(contexto);
         requestQueue.add(stringRequest);
     }

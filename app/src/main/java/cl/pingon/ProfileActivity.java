@@ -188,6 +188,7 @@ public class ProfileActivity extends AppCompatActivity {
                             new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
+                                    Log.e("INTERNET", ":"+error.toString());
                                     dialog.hide();
                                     alert.setTitle(getResources().getString(R.string.profile_title));
                                     alert.setMessage(getResources().getString(R.string.profile_save_message_error));
@@ -201,6 +202,7 @@ public class ProfileActivity extends AppCompatActivity {
                                 }
                             });
                 } else {
+                    Log.e("INTERNET", "NO DETECTADO");
                     alert.setTitle(getResources().getString(R.string.profile_title));
                     alert.setMessage(getResources().getString(R.string.profile_save_message_error));
                     alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
