@@ -347,10 +347,15 @@ public abstract class AdapterChecklist extends BaseAdapter {
         ImageButtonFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    InformesDetallesActivity.showPhoto(Fields.getCAM_VAL_DEFECTO());
-                } catch(Exception e){
+                if(Fields.getCAM_VAL_DEFECTO().isEmpty()){
+                    Log.e("VACIO",":"+ InformesDetallesActivity.LastImageFilename);
                     InformesDetallesActivity.showPhoto(InformesDetallesActivity.LastImageFilename);
+                } else {
+                    try {
+                        InformesDetallesActivity.showPhoto(Fields.getCAM_VAL_DEFECTO());
+                    } catch (Exception e) {
+                        InformesDetallesActivity.showPhoto(InformesDetallesActivity.LastImageFilename);
+                    }
                 }
             }
         });

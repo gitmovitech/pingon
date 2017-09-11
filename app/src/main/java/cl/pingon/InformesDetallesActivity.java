@@ -717,7 +717,9 @@ public class InformesDetallesActivity extends AppCompatActivity {
                             File filename = savebitmap(bitmap, ImageName+AdapterChecklist.getFRMID()+"-"+RowItemIndex+".jpg");
                             Fields.setValue(filename.getAbsolutePath());
                             Fields.setCAM_VAL_DEFECTO(filename.getAbsolutePath());
+                            LastImageFilename = Fields.getValue();
                             Log.d("PATH", Fields.getValue());
+                            Log.d("PATH", Fields.getCAM_VAL_DEFECTO());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
