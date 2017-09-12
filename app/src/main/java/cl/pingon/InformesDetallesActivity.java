@@ -549,7 +549,7 @@ public class InformesDetallesActivity extends AppCompatActivity {
      * @param index
      *  ------------------------------------------------------------------------------------------------------------
      */
-    int RowItemIndex = 0;
+    public int RowItemIndex = 0;
     int RowItemFrmId = 0;
     public String LastImageFilename = "";
     String LastVideoFilename = "";
@@ -682,10 +682,10 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         ImagePreviewDialog.hide();
-                        AdapterChecklist.ImageButtonFotoVisible();
                         ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
                         Fields.setValue(LastImageFilename);
                         Fields.setCAM_VAL_DEFECTO(LastImageFilename);
+                        Fields.getView().findViewById(R.id.image_button).setVisibility(View.VISIBLE);
                         Log.d("PATH", Fields.getValue());
                     }
                 });
@@ -711,8 +711,8 @@ public class InformesDetallesActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         ImagePreviewDialog.hide();
-                        AdapterChecklist.ImageButtonFotoVisible();
                         ModelChecklistFields Fields = AdapterChecklist.getChecklistData().get(RowItemIndex);
+                        Fields.getView().findViewById(R.id.image_button).setVisibility(View.VISIBLE);
                         try {
                             File filename = savebitmap(bitmap, ImageName+AdapterChecklist.getFRMID()+"-"+RowItemIndex+".jpg");
                             Fields.setValue(filename.getAbsolutePath());

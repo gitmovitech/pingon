@@ -52,7 +52,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
     Intent IntentSign;
     Integer FRM_ID;
     boolean[] animationStates;
-    Button ImageButtonFoto;
+    public ArrayList<Button> ImageButtonFoto;
 
     int Timer = 1000;
 
@@ -64,6 +64,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
         ImageItems = new ArrayList<ModelImage>();
         IntentSign = new Intent(context, SignDrawActivity.class);
         animationStates = new boolean[ChecklistFields.size()];
+        ImageButtonFoto = new ArrayList<>();
     }
 
     @Override
@@ -343,8 +344,12 @@ public abstract class AdapterChecklist extends BaseAdapter {
                 InformesDetallesActivity.setCameraIntentAction(RowItemIndex, FRM_ID);
             }
         });
-        ImageButtonFoto = (Button) view.findViewById(R.id.image_button);
-        ImageButtonFoto.setOnClickListener(new View.OnClickListener() {
+        for(int j = 0; j < RowItemIndex; j++){
+            ImageButtonFoto.add(j, null);
+        }
+
+        ImageButtonFoto.add(RowItemIndex, (Button) view.findViewById(R.id.image_button));
+        ImageButtonFoto.get(RowItemIndex).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(Fields.getCAM_VAL_DEFECTO().isEmpty()){
@@ -363,6 +368,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
         ButtonGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                InformesDetallesActivity.RowItemIndex = RowItemIndex;
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -376,7 +382,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
 
         if(Fields.getCAM_VAL_DEFECTO() != null){
             if(!Fields.getCAM_VAL_DEFECTO().isEmpty()) {
-                ImageButtonFoto.setVisibility(View.VISIBLE);
+                ImageButtonFoto.get(RowItemIndex).setVisibility(View.VISIBLE);
             }
         }
 
@@ -386,10 +392,6 @@ public abstract class AdapterChecklist extends BaseAdapter {
 
     public int getFRMID(){
         return FRM_ID;
-    }
-
-    public void ImageButtonFotoVisible(){
-        ImageButtonFoto.setVisibility(View.VISIBLE);
     }
 
     /*public void setImageButton(Bitmap ImageBitmapDecoded, int index){
