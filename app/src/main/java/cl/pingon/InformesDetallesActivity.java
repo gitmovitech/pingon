@@ -113,12 +113,13 @@ public class InformesDetallesActivity extends AppCompatActivity {
         AdapterChecklist = new AdapterChecklist(this, ArrayChecklist, this, getIntent().getIntExtra("FRM_ID",0)){};
         ListViewInformesDetalles.setAdapter(AdapterChecklist);
         ListViewInformesDetalles.setVisibility(View.INVISIBLE);
-        ListViewInformesDetalles.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+        /*ListViewInformesDetalles.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
                 ListViewInformesDetalles.smoothScrollToPosition(ListViewInformesDetalles.getCount());
+                Log.e("FOCUS", "TRUE");
             }
-        });
+        });*/
 
         RequestWriteExternalPerms();
         //getRegistrosDatabase();
@@ -126,13 +127,14 @@ public class InformesDetallesActivity extends AppCompatActivity {
         TimerUtils.setTimeout(new Runnable() {
             public void run() {
                 ListViewInformesDetalles.setVisibility(View.VISIBLE);
+                ListViewInformesDetalles.smoothScrollToPosition(ListViewInformesDetalles.getCount());
             }
         }, 1000);
         TimerUtils.setTimeout(new Runnable() {
             public void run() {
                 ListViewInformesDetalles.smoothScrollToPosition(0);
             }
-        }, 1100);
+        }, 1500);
     }
 
 
