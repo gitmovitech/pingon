@@ -95,8 +95,6 @@ public class PdfPreviewActivity extends AppCompatActivity {
         USU_ID = Integer.parseInt(session.getString("user_id", ""));
         USU_NAME = session.getString("first_name", "")+" "+session.getString("last_name", "");
         LOCAL_DOC_ID = getIntent().getIntExtra("LOCAL_DOC_ID", 0);
-        Log.d("LOCALDOCID",":"+ LOCAL_DOC_ID);
-        //LOCAL_DOC_ID = 1;
         final ArrayList<ModelKeyPairs> registros = getDocumentData(LOCAL_DOC_ID);
 
         TimerUtils.TaskHandle handle = TimerUtils.setTimeout(new Runnable() {
@@ -215,7 +213,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
                     if(CAM_TIPO.contains("etiqueta")){
                         registro.add(new ModelKeyPairs(CAM_NAME, "", CAM_TIPO));
                     } else {
-                        cr = Registro.getDraftsByFrmId(FRM_ID);
+                        cr = Registro.getDraftsByFrmIdAndLocalId(FRM_ID, LOCAL_DOC_ID);
                         if (cr.getCount() > 0) {
                             while (cr.moveToNext()) {
                                 if (CAM_ID == cr.getInt(cr.getColumnIndexOrThrow(TblRegistroDefinition.Entry.CAM_ID))) {
