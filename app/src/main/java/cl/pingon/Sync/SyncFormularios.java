@@ -61,11 +61,13 @@ public class SyncFormularios {
                         try {
                             if(RESTResponse.getInt("ok") == 1){
 
+                                HelperSQLite.deleteAll();
+
                                 data = (JSONArray) RESTResponse.get("data");
 
                                 for(int i = 0;i < data.length(); i++){
                                     item = (JSONObject) data.get(i);
-                                    addItem = true;
+                                    /*addItem = true;
                                     while(Cursor.moveToNext()) {
 
                                         ARN_ID = Cursor.getInt(Cursor.getColumnIndexOrThrow(TblFormulariosDefinition.Entry.ARN_ID));
@@ -95,7 +97,7 @@ public class SyncFormularios {
                                             break;
                                         }
                                     }
-                                    if(addItem){
+                                    if(addItem){*/
                                         values = new ContentValues();
                                         values.put(TblFormulariosDefinition.Entry.ARN_ID, item.getInt(TblFormulariosDefinition.Entry.ARN_ID));
                                         values.put(TblFormulariosDefinition.Entry.FRM_ID, item.getInt(TblFormulariosDefinition.Entry.FRM_ID));
@@ -103,7 +105,7 @@ public class SyncFormularios {
                                         values.put(TblFormulariosDefinition.Entry.FRM_NOMBRE, item.getString(TblFormulariosDefinition.Entry.FRM_NOMBRE));
                                         values.put(TblFormulariosDefinition.Entry.FRM_DECLARACION, item.getString(TblFormulariosDefinition.Entry.FRM_DECLARACION));
                                         HelperSQLite.insert(values);
-                                    }
+                                    //}
                                 }
                                 Cursor.close();
 

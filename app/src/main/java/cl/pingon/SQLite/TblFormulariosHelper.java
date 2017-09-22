@@ -73,6 +73,12 @@ public class TblFormulariosHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public void deleteAll(){
+        SQLiteDatabase db = getReadableDatabase();
+        db.delete(TblFormulariosDefinition.Entry.TABLE_NAME, null, null);
+        db.close();
+    }
+
     public Cursor getByArnIdFrmId(int ARN_ID, int FRM_ID){
         SQLiteDatabase db = getReadableDatabase();
         String[] projection = {
