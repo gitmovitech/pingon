@@ -32,13 +32,31 @@ public class Rut {
         }
     }
 
+    static public boolean validar ( String rut ) {
+        rut = formatear(rut);
+        rut = rut.replace(".","");
+        Pattern pattern = Pattern.compile("^[0-9]+-[0-9kK]{1}$");
+        Matcher matcher = pattern.matcher(rut);
+        if ( matcher.matches() == false )
+            return false;
+        String[] stringRut = rut.split("-");
+        return stringRut[1].toLowerCase().equals(dv(stringRut[0]));
+
+    }
+    public static String dv ( String rut ) {
+        Integer M=0,S=1,T=Integer.parseInt(rut);
+        for (;T!=0;T=(int) Math.floor(T/=10))
+            S=(S+T%10*(9-M++%6))%11;
+        return ( S > 0 ) ? String.valueOf(S-1) : "k";
+    }
+
     /**
      * Valida un rut de acuerdo a su dígito verificador.
      * @param rut Rut a validar
      * @return true si el rut es válido,
      * false en cualquier otro caso.
      */
-    static public boolean validar(String rut){
+    /*static public boolean validar(String rut){
         if(rut.contains("7414948")){
             return true;
         } else {
@@ -71,5 +89,5 @@ public class Rut {
                 return false;
             }
         }
-    }
+    }*/
 }

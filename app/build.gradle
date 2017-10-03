@@ -7,8 +7,8 @@ android {
         applicationId "cl.pingon"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 215
-        versionName "2.1.5"
+        versionCode 216
+        versionName "2.1.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
