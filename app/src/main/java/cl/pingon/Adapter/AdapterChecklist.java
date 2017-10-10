@@ -336,6 +336,7 @@ public abstract class AdapterChecklist extends BaseAdapter {
         TextView Label = (TextView) view.findViewById(R.id.label);
         Button ButtonFoto = (Button) view.findViewById(R.id.item_foto);
         Button ButtonGallery = (Button) view.findViewById(R.id.item_foto_gallery);
+        Button ButtonVerImage = (Button) view.findViewById(R.id.image_button);
         Label.setText(Fields.getCAM_NOMBRE_INTERNO());
 
         ButtonFoto.setOnClickListener(new View.OnClickListener() {
@@ -349,9 +350,10 @@ public abstract class AdapterChecklist extends BaseAdapter {
         }
 
         ImageButtonFoto.add(RowItemIndex, (Button) view.findViewById(R.id.image_button));
-        ImageButtonFoto.get(RowItemIndex).setOnClickListener(new View.OnClickListener() {
+        ButtonVerImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("FIELDS", Fields.getCAM_VAL_DEFECTO().toString());
                 if(Fields.getCAM_VAL_DEFECTO().isEmpty()){
                     Log.e("VACIO",":"+ InformesDetallesActivity.LastImageFilename);
                     InformesDetallesActivity.showPhoto(InformesDetallesActivity.LastImageFilename);
