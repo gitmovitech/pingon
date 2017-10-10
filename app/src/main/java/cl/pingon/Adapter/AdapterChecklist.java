@@ -102,7 +102,6 @@ public abstract class AdapterChecklist extends BaseAdapter {
             ViewReturn = Inflater.inflate(R.layout.item_empty, null);
         } else {
             ViewReturn = view;
-            Log.d("VIEW", "OK");
         }
 
         if(contador < getCount()){
@@ -180,12 +179,12 @@ public abstract class AdapterChecklist extends BaseAdapter {
         }
         contador++;
 
-        if (!animationStates[i]) {
+        /*if (!animationStates[i]) {
             Animation animation = AnimationUtils.loadAnimation(context, R.anim.slideup);
             animation.setStartOffset(i * 100);
             ViewReturn.startAnimation(animation);
             animationStates[i] = true;
-        }
+        }*/
 
         return ViewReturn;
 

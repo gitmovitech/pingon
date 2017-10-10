@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,12 +21,15 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -123,16 +127,31 @@ public class InformesDetallesActivity extends AppCompatActivity {
 
         RequestWriteExternalPerms();
         //getRegistrosDatabase();
+        //Log.d("NUMERO", ListViewInformesDetalles.scrollListBy();+")");
 
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        final int width = size.x;
+        int height = size.y;
+        ListViewInformesDetalles.scrollBy(width,0);
+        ListViewInformesDetalles.setFastScrollEnabled(false);
+        ListViewInformesDetalles.setVisibility(View.VISIBLE);
         TimerUtils.setTimeout(new Runnable() {
             public void run() {
-                ListViewInformesDetalles.setVisibility(View.VISIBLE);
                 ListViewInformesDetalles.smoothScrollToPosition(ListViewInformesDetalles.getCount());
+            }
+        }, 100);
+        TimerUtils.setTimeout(new Runnable() {
+            public void run() {
+                ListViewInformesDetalles.smoothScrollToPosition(0);
             }
         }, 1000);
         TimerUtils.setTimeout(new Runnable() {
             public void run() {
-                ListViewInformesDetalles.smoothScrollToPosition(0);
+                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slideup);
+                ListViewInformesDetalles.startAnimation(animation);
+                ListViewInformesDetalles.scrollTo(0,0);
             }
         }, 1500);
     }
