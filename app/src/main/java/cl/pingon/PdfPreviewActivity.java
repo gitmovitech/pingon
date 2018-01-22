@@ -86,43 +86,60 @@ public class PdfPreviewActivity extends AppCompatActivity {
         this.setTitle("Previsualización del informe");
         getSupportActionBar().setSubtitle("Generación del documento PDF");
 
-        android_id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-
+        Button EnviarInforme = (Button) findViewById(R.id.EnviarInforme);
         alert = new AlertDialog.Builder(this);
 
-        session = getSharedPreferences("session", Context.MODE_PRIVATE);
-        ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
-        USU_ID = Integer.parseInt(session.getString("user_id", ""));
-        USU_NAME = session.getString("first_name", "")+" "+session.getString("last_name", "");
-        LOCAL_DOC_ID = getIntent().getIntExtra("LOCAL_DOC_ID", 0);
-        final ArrayList<ModelKeyPairs> registros = getDocumentData(LOCAL_DOC_ID);
+        try{
+            android_id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        TimerUtils.TaskHandle handle = TimerUtils.setTimeout(new Runnable() {
-            public void run() {
-                genPDF(registros);
-            }
-        }, 500);
 
-        Button EnviarInforme = (Button) findViewById(R.id.EnviarInforme);
-        EnviarInforme.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TblDocumentoHelper Documento = new TblDocumentoHelper(getApplicationContext());
-                TblRegistroHelper Registro = new TblRegistroHelper(getApplicationContext());
-                ContentValues cv = new ContentValues();
-                cv.put(TblDocumentoDefinition.Entry.SEND_STATUS, "SYNC");
-                Documento.update(LOCAL_DOC_ID, cv);
-                cv = new ContentValues();
-                cv.put(TblRegistroDefinition.Entry.SEND_STATUS, "SYNC");
-                Registro.updateLocalDocId(LOCAL_DOC_ID, cv);
+            session = getSharedPreferences("session", Context.MODE_PRIVATE);
+            ARN_ID = Integer.parseInt(session.getString("arn_id", ""));
+            USU_ID = Integer.parseInt(session.getString("user_id", ""));
+            USU_NAME = session.getString("first_name", "")+" "+session.getString("last_name", "");
+            LOCAL_DOC_ID = getIntent().getIntExtra("LOCAL_DOC_ID", 0);
+            final ArrayList<ModelKeyPairs> registros = getDocumentData(LOCAL_DOC_ID);
 
-                Intent intent = new Intent(getApplicationContext(), BuzonActivity.class);
-                intent.putExtra("GOTO", "PendientesEnvioActivity");
-                startActivity(intent);
-                finish();
+            TimerUtils.TaskHandle handle = TimerUtils.setTimeout(new Runnable() {
+                public void run() {
+                    genPDF(registros);
+                }
+            }, 500);
 
-            }
-        });
+            EnviarInforme.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TblDocumentoHelper Documento = new TblDocumentoHelper(getApplicationContext());
+                    TblRegistroHelper Registro = new TblRegistroHelper(getApplicationContext());
+                    ContentValues cv = new ContentValues();
+                    cv.put(TblDocumentoDefinition.Entry.SEND_STATUS, "SYNC");
+                    Documento.update(LOCAL_DOC_ID, cv);
+                    cv = new ContentValues();
+                    cv.put(TblRegistroDefinition.Entry.SEND_STATUS, "SYNC");
+                    Registro.updateLocalDocId(LOCAL_DOC_ID, cv);
+
+                    Intent intent = new Intent(getApplicationContext(), BuzonActivity.class);
+                    intent.putExtra("GOTO", "PendientesEnvioActivity");
+                    startActivity(intent);
+                    finish();
+
+                }
+            });
+
+        } catch (Exception e){
+            EnviarInforme.setEnabled(false);
+
+            alert.setTitle("Error al generar el PDF");
+            alert.setMessage(e.toString());
+            alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alert.create();
+            alert.show();
+
+        }
 
     }
 
@@ -261,7 +278,6 @@ public class PdfPreviewActivity extends AppCompatActivity {
     private void genPDF(final ArrayList<ModelKeyPairs> registros){
         try {
 
-            String[] videofile;
             String responsable = "";
             String rut_responsable = "";
 
@@ -349,13 +365,21 @@ public class PdfPreviewActivity extends AppCompatActivity {
                 } else {
                     if(registros.get(i).getType().contains("firma")){
 
-                        tabla.addCell(pdf.addCell(registros.get(i).getKey()));
-                        tabla.addCell(pdf.addCell(pdf.addSign((ImageView) findViewById(R.id.ImageViewFirma), registros.get(i).getValue(), 150, 150)));
+                        try{
+                            tabla.addCell(pdf.addCell(registros.get(i).getKey()));
+                            tabla.addCell(pdf.addCell(pdf.addSign((ImageView) findViewById(R.id.ImageViewFirma), registros.get(i).getValue(), 150, 150)));
+                        } catch (Exception e){
+
+                        }
 
                     } else if(registros.get(i).getType().contains("foto")){
 
-                        tabla.addCell(pdf.addCell(registros.get(i).getKey()));
-                        tabla.addCell(pdf.addCell(pdf.addPhoto(registros.get(i).getValue(), 250, 250)));
+                        try{
+                            tabla.addCell(pdf.addCell(registros.get(i).getKey()));
+                            tabla.addCell(pdf.addCell(pdf.addPhoto(registros.get(i).getValue(), 250, 250)));
+                        } catch (Exception e){
+
+                        }
 
                     } else if(registros.get(i).getType().contains("video") || registros.get(i).getType().contains("audio")){
                         /*
@@ -424,6 +448,16 @@ public class PdfPreviewActivity extends AppCompatActivity {
                 tabla.addCell(pdf.addCell(imagen));
             } catch (Exception e){
                 Log.e("ERROR FIRMA", e.toString());
+
+                alert.setTitle("Error al generar el PDF");
+                alert.setMessage(e.toString());
+                alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                alert.create();
+                alert.show();
             }
 
 
@@ -456,29 +490,51 @@ public class PdfPreviewActivity extends AppCompatActivity {
             pdf.close();
 
             openPDF();
+
         } catch (IOException e) {
             e.printStackTrace();
+
+            alert.setTitle("Error al generar el PDF");
+            alert.setMessage(e.toString());
+            alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alert.create();
+            alert.show();
+
         } catch (DocumentException e) {
             e.printStackTrace();
+
+            alert.setTitle("Error al generar el PDF");
+            alert.setMessage(e.toString());
+            alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alert.create();
+            alert.show();
         }
     }
 
     public void openPDF(){
-        File file = new File(pdf.getPath());
-        Intent target = new Intent(Intent.ACTION_VIEW);
-        target.setDataAndType(Uri.fromFile(file),"application/pdf");
-        target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        Intent intent = Intent.createChooser(target, "Open File");
-
-        RelativeLayout rll = (RelativeLayout) findViewById(R.id.RelativeLayoutLoading);
-        rll.setVisibility(View.GONE);
-        LinearLayout llo = (LinearLayout) findViewById(R.id.LinearLayoutOK);
-        llo.setVisibility(View.VISIBLE);
-
         try {
+            File file = new File(pdf.getPath());
+            Intent target = new Intent(Intent.ACTION_VIEW);
+            target.setDataAndType(Uri.fromFile(file), "application/pdf");
+            target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            Intent intent = Intent.createChooser(target, "Open File");
+
+            RelativeLayout rll = (RelativeLayout) findViewById(R.id.RelativeLayoutLoading);
+            rll.setVisibility(View.GONE);
+            LinearLayout llo = (LinearLayout) findViewById(R.id.LinearLayoutOK);
+            llo.setVisibility(View.VISIBLE);
             startActivityForResult(target, 1);
+
         } catch (ActivityNotFoundException e) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
             alert.setTitle("Error");
             alert.setMessage("No se ha podido abrir el documento. \nDescargue e instale un lector de documentos PDF.");
             alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
