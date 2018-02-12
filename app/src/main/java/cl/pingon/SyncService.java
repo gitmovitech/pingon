@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import cl.pingon.Libraries.ErrorReport;
 import cl.pingon.Libraries.RESTService;
 import cl.pingon.Model.ModelDocumentos;
 import cl.pingon.Model.ModelRegistros;
@@ -56,6 +57,8 @@ public class SyncService extends Service {
     RESTService REST;
     Context context;
 
+    ErrorReport ErrorReport;
+
     ArrayList<Integer> RollbackRegisteredIds;
     Integer RollbackDocIdInserted;
 
@@ -74,6 +77,8 @@ public class SyncService extends Service {
 
     @Override
     public void onCreate() {
+
+        ErrorReport = new ErrorReport(getApplicationContext());
 
         url_documentos = getResources().getString(R.string.url_sync_documentos);
 
@@ -178,6 +183,7 @@ public class SyncService extends Service {
                     @Override
                     public void onError(Context context, UploadInfo uploadInfo, Exception exception) {
                         Processing = 0;
+                        ErrorReport.Send(session.getString("first_name", "")+" "+session.getString("last_name", ""), exception.getStackTrace().toString());
                         stopForeground(true);
                     }
 
@@ -249,11 +255,12 @@ public class SyncService extends Service {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("ERROR SUBIR DOCS", error.toString());
+                        ErrorReport.Send(session.getString("first_name", "")+" "+session.getString("last_name", ""), error.getStackTrace().toString());
                         Processing = 0;
                         stopForeground(true);
                     }
                 });
-            } else{
+            } else {
                 Log.d("SIN CONEXION", "INTERNET");
                 Processing = 0;
                 stopForeground(true);

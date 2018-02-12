@@ -41,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import cl.pingon.Libraries.ErrorReport;
 import cl.pingon.Libraries.PDF;
 import cl.pingon.Libraries.TimerUtils;
 import cl.pingon.Model.ModelKeyPairs;
@@ -71,6 +72,7 @@ public class PdfPreviewActivity extends AppCompatActivity {
     String RUT_CLIENTE;
     String COMUNA_OBRA;
     AlertDialog.Builder alert;
+    ErrorReport ErrorReport;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +90,8 @@ public class PdfPreviewActivity extends AppCompatActivity {
 
         Button EnviarInforme = (Button) findViewById(R.id.EnviarInforme);
         alert = new AlertDialog.Builder(this);
+
+        ErrorReport = new ErrorReport(this);
 
         try{
             android_id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -126,13 +130,14 @@ public class PdfPreviewActivity extends AppCompatActivity {
                 }
             });
 
-        } catch (Exception e){
+        } catch (final Exception e){
             EnviarInforme.setEnabled(false);
 
             alert.setTitle("Error al generar el PDF");
             alert.setMessage(e.toString());
             alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    ErrorReport.Send(USU_NAME, e.toString());
                     dialog.cancel();
                 }
             });
@@ -248,12 +253,13 @@ public class PdfPreviewActivity extends AppCompatActivity {
                 }
                 cursor.close();
 
-            } catch (Exception e){
+            } catch (final Exception e){
 
                 alert.setTitle("Error de Base de datos");
                 alert.setMessage(e.toString());
                 alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        ErrorReport.Send(USU_NAME, e.toString());
                         dialog.cancel();
                     }
                 });
@@ -446,13 +452,14 @@ public class PdfPreviewActivity extends AppCompatActivity {
                 imagen.scaleAbsoluteHeight(150);
                 imagen.setAlignment(Image.LEFT);
                 tabla.addCell(pdf.addCell(imagen));
-            } catch (Exception e){
+            } catch (final Exception e){
                 Log.e("ERROR FIRMA", e.toString());
 
                 alert.setTitle("Error al generar el PDF");
                 alert.setMessage(e.toString());
                 alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        ErrorReport.Send(USU_NAME, e.getStackTrace().toString());
                         dialog.cancel();
                     }
                 });
@@ -491,26 +498,28 @@ public class PdfPreviewActivity extends AppCompatActivity {
 
             openPDF();
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
 
             alert.setTitle("Error al generar el PDF");
             alert.setMessage(e.toString());
             alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    ErrorReport.Send(USU_NAME, e.getStackTrace().toString());
                     dialog.cancel();
                 }
             });
             alert.create();
             alert.show();
 
-        } catch (DocumentException e) {
+        } catch (final DocumentException e) {
             e.printStackTrace();
 
             alert.setTitle("Error al generar el PDF");
             alert.setMessage(e.toString());
             alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    ErrorReport.Send(USU_NAME, e.getStackTrace().toString());
                     dialog.cancel();
                 }
             });
@@ -533,12 +542,13 @@ public class PdfPreviewActivity extends AppCompatActivity {
             llo.setVisibility(View.VISIBLE);
             startActivityForResult(target, 1);
 
-        } catch (ActivityNotFoundException e) {
+        } catch (final ActivityNotFoundException e) {
 
             alert.setTitle("Error");
             alert.setMessage("No se ha podido abrir el documento. \nDescargue e instale un lector de documentos PDF.");
             alert.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    ErrorReport.Send(USU_NAME, e.getStackTrace().toString());
                     dialog.cancel();
                 }
             });
