@@ -31,6 +31,7 @@ import cl.pingon.SQLite.TblListasGeneralesItemsHelper;
 import cl.pingon.Sync.SyncBrands;
 import cl.pingon.Sync.SyncChecklist;
 import cl.pingon.Sync.SyncCompany;
+import cl.pingon.Sync.SyncFeriados;
 import cl.pingon.Sync.SyncFormularios;
 import cl.pingon.Sync.SyncListOptions;
 import cl.pingon.Sync.SyncListasGenerales;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     String BrandsUrl;
     String ListasGeneralesUrl;
     String ListasGeneralesItemsUrl;
+    String FeriadosUrl;
     AlertDialog.Builder alert;
 
     @Override
@@ -87,10 +89,19 @@ public class MainActivity extends AppCompatActivity {
         BrandsUrl = getResources().getString(R.string.url_sync_emp_brands).toString()+"/"+session.getString("token","");
         ListasGeneralesUrl = getResources().getString(R.string.url_sync_listas_generales).toString()+"/"+session.getString("token","");
         ListasGeneralesItemsUrl = getResources().getString(R.string.url_sync_listas_generales_items).toString()+"/"+session.getString("token","");
+        FeriadosUrl = getResources().getString(R.string.url_feriados).toString();
 
         if(session.getString("token","") != "") {
 
             if(detectInternet()){
+
+                SyncFeriados Feriados = new SyncFeriados(getApplicationContext(), mainactivity, FeriadosUrl);
+                Feriados.Sync(new CallbackSync(){
+                    @Override
+                    public void success() {
+                        super.success();
+                    }
+                });
 
                 SyncCompany Company = new SyncCompany(getApplicationContext(), mainactivity, CompanyUrl);
                 Company.Sync(new CallbackSync(){

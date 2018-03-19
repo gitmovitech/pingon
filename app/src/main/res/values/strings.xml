@@ -61,6 +61,9 @@
     <string name="url_rollback_data_sent">http://104.154.36.61:2234/rollback-data-sent</string>
     <string name="url_download">http://pingon.newbits.cl/appm/dl.php</string>
     <string name="url_sync_upload_data">http://104.154.36.61:2234/upload/data</string>
+
+    <string name="url_feriados">http://104.154.36.61:2234/feriados</string>
+
     <string name="title_activity_eliminar">ELIMINAR</string>
 
     <string name="delete_draft">Eliminar borrador</string>
