@@ -20,9 +20,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Layout;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,6 +35,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
@@ -591,10 +594,25 @@ public class InformesDetallesActivity extends AppCompatActivity {
     }
 
     public void showPhoto(String filename){
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(new File(filename)), "image/*");
-        startActivity(intent);
+
+        /*File file = new File(filename.toString());
+        if(file.exists()){
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.parse(filename.toString()), "image/*");
+            startActivity(intent);
+        } else {
+            Log.d("Archivo", "No existe");
+        }*/
+        AlertDialog.Builder alertadd = new AlertDialog.Builder(this);
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View view = factory.inflate(R.layout.image_preview_dialog, null);
+        ImageView mv = (ImageView) view.findViewById(R.id.ImagePreviewDialog);
+        mv.setImageURI(Uri.parse(filename.toString()));
+        LinearLayout ll = (LinearLayout) view.findViewById(R.id.LLImagePreview);
+        ll.setVisibility(View.GONE);
+        alertadd.setView(view);
+        alertadd.show();
     }
 
     public void dispatchTakeVideoIntent(int index, int FRM_ID) {

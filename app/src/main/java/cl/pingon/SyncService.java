@@ -183,7 +183,7 @@ public class SyncService extends Service {
                     @Override
                     public void onError(Context context, UploadInfo uploadInfo, Exception exception) {
                         Processing = 0;
-                        ErrorReport.Send(session.getString("first_name", "")+" "+session.getString("last_name", ""), exception.getStackTrace().toString());
+                        ErrorReport.Send(session.getString("first_name", "")+" "+session.getString("last_name", ""), exception.toString());
                         stopForeground(true);
                     }
 
@@ -255,7 +255,7 @@ public class SyncService extends Service {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("ERROR SUBIR DOCS", error.toString());
-                        ErrorReport.Send(session.getString("first_name", "")+" "+session.getString("last_name", ""), error.getStackTrace().toString());
+                        ErrorReport.Send(session.getString("first_name", "")+" "+session.getString("last_name", ""), error.toString());
                         Processing = 0;
                         stopForeground(true);
                     }
